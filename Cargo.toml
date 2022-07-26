@@ -1,5 +1,5 @@
 [package]
-name = "kubectx"
+name = "switch_context"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,4 @@ edition = "2021"
 [dependencies]
 tui = "0.18"
 crossterm = "0.23"
+clap = { version = "3.0", features = ["derive"] }
