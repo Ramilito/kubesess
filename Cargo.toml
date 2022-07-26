@@ -7,5 +7,3 @@ edition = "2021"
 [dependencies]
 tui = "0.18"
 crossterm = "0.23"
-subprocess = "0.2.9"
-
