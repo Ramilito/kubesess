@@ -14,7 +14,17 @@ fn main() -> Result<(), io::Error> {
         .stdout(Stdio::piped())
         .spawn()?;
 
-    stdout.wait_with_output()?;
+    let output = stdout.wait_with_output()?;
+    let result = String::from_utf8(output.stdout).unwrap();
+
+    Command::new("kubectl")
+        .args(["config", "use-context", &result.trim()])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+
+    println!("{}", result);
 
     Ok(())
 }
