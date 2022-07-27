@@ -23,3 +23,16 @@ pub fn selectable_contexts(mut contexts: Child) -> String {
 
     String::from_utf8(output.stdout).unwrap().trim().to_owned()
 }
+
+pub fn select_context(selection: String) -> String {
+    let result = Command::new("kubectl")
+        .args(["config", "use-context", &selection])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap()
+        .wait_with_output()
+        .unwrap();
+
+    String::from_utf8(result.stdout).unwrap()
+}
