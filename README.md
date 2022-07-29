@@ -27,7 +27,7 @@ export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 ```
 
 ## Prerequisite
-  * fzf
+  * [fzf](https://github.com/junegunn/fzf)
 
 ## Installation
 ```
