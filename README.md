@@ -39,3 +39,4 @@ Finally add an alias to run it in your .bashrc, .zshrc
 ```
 alias Switch="source ~/kubesess/run.sh"
 ```
+
