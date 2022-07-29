@@ -21,12 +21,14 @@ Often the following command you type will not be dangerous, and you will notice 
 We will use the config merge capability of kubectl to override the current-context setting.
 By creating a file with the correct context and prepend it to the KUBECONFIG environment variable 
 
-'''
+```
 export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
-'''
+
+```
 
 ## Installation
-'''
+```
 wget binaries
 Wget script
-'''
+
+```
