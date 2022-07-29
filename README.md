@@ -1,4 +1,4 @@
-# kubesess
+# kubesess(ion)
 
 ## What
 This plugin makes it possible to have one context per shell active.
