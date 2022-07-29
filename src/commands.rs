@@ -1,14 +1,12 @@
 use std::process::{Child, Command, Stdio};
 
 pub fn get_context() -> Child {
-    let contexts = Command::new("kubectl")
+    Command::new("kubectl")
         .args(["config", "get-contexts", "-o", "name"])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()
-        .unwrap();
-
-    contexts
+        .unwrap()
 }
 
 pub fn selectable_contexts(mut contexts: Child) -> String {
@@ -24,9 +22,30 @@ pub fn selectable_contexts(mut contexts: Child) -> String {
     String::from_utf8(output.stdout).unwrap().trim().to_owned()
 }
 
-pub fn select_context(selection: String) -> String {
+pub fn set_context(selection: &String) -> String {
     let result = Command::new("kubectl")
-        .args(["config", "use-context", &selection])
+        .arg("config")
+        .arg("--kubeconfig")
+        .arg(format!("ctx/{}", &selection))
+        .arg("set-context")
+        .arg(&selection)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap()
+        .wait_with_output()
+        .unwrap();
+
+    String::from_utf8(result.stdout).unwrap()
+}
+
+pub fn use_context(selection: &String, path: &String) -> String {
+    let result = Command::new("kubectl")
+        .arg("config")
+        .arg("--kubeconfig")
+        .arg(format!("{}/ctx/{}", &path, &selection))
+        .arg("use-context")
+        .arg(&selection)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()

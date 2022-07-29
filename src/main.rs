@@ -1,8 +1,7 @@
 mod commands;
 
+use std::{io, env};
 use clap::Parser;
-use crossterm::style::Stylize;
-use std::io;
 
 #[derive(Parser)]
 struct Cli {
@@ -11,6 +10,7 @@ struct Cli {
 
 fn main() -> Result<(), io::Error> {
     let arg = Cli::parse().context;
+    let path = env::current_dir()?;
     let selection;
 
     if arg.is_some() {
@@ -20,8 +20,10 @@ fn main() -> Result<(), io::Error> {
         selection = commands::selectable_contexts(contexts);
     }
 
-    let result = commands::select_context(selection);
-    println!("{}", result.trim().green());
+    commands::set_context(&selection);
+    commands::use_context(&selection, &path.display().to_string());
+
+    println!("{}/ctx/{}", path.display(), &selection);
 
     Ok(())
 }
