@@ -31,7 +31,10 @@ export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 
 ## Installation
 ```
-wget binaries
-Wget script
+wget https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz
+
+mkdir kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C kubesess
+
+chmod -x ./kubesess/run.sh 
 
 ```
