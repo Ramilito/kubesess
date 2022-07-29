@@ -1,5 +1,9 @@
 # kubesess(ion)
 
+## Showcase
+
+![showcase](https://rentarami.se/assets/images/posts/kube_context.gif)
+
 ## What
 This plugin makes it possible to have one context per shell active.
 ## Why
