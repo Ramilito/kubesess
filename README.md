@@ -26,6 +26,9 @@ export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 
 ```
 
+## Prerequisite
+  * fzf
+
 ## Installation
 ```
 wget binaries
