@@ -1,5 +1,7 @@
 #!/bin/bash
 
-NEW_CTX=$(./target/debug/switch_context) 
+NEW_CTX=$(./kubesess) 
+
+echo $NEW_CTX
 
 export KUBECONFIG=$NEW_CTX:$KUBECONFIG
