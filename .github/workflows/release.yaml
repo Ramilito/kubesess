@@ -19,3 +19,4 @@ jobs:
         with:
           RUSTTARGET: ${{ matrix.target }}
           EXTRA_FILES: "README.md run.zsh"
+          ARCHIVE_TYPES: "tar.gz"
