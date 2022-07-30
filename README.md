@@ -54,9 +54,9 @@ export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 
 Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://github.com/ahmetb/kubectx/tree/master/cmd/kubectx)
 ---- | ---- | ----
-20 runs with no ctx switch and no kubectl calls | .026233087 | 1.640134975
-20 runs with ctx switch and no kubectl calls | .050143972 | 1.690872333
-20 runs with ctx switch and calling kubectl get services | 2.278367573 | 4.025512067
+20 runs with no ctx switch and no kubectl calls | .024931342 | 1.744966963
+20 runs with ctx switch and no kubectl calls | .049247181 | 3.775905777
+20 runs with ctx switch and calling kubectl get nodes | 11.167763585 | 15.265837926
 
 ###### I am using the input argument variant for both tools, using fzf or tab completion is harder to measure.
 
