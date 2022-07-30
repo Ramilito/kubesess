@@ -1,5 +1,16 @@
 # kubesess(ion)
 
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+     [Showcase](#showcase)
+    </li>
+  </ol>
+
+</details>
+
+
 - [kubesess(ion)](#kubesess-ion-)
   * [Showcase](#showcase)
   * [Roadmap](#roadmap)
