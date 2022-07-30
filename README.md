@@ -13,6 +13,7 @@
   * [Getting Started](#getting-started)
     + [Prerequisite](#prerequisite)
     + [Installation](#installation)
+  * [Configuration](#configuration)
   * [Usage](#usage)
   * [Roadmap](#roadmap)
 
@@ -77,6 +78,14 @@ Finally, add an alias to run it in your .bashrc, .zshrc.
 ```
 alias Switch='export KUBECONFIG=$(~/kubesess/kubesess):$HOME/.kube/config'
 ```
+
+## Configuration
+You can also set default context using context name as an input.
+
+```
+alias Switch='export KUBECONFIG=$(~/kubesess/kubesess ${CONTEXT_NAME}):$HOME/.kube/config'
+```
+
 
 ## Usage
 
