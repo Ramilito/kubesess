@@ -1,5 +1,5 @@
 SHELL := /bin/bash
 
-.PHONY: build
-build:
-	cargo build && cp ./target/debug/kubesess .
+.PHONY: deploy_local
+deploy_local:
+	cargo build && cp ./target/debug/kubesess ~/kubesess
