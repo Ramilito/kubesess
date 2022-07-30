@@ -6,6 +6,7 @@
 - [kubesess(ion)](#kubesess-ion-)
   * [Showcase](#showcase)
   * [Roadmap](#roadmap)
+  * [About The Project](#about-the-project)
   * [What?](#what-)
   * [Why?](#why-)
   * [How?](#how-)
@@ -20,25 +21,13 @@
 
 ![showcase](https://rentarami.se/assets/images/posts/kube_context.gif)
 
-<!-- ROADMAP -->
-## Roadmap
+## About The Project
 
-- [x] List all contexts
-- [x] Present it with fzf
-- [x] Write selection to file
-- [x] Output link to file
-- [x] Add alias to handle output
-- [x] Cleanup environment each use
-    - [x] env variable
-    - [x] output files to $HOME/.cache/kubesess
-- [ ] Handle different namespaces per shell
-- [ ] Use rust tui instead of fzf
-
-## What?
+### What?
 
 This plugin makes it possible to have one context per shell active.
 
-## Why?
+### Why?
 
 Why isolated context?
 Typically when you switch context in kubectl (with ex. kubectx), the change happens on all terminal instances. 
@@ -58,6 +47,20 @@ The program will output the SESSION_CONTEXT and the alias created in <a href="#i
 ```
 export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 ```
+
+<!-- ROADMAP -->
+## Roadmap
+
+- [x] List all contexts
+- [x] Present it with fzf
+- [x] Write selection to file
+- [x] Output link to file
+- [x] Add alias to handle output
+- [x] Cleanup environment each use
+    - [x] env variable
+    - [x] output files to $HOME/.cache/kubesess
+- [ ] Handle different namespaces per shell
+- [ ] Use rust tui instead of fzf
 
 ## Getting Started
 
