@@ -27,6 +27,7 @@
     - [x] env variable
     - [x] output files to $HOME/.cache/kubesess
 - [ ] Handle different namespaces per shell
+- [ ] Use rust tui instead of fzf
 
 ## What?
 
