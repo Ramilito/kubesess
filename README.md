@@ -74,18 +74,19 @@ wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.
 mkdir $HOME/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C $HOME/kubesess
 ```
 
-Finally, add an alias to run it in your .bashrc, .zshrc.
+Finally, add aliases to run it in your .bashrc, .zshrc.
 ```
-alias Switch='export KUBECONFIG=$(~/kubesess/kubesess):$HOME/.kube/config'
+alias Switch='export KUBECONFIG=$(~/kubesess/kubesess -- context):$HOME/.kube/config'
+alias kn='export KUBECONFIG=$(~/kubesess/kubesess -- namespace):$HOME/.kube/config'
 ```
 
 ## Configuration
 
-You can set default context using context name as an input in your .bashrc, .zshrc.
+You can set default context using context name as an input in your .bashrc, .zshrc and exporting the result to KUBECONFIG environment variable.
 
 ```
 export KUBECONFIG=$(~/kubesess/kubesess docker-desktop):$HOME/.kube/config
-alias Switch='export KUBECONFIG=$(~/kubesess/kubesess):$HOME/.kube/config'
+alias Switch='export KUBECONFIG=$(~/kubesess/kubesess -- context):$HOME/.kube/config'
 ```
 
 ## Usage
@@ -103,7 +104,8 @@ Use the alias, can be whatever you want it to be, and then pick one of the sugge
 - [x] Cleanup environment each use
     - [x] env variable
     - [x] output files to $HOME/.cache/kubesess
-- [ ] Handle different namespaces per shell
+- [x] Handle different namespaces per shell
 - [ ] Use rust tui instead of fzf
+- [ ] Add option to make changes stick (all shells)
 - [ ] Add tab completion
 
