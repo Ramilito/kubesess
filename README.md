@@ -5,11 +5,11 @@
 
 - [kubesess(ion)](#kubesess-ion-)
   * [Showcase](#showcase)
-  * [Roadmap](#roadmap)
   * [About The Project](#about-the-project)
-  * [What?](#what-)
-  * [Why?](#why-)
-  * [How?](#how-)
+    + [What](#what)
+    + [Why](#why)
+    + [How](#how)
+  * [Roadmap](#roadmap)
   * [Getting Started](#getting-started)
     + [Prerequisite](#prerequisite)
     + [Installation](#installation)
@@ -23,11 +23,11 @@
 
 ## About The Project
 
-### What?
+### What
 
 This plugin makes it possible to have one context per shell active.
 
-### Why?
+### Why
 
 Why isolated context?
 Typically when you switch context in kubectl (with ex. kubectx), the change happens on all terminal instances. 
@@ -38,7 +38,7 @@ You open another terminal, switch context, do your work and then go right back t
 The issue is that the prompt has not visually refreshed to the actual context. 
 Often the following command you type will not be dangerous, and you will notice that you did it in production, but sometimes the damage is severe💥.
 
-## How?
+### How
 
 We will use the config merge capability of kubectl to override the current-context setting.
 By creating a file with the correct context and prepend it to the KUBECONFIG environment variable 
