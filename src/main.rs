@@ -1,11 +1,19 @@
 mod commands;
 
-use std::io;
 use clap::Parser;
+use std::io;
 
 #[derive(Parser)]
 struct Cli {
+    #[clap(value_enum)]
+    mode: Mode,
     context: Option<String>,
+}
+
+#[derive(clap::ValueEnum, Clone)]
+enum Mode {
+    Namespace,
+    Context,
 }
 
 fn main() -> Result<(), io::Error> {
