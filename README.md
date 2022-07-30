@@ -1,13 +1,39 @@
 # kubesess(ion)
 
+- [kubesess(ion)](#kubesess-ion-)
+  * [Showcase](#showcase)
+  * [Roadmap](#roadmap)
+  * [What?](#what-)
+  * [Why?](#why-)
+  * [How?](#how-)
+  * [Getting Started](#getting-started)
+    + [Prerequisite](#prerequisite)
+    + [Installation](#installation)
+  * [Usage](#usage)
+ 
 ## Showcase
 
 ![showcase](https://rentarami.se/assets/images/posts/kube_context.gif)
 
+<!-- ROADMAP -->
+## Roadmap
+
+- [x] List all contexts
+- [x] Present it with fzf
+- [x] Write selection to file
+- [x] Output link to file
+- [x] Add alias to handle output
+- [x] Cleanup environment each use
+    - [x] env variable
+    - [x] output files to $HOME/.cache/kubesess
+- [ ] Handle different namespaces per shell
+
 ## What?
+
 This plugin makes it possible to have one context per shell active.
 
 ## Why?
+
 Why isolated context?
 Typically when you switch context in kubectl (with ex. kubectx), the change happens on all terminal instances. 
 That is because the change is saved in your $HOME/.kube/config file and is read on every interaction with kubectl.
@@ -18,17 +44,24 @@ The issue is that the prompt has not visually refreshed to the actual context.
 Often the following command you type will not be dangerous, and you will notice that you did it in production, but sometimes the damage is severe💥.
 
 ## How?
+
 We will use the config merge capability of kubectl to override the current-context setting.
 By creating a file with the correct context and prepend it to the KUBECONFIG environment variable 
 
+The program will output the SESSION_CONTEXT and the alias created in <a href="#installation">Installation</a> will do the prepending
 ```
 export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 ```
 
-## Prerequisite
-  * [fzf](https://github.com/junegunn/fzf)
+## Getting Started
 
-## Installation
+### Prerequisite
+
+* [fzf](https://github.com/junegunn/fzf)
+
+### Installation
+
+Download and extract the binary.
 ```
 wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz" &&
 mkdir ~/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C ~/kubesess
@@ -39,3 +72,6 @@ Finally, add an alias to run it in your .bashrc, .zshrc.
 alias Switch='export KUBECONFIG=$(~/kubesess/kubesess):$HOME/.kube/config'
 ```
 
+## Usage
+
+Use the alias, can be whatever you want it to be, and then pick one of the suggested context to switch to.
