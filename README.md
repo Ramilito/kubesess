@@ -95,5 +95,5 @@ Use the alias, can be whatever you want it to be, and then pick one of the sugge
     - [x] output files to $HOME/.cache/kubesess
 - [ ] Handle different namespaces per shell
 - [ ] Use rust tui instead of fzf
-
+- [ ] Add tab completion
 
