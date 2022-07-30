@@ -32,11 +32,10 @@ export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 ```
 wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz" &&
 mkdir ~/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C ~/kubesess &&
-chmod +x ~/kubesess/run.sh
 ```
 
 Finally add an alias to run it in your .bashrc, .zshrc
 ```
-alias Switch="source ~/kubesess/run.sh"
+alias Switch="export KUBECONFIG=$(~/kubesess/kubesess):$KUBECONFIG"
 ```
 
