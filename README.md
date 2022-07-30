@@ -2,15 +2,6 @@
 
 <details>
   <summary>Table of Contents</summary>
-  <ol>
-    <li>
-     [Showcase](#showcase)
-    </li>
-  </ol>
-
-</details>
-
-
 - [kubesess(ion)](#kubesess-ion-)
   * [Showcase](#showcase)
   * [Roadmap](#roadmap)
@@ -21,7 +12,8 @@
     + [Prerequisite](#prerequisite)
     + [Installation](#installation)
   * [Usage](#usage)
- 
+</details>
+
 ## Showcase
 
 ![showcase](https://rentarami.se/assets/images/posts/kube_context.gif)
