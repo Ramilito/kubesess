@@ -52,10 +52,10 @@ pub fn set_namespace(current_ctx: &String, selection: &String, temp_dir: &str) {
 }
 
 pub fn set_context(selection: &String, temp_dir: &str) {
-    create_file(selection, None , temp_dir)
+    create_file(selection, None, temp_dir)
 }
 
-fn create_file(context: &String, namespace: Option<&String>, temp_dir: &str){
+fn create_file(context: &String, namespace: Option<&String>, temp_dir: &str) {
     let path = Path::new(context);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
@@ -69,11 +69,10 @@ fn create_file(context: &String, namespace: Option<&String>, temp_dir: &str){
     write!(f, "kind: Config\n").unwrap();
     write!(f, "contexts:\n").unwrap();
     write!(f, "- context:\n").unwrap();
-    write!(f, "{:indent$}cluster: {}\n", "", context, indent=4).unwrap();
+    write!(f, "{:indent$}cluster: {}\n", "", context, indent = 4).unwrap();
     if let Some(x) = namespace {
-        write!(f, "{:indent$}namespace: {}\n", "", x, indent=4).unwrap();
+        write!(f, "{:indent$}namespace: {}\n", "", x, indent = 4).unwrap();
     }
-    write!(f, "{:indent$}user: {}\n", "", context, indent=4).unwrap();
-    write!(f, "{:indent$}name: {}\n", "", context, indent=2).unwrap();
-
+    write!(f, "{:indent$}user: {}\n", "", context, indent = 4).unwrap();
+    write!(f, "{:indent$}name: {}\n", "", context, indent = 2).unwrap();
 }
