@@ -70,12 +70,12 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 Download and extract the binary.
 ```
 wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz" &&
-mkdir ~/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C ~/kubesess
+mkdir $HOME/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C $HOME/kubesess
 ```
 
 Finally, add an alias to run it in your .bashrc, .zshrc.
 ```
-alias Switch='export KUBECONFIG=$(~/kubesess/kubesess):$HOME/.kube/config'
+alias Switch='export KUBECONFIG=$($HOME/kubesess/kubesess):$HOME/.kube/config'
 ```
 
 ## Usage
