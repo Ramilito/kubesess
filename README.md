@@ -9,6 +9,7 @@
     + [What](#what)
     + [Why](#why)
     + [How](#how)
+    + [Benchmark](#benchmark)
   * [Getting Started](#getting-started)
     + [Prerequisite](#prerequisite)
     + [Installation](#installation)
@@ -25,7 +26,7 @@
 
 ### What
 
-This plugin makes it possible to have one context per shell active.
+This BLAZINGLY FAST plugin makes it possible to have one context per shell active.
 
 ### Why
 
@@ -47,6 +48,14 @@ The program will output the SESSION_CONTEXT and the alias created in <a href="#i
 ```
 export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 ```
+
+### Benchmark
+
+Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://github.com/ahmetb/kubectx/tree/master/cmd/kubectx)
+---- | ---- | ----
+20 runs with no ctx switch and no kubectl calls | 026233087 | 1.640134975
+
+
 
 ## Getting Started
 
