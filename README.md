@@ -34,8 +34,10 @@ wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.
 mkdir ~/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C ~/kubesess
 ```
 
-Finally add an alias to run it in your .bashrc, .zshrc
+Finally add an alias and environment variables to run it in your .bashrc, .zshrc
 ```
+export KUBECONFIG=$HOME/.kube/config
+export KUBECONFIG_OLD="$KUBECONFIG"
 alias Switch='export KUBECONFIG=$(~/kubesess/kubesess):$KUBECONFIG'
 ```
 
