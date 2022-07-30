@@ -2,6 +2,7 @@
 
 <details>
   <summary>Table of Contents</summary>
+
 - [kubesess(ion)](#kubesess-ion-)
   * [Showcase](#showcase)
   * [Roadmap](#roadmap)
@@ -12,6 +13,7 @@
     + [Prerequisite](#prerequisite)
     + [Installation](#installation)
   * [Usage](#usage)
+
 </details>
 
 ## Showcase
