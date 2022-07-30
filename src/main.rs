@@ -20,10 +20,9 @@ fn main() -> Result<(), io::Error> {
         selection = commands::selectable_contexts(contexts);
     }
 
-    commands::set_context(&selection);
-    commands::use_context(&selection, &path.display().to_string());
+    commands::set_contextfile(&selection);
 
-    println!("{}/ctx/{}", path.display(), &selection);
+    println!("{}/ctx/{}", &path.display(), str::replace(&selection, ":", "_"));
 
     Ok(())
 }
