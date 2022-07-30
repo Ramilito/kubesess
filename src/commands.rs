@@ -24,15 +24,15 @@ pub fn selectable_contexts(mut contexts: Child) -> String {
     String::from_utf8(output.stdout).unwrap().trim().to_owned()
 }
 
-pub fn set_contextfile(selection: &String) {
+pub fn set_contextfile(selection: &String, temp_dir: &str ) {
     let path = Path::new(selection);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
     let filename = path.file_name().unwrap().to_str().unwrap();
 
-    let _ = fs::create_dir(format!("ctx/{}", dirname));
+    let _ = fs::create_dir_all(format!("{}/{}", temp_dir, dirname));
 
-    let mut f = File::create(format!("ctx/{}/{}", dirname, filename)).unwrap();
+    let mut f = File::create(format!("{}/{}/{}", temp_dir, dirname, filename)).unwrap();
 
     write!(f, "apiVersion: v1\n").unwrap();
     write!(f, "current-context: {}\n", selection).unwrap();

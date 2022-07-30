@@ -9,3 +9,4 @@ edition = "2021"
 tui = "0.18"
 crossterm = "0.23"
 clap = { version = "3.0", features = ["derive"] }
+dirs = "4.0"

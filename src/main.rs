@@ -1,6 +1,6 @@
 mod commands;
 
-use std::{io, env};
+use std::io;
 use clap::Parser;
 
 #[derive(Parser)]
@@ -10,7 +10,8 @@ struct Cli {
 
 fn main() -> Result<(), io::Error> {
     let arg = Cli::parse().context;
-    let path = env::current_dir()?;
+    let temp_dir = format!("{}/.cache/kubesess", dirs::home_dir().unwrap().display());
+
     let selection;
 
     if arg.is_some() {
@@ -19,10 +20,9 @@ fn main() -> Result<(), io::Error> {
         let contexts = commands::get_context();
         selection = commands::selectable_contexts(contexts);
     }
+    commands::set_contextfile(&selection, &temp_dir);
 
-    commands::set_contextfile(&selection);
-
-    println!("{}/ctx/{}", &path.display(), str::replace(&selection, ":", "_"));
+    println!("{}/{}", &temp_dir, str::replace(&selection, ":", "_"));
 
     Ok(())
 }
