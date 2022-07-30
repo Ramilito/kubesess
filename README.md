@@ -55,7 +55,7 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 ---- | ---- | ----
 20 runs with no ctx switch and no kubectl calls | .026233087 | 1.640134975
 20 runs with ctx switch and no kubectl calls | .050143972 | 1.690872333
-20 runs with ctx switch and kubectl calls | 2.278367573 | 4.025512067
+20 runs with ctx switch and calling kubectl get services | 2.278367573 | 4.025512067
 
 ## Getting Started
 
