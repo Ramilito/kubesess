@@ -107,7 +107,7 @@ Use the alias, can be whatever you want it to be, and then pick one of the sugge
     - [x] env variable
     - [x] output files to $HOME/.cache/kubesess
 - [x] Handle different namespaces per shell
-- [ ] Use rust tui instead of fzf
+- [x] Use rust tui instead of fzf
 - [ ] Add option to make changes stick (all shells)
 - [ ] Add tab completion
 
