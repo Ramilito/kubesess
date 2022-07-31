@@ -21,7 +21,7 @@
 
 ## Showcase
 
-![showcase](https://github.com/Ramilito/kubesess/images/kubesess.gif)
+![showcase](https://github.com/Ramilito/kubesess/docs/images/kubesess.gif)
 
 ###### The showcase demonstrates the multiple sessions per shell, selecting items and fuzzy searching for them.
 
