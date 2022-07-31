@@ -85,7 +85,7 @@ alias kn='export KUBECONFIG=$(~/kubesess/kubesess -- namespace):$HOME/.kube/conf
 You can set default context using context name as an input in your .bashrc, .zshrc and exporting the result to KUBECONFIG environment variable.
 
 ```
-export KUBECONFIG=$(~/kubesess/kubesess docker-desktop):$HOME/.kube/config
+export KUBECONFIG=$(~/kubesess/kubesess -- context docker-desktop):$HOME/.kube/config
 alias Switch='export KUBECONFIG=$(~/kubesess/kubesess -- context):$HOME/.kube/config'
 ```
 
