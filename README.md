@@ -106,8 +106,8 @@ Use the alias, can be whatever you want it to be, and then pick one of the sugge
 - [x] Write selection to file
 - [x] Output link to file
 - [x] Add alias to handle output
-- [x] Cleanup environment each use
-    - [x] env variable
+- [x] Cleanup after use
+    - [x] clean prepended env variable
     - [x] output files to $HOME/.cache/kubesess
 - [x] Handle different namespaces per shell
 - [x] Use rust tui instead of fzf
