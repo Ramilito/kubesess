@@ -1,4 +1,4 @@
-use dialoguer::{theme::ColorfulTheme, Select};
+use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
@@ -39,7 +39,7 @@ pub fn get_current_context() -> String {
 }
 
 pub fn selectable_list(input: Vec<String>) -> String {
-    let selection = Select::with_theme(&ColorfulTheme::default())
+    let selection = FuzzySelect::with_theme(&ColorfulTheme::default())
         // .with_prompt("Pick")
         .default(0)
         .items(&input[..])

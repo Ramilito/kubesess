@@ -7,4 +7,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.0", features = ["derive"] }
 dirs = "4.0"
-dialoguer = "0.10.2"
+dialoguer = { version = "0.10.2", features = ["fuzzy-select"] }
