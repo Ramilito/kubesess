@@ -23,10 +23,10 @@
 
 ![showcase](https://raw.github.com/Ramilito/kubesess/main/docs/images/kubesess.gif)
 
-<sup>
+
 The showcase demonstrates the multiple sessions per shell feature, selecting items and fuzzy searching for them.
 The same features apply for handling namespace as well
-</sup>
+
 
 ## About The Project
 
@@ -63,7 +63,7 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 20 runs with ctx switch and no kubectl calls | .049247181 | 3.775905777
 20 runs with ctx switch and calling kubectl get nodes | 11.167763585 | 15.265837926
 
-###### I am using the input argument variant for both tools, using fzf or tab completion is harder to measure.
+<sup>I am using the input argument variant for both tools, using fzf or tab completion is harder to do.</sup>
 
 ## Getting Started
 
