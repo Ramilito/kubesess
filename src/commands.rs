@@ -1,8 +1,8 @@
 use dialoguer::{theme::ColorfulTheme, Select};
 use std::fs::{self, File};
-use std::io::{Lines, Write};
+use std::io::Write;
 use std::path::Path;
-use std::process::{Child, Command, Stdio};
+use std::process::{Command, Stdio};
 
 pub fn get_context() -> Vec<String> {
     let output = Command::new("kubectl")
