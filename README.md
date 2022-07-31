@@ -21,7 +21,9 @@
 
 ## Showcase
 
-![showcase](https://rentarami.se/assets/images/posts/kube_context.gif)
+![showcase](https://github.com/Ramilito/kubesess/images/kubesess.gif)
+
+###### The showcase demonstrates the multiple sessions per shell, selecting items and fuzzy searching for them.
 
 ## About The Project
 
