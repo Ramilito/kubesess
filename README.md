@@ -66,7 +66,7 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 
 ### Prerequisite
 
-* [fzf](https://github.com/junegunn/fzf)
+* No dependencies
 
 ### Installation
 
