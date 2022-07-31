@@ -1,15 +1,28 @@
+use dialoguer::{theme::ColorfulTheme, Select};
 use std::fs::{self, File};
-use std::io::Write;
+use std::io::{Lines, Write};
 use std::path::Path;
 use std::process::{Child, Command, Stdio};
 
-pub fn get_context() -> Child {
-    Command::new("kubectl")
+pub fn get_context() -> Vec<String> {
+    let output = Command::new("kubectl")
         .args(["config", "get-contexts", "-o", "name"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .unwrap()
+        .output()
+        .unwrap();
+
+    let string = String::from_utf8(output.stdout).unwrap();
+    string.lines().map(ToOwned::to_owned).collect()
+
+}
+
+pub fn get_namespace() -> Vec<String> {
+    let output = Command::new("kubectl")
+        .args(["get", "namespace", "-o=custom-columns=Name:.metadata.name"])
+        .output()
+        .unwrap();
+
+    let string = String::from_utf8(output.stdout).unwrap();
+    string.lines().map(ToOwned::to_owned).collect()
 }
 
 pub fn get_current_context() -> String {
@@ -25,26 +38,15 @@ pub fn get_current_context() -> String {
     String::from_utf8(output.stdout).unwrap().trim().to_owned()
 }
 
-pub fn get_namespace() -> Child {
-    Command::new("kubectl")
-        .args(["get", "namespace", "-o=custom-columns=Name:.metadata.name"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .unwrap()
-}
-
-pub fn selectable_list(mut input: Child) -> String {
-    let output = Command::new("fzf")
-        .args(["--ansi", "--no-preview"])
-        .stdin(input.stdout.take().unwrap())
-        .stdout(Stdio::piped())
-        .spawn()
-        .unwrap()
-        .wait_with_output()
+pub fn selectable_list(input: Vec<String>) -> String {
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        // .with_prompt("Pick")
+        .default(0)
+        .items(&input[..])
+        .interact()
         .unwrap();
 
-    String::from_utf8(output.stdout).unwrap().trim().to_owned()
+    input[selection].to_string()
 }
 
 pub fn set_namespace(current_ctx: &String, selection: &String, temp_dir: &str) {
