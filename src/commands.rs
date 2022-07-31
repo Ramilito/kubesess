@@ -22,7 +22,7 @@ pub fn get_namespace() -> Vec<String> {
         .unwrap();
 
     let string = String::from_utf8(output.stdout).unwrap();
-    string.lines().map(ToOwned::to_owned).collect()
+    string.lines().skip(1).map(ToOwned::to_owned).collect()
 }
 
 pub fn get_current_context() -> String {
