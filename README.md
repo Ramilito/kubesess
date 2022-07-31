@@ -23,7 +23,7 @@
 
 ![showcase](https://raw.github.com/Ramilito/kubesess/main/docs/images/kubesess.gif)
 
-###### The showcase demonstrates the multiple sessions per shell, selecting items and fuzzy searching for them.
+<p> The showcase demonstrates the multiple sessions per shell, selecting items and fuzzy searching for them.</p>
 
 ## About The Project
 
