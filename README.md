@@ -32,7 +32,7 @@ The same features apply for handling namespace as well
 
 ### What
 
-This BLAZINGLY FAST plugin makes it possible to have one context per shell active.
+This BLAZINGLY FAST plugin written in Rust makes it possible to have one context per shell active.
 
 ### Why
 
