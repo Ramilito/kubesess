@@ -48,16 +48,16 @@ pub fn selectable_list(input: Vec<String>) -> String {
     input[selection].to_string()
 }
 
-pub fn set_namespace(current_ctx: &String, selection: &String, temp_dir: &str) {
-    create_file(current_ctx, Some(selection), temp_dir)
+pub fn set_namespace(ctx: &String, selection: &String, temp_dir: &str) {
+    create_file(ctx, Some(selection), temp_dir)
 }
 
-pub fn set_context(selection: &String, temp_dir: &str) {
-    create_file(selection, None, temp_dir)
+pub fn set_context(ctx: &String, temp_dir: &str) {
+    create_file(ctx, None, temp_dir)
 }
 
-fn create_file(context: &String, namespace: Option<&String>, temp_dir: &str) {
-    let path = Path::new(context);
+fn create_file(ctx: &String, namespace: Option<&String>, temp_dir: &str) {
+    let path = Path::new(ctx);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
     let filename = path.file_name().unwrap().to_str().unwrap();
@@ -65,15 +65,17 @@ fn create_file(context: &String, namespace: Option<&String>, temp_dir: &str) {
 
     let mut f = File::create(format!("{}/{}/{}", temp_dir, dirname, filename)).unwrap();
 
-    write!(f, "apiVersion: v1\n").unwrap();
-    write!(f, "current-context: {}\n", context).unwrap();
-    write!(f, "kind: Config\n").unwrap();
-    write!(f, "contexts:\n").unwrap();
-    write!(f, "- context:\n").unwrap();
-    write!(f, "{:indent$}cluster: {}\n", "", context, indent = 4).unwrap();
+    let mut content = format!("apiVersion: v1\n");
+    content.push_str(&format!("current-context: {}\n", ctx));
+    content.push_str("kind: Config\n");
+    content.push_str("contexts:\n");
+    content.push_str("- context:\n");
+    content.push_str(&format!("{:indent$}cluster: {}\n", "", ctx, indent = 4));
     if let Some(x) = namespace {
-        write!(f, "{:indent$}namespace: {}\n", "", x, indent = 4).unwrap();
+        content.push_str(&format!("{:indent$}namespace: {}\n", "", x, indent = 4));
     }
-    write!(f, "{:indent$}user: {}\n", "", context, indent = 4).unwrap();
-    write!(f, "{:indent$}name: {}\n", "", context, indent = 2).unwrap();
+    content.push_str(&format!("{:indent$}user: {}\n", "", ctx, indent = 4));
+    content.push_str(&format!("{:indent$}name: {}\n", "", ctx, indent = 2));
+
+    f.write_all(content.as_bytes()).unwrap();
 }
