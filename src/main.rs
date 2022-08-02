@@ -6,52 +6,53 @@ use std::io;
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 struct Cli {
-    #[clap(value_enum)]
+    #[clap(value_enum, display_order = 1)]
     mode: Mode,
-
-    #[clap(short, long, value_parser)]
-    context: Option<String>,
-
-    #[clap(short, long, value_parser)]
-    namespace: Option<String>,
+    #[clap(short, long, value_parser, display_order = 2)]
+    value: Option<String>,
 }
 
 #[derive(clap::ValueEnum, Clone)]
 enum Mode {
     Namespace,
     Context,
+    DefaultContext,
 }
 
 fn main() -> Result<(), io::Error> {
     let args = Cli::parse();
     let temp_dir = format!("{}/.cache/kubesess", dirs::home_dir().unwrap().display());
-    let selection;
-    let ns;
+    let ctx;
 
     match args.mode {
         Mode::Namespace => {
-            if let Some(x) = args.namespace{
-                ns = x;
-            } else {
-                let contexts = commands::get_namespace();
-                ns = commands::selectable_list(contexts);
-            }
+            ctx = commands::get_current_context();
+            let ns;
 
-            selection = commands::get_current_context();
-            commands::set_namespace(&selection, &ns, &temp_dir);
+            match args.value {
+                None => {
+                    let namespaces = commands::get_namespaces();
+                    ns = commands::selectable_list(namespaces);
+                }
+                Some(x) => ns = x,
+            }
+            commands::set_namespace(&ctx, &ns, &temp_dir);
         }
         Mode::Context => {
-            if args.context.is_some() {
-                selection = args.context.unwrap().to_string();
-            } else {
-                let contexts = commands::get_context();
-                selection = commands::selectable_list(contexts);
+            match args.value {
+                None => {
+                    let contexts = commands::get_context();
+                    ctx = commands::selectable_list(contexts);
+                }
+                Some(x) => ctx = x,
             }
+            commands::set_context(&ctx, &temp_dir);
 
-            commands::set_context(&selection, &temp_dir);
+            println!("{}/{}", &temp_dir, str::replace(&ctx, ":", "_"));
+        }
+        Mode::DefaultContext => {
         }
     }
-    println!("{}/{}", &temp_dir, str::replace(&selection, ":", "_"));
 
     Ok(())
 }
