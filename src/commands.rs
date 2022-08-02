@@ -12,10 +12,9 @@ pub fn get_context() -> Vec<String> {
 
     let string = String::from_utf8(output.stdout).unwrap();
     string.lines().map(ToOwned::to_owned).collect()
-
 }
 
-pub fn get_namespace() -> Vec<String> {
+pub fn get_namespaces() -> Vec<String> {
     let output = Command::new("kubectl")
         .args(["get", "namespace", "-o=custom-columns=Name:.metadata.name"])
         .output()
