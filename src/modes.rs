@@ -1,15 +1,12 @@
 use crate::{commands, Cli};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
-    let ctx;
     match value {
         None => {
-            ctx = callback();
+            callback()
         }
-        Some(x) => ctx = x.trim().to_string(),
+        Some(x) => x.trim().to_string(),
     }
-
-    ctx
 }
 
 pub fn default_context(args: Cli) {
