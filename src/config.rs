@@ -52,7 +52,7 @@ fn build_config(ctx: &String, namespace: Option<&String>, strbuf: String) -> Con
     config
 }
 
-fn get_config(ctx: &String, temp_dir: &str, mut strbuf: String) {
+fn read_config(ctx: &String, temp_dir: &str, mut strbuf: String) {
     let f = get_config_file(ctx, temp_dir);
     let mut reader = BufReader::new(&f);
 
@@ -78,7 +78,7 @@ fn get_config_file(ctx: &String, temp_dir: &str) -> File {
 pub fn set(ctx: &String, namespace: Option<&String>, temp_dir: &str) {
     let strbuf = String::new();
 
-    get_config(ctx, temp_dir, strbuf.to_owned());
+    read_config(ctx, temp_dir, strbuf.to_owned());
 
     let f = get_config_file(ctx, temp_dir);
     let writer = BufWriter::new(&f);
