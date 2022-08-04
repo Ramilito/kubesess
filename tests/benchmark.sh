@@ -1,9 +1,9 @@
 timekubesess(){
   start=`date +%s.%N`
   for i in $(seq 1 20); do
-    export KUBECONFIG=$(~/kubesess/kubesess -c arn:aws:eks:eu-north-1:392162365071:cluster/toca-days-staging-eu-north-1 context):$HOME/.kube/config;
+    export KUBECONFIG=$(kubesess -v arn:aws:eks:eu-north-1:392162365071:cluster/toca-days-staging-eu-north-1 context):$HOME/.kube/config;
     kubectl get nodes;
-    export KUBECONFIG=$(~/kubesess/kubesess -c docker-desktop context):$HOME/.kube/config;
+    export KUBECONFIG=$(kubesess -v docker-desktop context):$HOME/.kube/config;
     kubectl get nodes;
   done
   end=`date +%s.%N`
