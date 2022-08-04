@@ -22,10 +22,10 @@ enum Mode {
 }
 
 impl Mode {
-    fn invoke(&self, temp_dir: &String) {
+    fn invoke(&self, dest: &String) {
         match self {
-            Mode::Namespace => modes::namespace(Cli::parse(), temp_dir),
-            Mode::Context => modes::context(Cli::parse(), temp_dir),
+            Mode::Namespace => modes::namespace(Cli::parse(), dest),
+            Mode::Context => modes::context(Cli::parse(), dest),
             Mode::DefaultContext => modes::default_context(Cli::parse()),
         }
     }
@@ -33,9 +33,9 @@ impl Mode {
 
 fn main() -> Result<(), io::Error> {
     let args = Cli::parse();
-    let temp_dir = format!("{}/.cache/kubesess", dirs::home_dir().unwrap().display());
+    let dest = format!("{}/.cache/kubesess", dirs::home_dir().unwrap().display());
 
-    Mode::invoke(&args.mode, &temp_dir);
+    Mode::invoke(&args.mode, &dest);
 
     Ok(())
 }
