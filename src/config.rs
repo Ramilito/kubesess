@@ -59,6 +59,14 @@ fn read_config(ctx: &String, temp_dir: &str, mut strbuf: String) {
     reader.read_line(&mut strbuf).expect("Unable to read file");
 }
 
+fn write_config(ctx: &String, temp_dir: &str, namespace: Option<&String>, strbuf: String) {
+    let f = get_config_file(ctx, temp_dir);
+    let writer = BufWriter::new(&f);
+    let config = build_config(ctx, namespace, strbuf);
+
+    serde_yaml::to_writer(writer, &config).unwrap();
+}
+
 fn get_config_file(ctx: &String, temp_dir: &str) -> File {
     let path = Path::new(ctx);
     let parent = path.parent().unwrap();
@@ -79,10 +87,5 @@ pub fn set(ctx: &String, namespace: Option<&String>, temp_dir: &str) {
     let strbuf = String::new();
 
     read_config(ctx, temp_dir, strbuf.to_owned());
-
-    let f = get_config_file(ctx, temp_dir);
-    let writer = BufWriter::new(&f);
-    let config = build_config(ctx, namespace, strbuf);
-
-    serde_yaml::to_writer(writer, &config).unwrap();
+    write_config(ctx, temp_dir, namespace, strbuf.to_owned());
 }
