@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     fs::{self, File},
     io::{BufRead, BufReader, BufWriter},
-    path::Path,
+    path::Path
 };
 
 #[derive(Default, Debug, Serialize, Deserialize)]
@@ -32,7 +32,7 @@ struct Config {
     contexts: Vec<Contexts>,
 }
 
-fn build_config(ctx: &String, namespace: Option<&String>, strbuf: String) -> Config {
+fn build_config(ctx: &str, namespace: Option<&str>, strbuf: &str) -> Config {
     let mut config: Config = serde_yaml::from_str(&strbuf).unwrap();
     config.api_version = "v1".to_string();
     config.kind = "Config".to_string();
@@ -52,19 +52,19 @@ fn build_config(ctx: &String, namespace: Option<&String>, strbuf: String) -> Con
     config
 }
 
-fn read_config(ctx: &String, dest: &str, mut strbuf: String) {
+fn read_config(ctx: &str, dest: &str, strbuf: &str) {
     let f = get_config_file(ctx, dest, None);
     let mut reader = BufReader::new(&f);
 
-    reader.read_line(&mut strbuf).expect("Unable to read file");
+    reader.read_line(&mut strbuf.to_owned()).expect("Unable to read file");
 }
 
 fn write_config(
-    ctx: &String,
+    ctx: &str,
     dest: &str,
-    file_name: Option<String>,
-    namespace: Option<&String>,
-    strbuf: String,
+    file_name: Option<&str>,
+    namespace: Option<&str>,
+    strbuf: &str,
 ) {
     let f = get_config_file(ctx, dest, file_name);
     let writer = BufWriter::new(&f);
@@ -73,7 +73,7 @@ fn write_config(
     serde_yaml::to_writer(writer, &config).unwrap();
 }
 
-fn get_config_file(ctx: &String, dest: &str, file_name: Option<String>) -> File {
+fn get_config_file(ctx: &str, dest: &str, file_name: Option<&str>) -> File {
     let path = Path::new(ctx);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
@@ -103,16 +103,16 @@ fn get_config_file(ctx: &String, dest: &str, file_name: Option<String>) -> File 
     f
 }
 
-pub fn set(ctx: &String, namespace: Option<&String>, dest: &str) {
+pub fn set(ctx: &str, namespace: Option<&str>, dest: &str) {
     let strbuf = String::new();
+    read_config(ctx, dest, strbuf.as_str());
 
-    read_config(ctx, dest, strbuf.to_owned());
-    write_config(ctx, dest, None, namespace, strbuf.to_owned());
+    write_config(ctx, dest, None, namespace, strbuf.as_str());
     write_config(
         ctx,
         dest,
-        Some("config".to_string()),
+        Some("config"),
         namespace,
-        strbuf.to_owned(),
+        strbuf.as_str(),
     );
 }
