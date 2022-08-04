@@ -1,7 +1,14 @@
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use std::process::{Command, Stdio};
-
 use crate::config;
+
+pub fn set_default_cotext(ctx: &str) {
+    Command::new("kubectl")
+        .args(["config", "use-context", ctx])
+        .spawn()
+        .unwrap()
+        .wait().unwrap();
+ }
 
 pub fn get_context() -> Vec<String> {
     let output = Command::new("kubectl")
@@ -46,14 +53,6 @@ pub fn selectable_list(input: Vec<String>) -> String {
 
     input[selection].to_string()
 }
-
-pub fn set_default_cotext(ctx: &str) {
-    Command::new("kubectl")
-        .args(["config", "use-context", ctx])
-        .spawn()
-        .unwrap()
-        .wait().unwrap();
- }
 
 pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str) {
     config::set(ctx, Some(selection), temp_dir)
