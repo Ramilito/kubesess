@@ -16,7 +16,7 @@ pub fn default_context(args: Cli) {
     commands::set_default_cotext(&ctx);
 }
 
-pub fn context(args: Cli, dest: &String) {
+pub fn context(args: Cli, dest: &str) {
     let ctx = selection(args.value, || -> String {
         let contexts = commands::get_context();
         commands::selectable_list(contexts)
@@ -27,7 +27,7 @@ pub fn context(args: Cli, dest: &String) {
     println!("{}/{}", &dest, str::replace(&ctx, ":", "_"));
 }
 
-pub fn namespace(args: Cli, dest: &String) {
+pub fn namespace(args: Cli, dest: &str) {
     let ctx = commands::get_current_context();
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
