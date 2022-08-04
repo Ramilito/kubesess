@@ -10,8 +10,8 @@ build:
 
 .PHONY: deploy_local
 deploy_local: build
-	cp ./target/debug/kubesess ./src/kubesess.sh ~/kubesess/
-	sudo mv ~/kubesess/kubesess /usr/local/bin/kubesess
+	cp ./target/debug/kubesess ./src/kubesess.sh ~/.kube/kubesess/
+	sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
 
 .PHONY: benchmark
 benchmark: deploy_local
