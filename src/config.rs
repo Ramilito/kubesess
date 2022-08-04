@@ -83,6 +83,6 @@ pub fn set(ctx: &String, namespace: Option<&String>, temp_dir: &str) {
     let f = get_config_file(ctx, temp_dir);
     let writer = BufWriter::new(&f);
     let config = build_config(ctx, namespace, strbuf);
-    println!("{:?}", config);
+
     serde_yaml::to_writer(writer, &config).unwrap();
 }
