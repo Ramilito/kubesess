@@ -33,7 +33,7 @@ impl Mode {
 
 fn main() -> Result<(), io::Error> {
     let args = Cli::parse();
-    let dest = format!("{}/.cache/kubesess", dirs::home_dir().unwrap().display());
+    let dest = format!("{}/.kube/kubesess", dirs::home_dir().unwrap().display());
 
     Mode::invoke(&args.mode, &dest);
 

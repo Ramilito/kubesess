@@ -1,7 +1,7 @@
 kc() {
-  config=$(kubesess ${1:+"-v "$1} context):$HOME/.kube/config;
-  export KUBECONFIG=$config;
+  kubesess ${1:+"-v "$1} context;
 }
+
 kcd() {
   kubesess ${1:+"-v "$1} default-context;
 }

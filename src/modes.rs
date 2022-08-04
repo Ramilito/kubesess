@@ -2,9 +2,7 @@ use crate::{commands, Cli};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
-        None => {
-            callback()
-        }
+        None => callback(),
         Some(x) => x.trim().to_string(),
     }
 }

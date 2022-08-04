@@ -53,32 +53,52 @@ fn build_config(ctx: &String, namespace: Option<&String>, strbuf: String) -> Con
 }
 
 fn read_config(ctx: &String, dest: &str, mut strbuf: String) {
-    let f = get_config_file(ctx, dest);
+    let f = get_config_file(ctx, dest, None);
     let mut reader = BufReader::new(&f);
 
     reader.read_line(&mut strbuf).expect("Unable to read file");
 }
 
-fn write_config(ctx: &String, dest: &str, namespace: Option<&String>, strbuf: String) {
-    let f = get_config_file(ctx, dest);
+fn write_config(
+    ctx: &String,
+    dest: &str,
+    file_name: Option<String>,
+    namespace: Option<&String>,
+    strbuf: String,
+) {
+    let f = get_config_file(ctx, dest, file_name);
     let writer = BufWriter::new(&f);
     let config = build_config(ctx, namespace, strbuf);
 
     serde_yaml::to_writer(writer, &config).unwrap();
 }
 
-fn get_config_file(ctx: &String, dest: &str) -> File {
+fn get_config_file(ctx: &String, dest: &str, file_name: Option<String>) -> File {
     let path = Path::new(ctx);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
-    let filename = path.file_name().unwrap().to_str().unwrap();
+    let destination = match file_name {
+        Some(ref file_name) => {
+            format!("{}/{}", dest, &file_name)
+        }
+        None => {
+            format!(
+                "{}/{}/{}",
+                dest,
+                dirname,
+                path.file_name().unwrap().to_string_lossy()
+            )
+        }
+    };
+
     let _ = fs::create_dir_all(format!("{}/{}", dest, dirname));
 
     let f = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
-        .open(format!("{}/{}/{}", dest, dirname, filename))
+        .truncate(file_name.is_some())
+        .open(destination)
         .expect("Unable to open file");
     f
 }
@@ -87,5 +107,12 @@ pub fn set(ctx: &String, namespace: Option<&String>, dest: &str) {
     let strbuf = String::new();
 
     read_config(ctx, dest, strbuf.to_owned());
-    write_config(ctx, dest, namespace, strbuf.to_owned());
+    write_config(ctx, dest, None, namespace, strbuf.to_owned());
+    write_config(
+        ctx,
+        dest,
+        Some("config".to_string()),
+        namespace,
+        strbuf.to_owned(),
+    );
 }
