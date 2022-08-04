@@ -8,14 +8,14 @@ use std::{
 #[derive(Default, Debug, Serialize, Deserialize)]
 struct Contexts {
     context: Context,
-    name: String,
+    name: String
 }
 
 #[derive(Default, Debug, Serialize, Deserialize)]
 struct Context {
     namespace: String,
     cluster: String,
-    user: String,
+    user: String
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -29,7 +29,7 @@ struct Config {
     #[serde(rename = "current-context")]
     current_context: String,
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
-    contexts: Vec<Contexts>,
+    contexts: Vec<Contexts>
 }
 
 fn build_config(ctx: &str, namespace: Option<&str>, strbuf: &str) -> Config {
@@ -53,52 +53,38 @@ fn build_config(ctx: &str, namespace: Option<&str>, strbuf: &str) -> Config {
 }
 
 fn read_config(ctx: &str, dest: &str, strbuf: &str) {
-    let f = get_config_file(ctx, dest, None);
+    let f = get_config_file(ctx, dest);
     let mut reader = BufReader::new(&f);
 
-    reader.read_line(&mut strbuf.to_owned()).expect("Unable to read file");
+    reader
+        .read_line(&mut strbuf.to_owned())
+        .expect("Unable to read file");
 }
 
-fn write_config(
-    ctx: &str,
-    dest: &str,
-    file_name: Option<&str>,
-    namespace: Option<&str>,
-    strbuf: &str,
-) {
-    let f = get_config_file(ctx, dest, file_name);
+fn write_config(ctx: &str, dest: &str, namespace: Option<&str>, strbuf: &str) {
+    let f = get_config_file(ctx, dest);
     let writer = BufWriter::new(&f);
     let config = build_config(ctx, namespace, strbuf);
 
     serde_yaml::to_writer(writer, &config).unwrap();
 }
 
-fn get_config_file(ctx: &str, dest: &str, file_name: Option<&str>) -> File {
+fn get_config_file(ctx: &str, dest: &str) -> File {
     let path = Path::new(ctx);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
-    let destination = match file_name {
-        Some(ref file_name) => {
-            format!("{}/{}", dest, &file_name)
-        }
-        None => {
-            format!(
-                "{}/{}/{}",
-                dest,
-                dirname,
-                path.file_name().unwrap().to_string_lossy()
-            )
-        }
-    };
-
     let _ = fs::create_dir_all(format!("{}/{}", dest, dirname));
 
     let f = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
-        .truncate(file_name.is_some())
-        .open(destination)
+        .open(format!(
+            "{}/{}/{}",
+            dest,
+            dirname,
+            path.file_name().unwrap().to_string_lossy()
+        ))
         .expect("Unable to open file");
     f
 }
@@ -106,13 +92,5 @@ fn get_config_file(ctx: &str, dest: &str, file_name: Option<&str>) -> File {
 pub fn set(ctx: &str, namespace: Option<&str>, dest: &str) {
     let strbuf = String::new();
     read_config(ctx, dest, strbuf.as_str());
-
-    write_config(ctx, dest, None, namespace, strbuf.as_str());
-    write_config(
-        ctx,
-        dest,
-        Some("config"),
-        namespace,
-        strbuf.as_str(),
-    );
+    write_config(ctx, dest, namespace, strbuf.as_str());
 }
