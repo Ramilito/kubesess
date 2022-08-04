@@ -52,40 +52,40 @@ fn build_config(ctx: &String, namespace: Option<&String>, strbuf: String) -> Con
     config
 }
 
-fn read_config(ctx: &String, temp_dir: &str, mut strbuf: String) {
-    let f = get_config_file(ctx, temp_dir);
+fn read_config(ctx: &String, dest: &str, mut strbuf: String) {
+    let f = get_config_file(ctx, dest);
     let mut reader = BufReader::new(&f);
 
     reader.read_line(&mut strbuf).expect("Unable to read file");
 }
 
-fn write_config(ctx: &String, temp_dir: &str, namespace: Option<&String>, strbuf: String) {
-    let f = get_config_file(ctx, temp_dir);
+fn write_config(ctx: &String, dest: &str, namespace: Option<&String>, strbuf: String) {
+    let f = get_config_file(ctx, dest);
     let writer = BufWriter::new(&f);
     let config = build_config(ctx, namespace, strbuf);
 
     serde_yaml::to_writer(writer, &config).unwrap();
 }
 
-fn get_config_file(ctx: &String, temp_dir: &str) -> File {
+fn get_config_file(ctx: &String, dest: &str) -> File {
     let path = Path::new(ctx);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
     let filename = path.file_name().unwrap().to_str().unwrap();
-    let _ = fs::create_dir_all(format!("{}/{}", temp_dir, dirname));
+    let _ = fs::create_dir_all(format!("{}/{}", dest, dirname));
 
     let f = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
-        .open(format!("{}/{}/{}", temp_dir, dirname, filename))
+        .open(format!("{}/{}/{}", dest, dirname, filename))
         .expect("Unable to open file");
     f
 }
 
-pub fn set(ctx: &String, namespace: Option<&String>, temp_dir: &str) {
+pub fn set(ctx: &String, namespace: Option<&String>, dest: &str) {
     let strbuf = String::new();
 
-    read_config(ctx, temp_dir, strbuf.to_owned());
-    write_config(ctx, temp_dir, namespace, strbuf.to_owned());
+    read_config(ctx, dest, strbuf.to_owned());
+    write_config(ctx, dest, namespace, strbuf.to_owned());
 }
