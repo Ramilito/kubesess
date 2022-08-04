@@ -1,0 +1,43 @@
+use crate::{commands, Cli};
+
+fn selection(value: Option<String>, callback: fn() -> String) -> String {
+    let ctx;
+    match value {
+        None => {
+            ctx = callback();
+        }
+        Some(x) => ctx = x.trim().to_string(),
+    }
+
+    ctx
+}
+
+pub fn default_context(args: Cli) {
+    let ctx = selection(args.value, || -> String {
+        let contexts = commands::get_context();
+        commands::selectable_list(contexts)
+    });
+
+    commands::set_default_cotext(&ctx);
+}
+
+pub fn context(args: Cli, temp_dir: &String) {
+    let ctx = selection(args.value, || -> String {
+        let contexts = commands::get_context();
+        commands::selectable_list(contexts)
+    });
+
+    commands::set_context(&ctx, &temp_dir);
+
+    println!("{}/{}", &temp_dir, str::replace(&ctx, ":", "_"));
+}
+
+pub fn namespace(args: Cli, temp_dir: &String) {
+    let ctx = commands::get_current_context();
+    let ns = selection(args.value, || -> String {
+        let namespaces = commands::get_namespaces();
+        commands::selectable_list(namespaces)
+    });
+
+    commands::set_namespace(&ctx, &ns, &temp_dir);
+}
