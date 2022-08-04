@@ -48,11 +48,11 @@ pub fn selectable_list(input: Vec<String>) -> String {
 }
 
 pub fn set_namespace(ctx: &String, selection: &String, temp_dir: &str) {
-    config::create_file(ctx, Some(selection), temp_dir)
+    config::set(ctx, Some(selection), temp_dir)
 }
 
 pub fn set_context(ctx: &String, temp_dir: &str) {
-    config::create_file(ctx, None, temp_dir)
+    config::set(ctx, None, temp_dir)
 }
 
 
