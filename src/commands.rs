@@ -47,6 +47,14 @@ pub fn selectable_list(input: Vec<String>) -> String {
     input[selection].to_string()
 }
 
+pub fn set_default_cotext(ctx: &String) {
+    Command::new("kubectl")
+        .args(["config", "use-context", ctx])
+        .spawn()
+        .unwrap()
+        .wait().unwrap();
+ }
+
 pub fn set_namespace(ctx: &String, selection: &String, temp_dir: &str) {
     config::set(ctx, Some(selection), temp_dir)
 }
