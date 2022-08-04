@@ -23,37 +23,48 @@ enum Mode {
 fn main() -> Result<(), io::Error> {
     let args = Cli::parse();
     let temp_dir = format!("{}/.cache/kubesess", dirs::home_dir().unwrap().display());
-    let ctx;
 
     match args.mode {
         Mode::Namespace => {
-            ctx = commands::get_current_context();
-            let ns;
+            let ctx = commands::get_current_context();
+            let ns = selection(args.value, || -> String {
+                let namespaces = commands::get_namespaces();
+                commands::selectable_list(namespaces)
+            });
 
-            match args.value {
-                None => {
-                    let namespaces = commands::get_namespaces();
-                    ns = commands::selectable_list(namespaces);
-                }
-                Some(x) => ns = x,
-            }
             commands::set_namespace(&ctx, &ns, &temp_dir);
         }
         Mode::Context => {
-            match args.value {
-                None => {
-                    let contexts = commands::get_context();
-                    ctx = commands::selectable_list(contexts);
-                }
-                Some(x) => ctx = x,
-            }
+            let ctx = selection(args.value, || -> String {
+                let contexts = commands::get_context();
+                commands::selectable_list(contexts)
+            });
+
             commands::set_context(&ctx, &temp_dir);
 
             println!("{}/{}", &temp_dir, str::replace(&ctx, ":", "_"));
         }
         Mode::DefaultContext => {
+            let ctx = selection(args.value, || -> String {
+                let contexts = commands::get_context();
+                commands::selectable_list(contexts)
+            });
+
+            commands::set_default_cotext(&ctx);
         }
     }
 
     Ok(())
+}
+
+fn selection(value: Option<String>, callback: fn() -> String) -> String {
+    let ctx;
+    match value {
+        None => {
+            ctx = callback();
+        }
+        Some(x) => ctx = x.trim().to_string(),
+    }
+
+    ctx
 }
