@@ -1,4 +1,5 @@
 mod commands;
+mod config;
 
 use clap::Parser;
 use std::io;
