@@ -35,4 +35,6 @@ pub fn namespace(args: Cli, dest: &str) {
     });
 
     commands::set_namespace(&ctx, &ns, &dest);
+
+    println!("{}/{}", &dest, str::replace(&ctx, ":", "_"));
 }

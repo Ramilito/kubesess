@@ -9,5 +9,7 @@ kcd() {
 }
 
 kn() {
-  kubesess ${1:+"-v "$1} namespace;
+  config=$(kubesess ${1:+"-v "$1} namespace);
+  export KUBECONFIG=$config:$HOME/.kube/config;
+
 }

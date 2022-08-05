@@ -13,7 +13,6 @@
   * [Getting Started](#getting-started)
     + [Prerequisite](#prerequisite)
     + [Installation](#installation)
-  * [Configuration](#configuration)
   * [Usage](#usage)
   * [Roadmap](#roadmap)
 
@@ -71,6 +70,9 @@ Tool: [hyperfine](./tests/hyperfine/markdown.md)
 | `kubesess -v docker-desktop context` | 1.3 ± 0.2 | 1.0 | 2.2 | 1.00 |
 | `kubectx docker-desktop` | 91.8 ± 3.3 | 85.1 | 100.7 | 71.23 ± 13.64 |
 
+
+* Disclaimer *
+kubectx and kubens are a wonderful tools, been using it allot but my workflow is different and thus this tool was created.
 
 ## Getting Started
 
