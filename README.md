@@ -56,7 +56,7 @@ export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 
 ### Benchmark
 
-Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://github.com/ahmetb/kubectx/tree/master/cmd/kubectx)
+Command | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://github.com/ahmetb/kubectx/tree/master/cmd/kubectx)
 ---- | ---- | ----
 20 runs with no ctx switch and no kubectl calls | .024931342 | 1.744966963
 20 runs with ctx switch and no kubectl calls | .049247181 | 3.775905777
@@ -64,7 +64,13 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 
 <sup>I am using the input argument variant for both tools, using fzf or tab completion is harder to do.</sup>
 
-[hyperfine](./tests/hyperfine/markdown.md)
+
+Tool: [hyperfine](./tests/hyperfine/markdown.md)
+| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
+|:---|---:|---:|---:|---:|
+| `kubesess -v docker-desktop context` | 1.3 ± 0.2 | 1.0 | 2.2 | 1.00 |
+| `kubectx docker-desktop` | 91.8 ± 3.3 | 85.1 | 100.7 | 71.23 ± 13.64 |
+
 
 ## Getting Started
 
