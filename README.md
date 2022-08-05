@@ -118,5 +118,5 @@ kn (kubenamespace) Sets session namespace
 - [x] Handle different namespaces per shell
 - [x] Use rust tui instead of fzf
 - [x] Add option to make changes stick (default-context)
-- [ ] Add tab completion
+- [ ] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 
