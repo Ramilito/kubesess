@@ -23,7 +23,6 @@
 
 ![showcase](https://raw.github.com/Ramilito/kubesess/main/docs/images/kubesess.gif)
 
-
 The showcase demonstrates the multiple sessions per shell feature, selecting items and fuzzy searching for them.
 The same features apply for handling namespace as well
 
@@ -65,6 +64,8 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 
 <sup>I am using the input argument variant for both tools, using fzf or tab completion is harder to do.</sup>
 
+[hyperfine](./tests/hyperfine/markdown.md
+
 ## Getting Started
 
 ### Prerequisite
@@ -75,28 +76,27 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 
 Download and extract the binary.
 ```
-wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz" &&
-mkdir $HOME/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C $HOME/kubesess
+wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz" && \
+mkdir $HOME/.kube/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C $HOME/.kube/kubesess
 ```
 
-Finally, add aliases to run it in your .bashrc, .zshrc.
+A script wrapper called kubesess.sh is provided for easier use, source the script wrapper in your .bashrc, .zshrc.
 ```
-alias Switch='export KUBECONFIG=$(~/kubesess/kubesess -- context):$HOME/.kube/config'
-alias kn='export KUBECONFIG=$(~/kubesess/kubesess -- namespace):$HOME/.kube/config'
-```
-
-## Configuration
-
-You can set default context using context name as an input in your .bashrc, .zshrc and exporting the result to KUBECONFIG environment variable.
-
-```
-export KUBECONFIG=$(~/kubesess/kubesess -- context docker-desktop):$HOME/.kube/config
-alias Switch='export KUBECONFIG=$(~/kubesess/kubesess -- context):$HOME/.kube/config'
+source ~/.kube/kubesess/kubesess.sh
 ```
 
 ## Usage
 
-Use the alias, can be whatever you want it to be, and then pick one of the suggested context to switch to.
+See the available commands by running kubesess -h, output from the program needs to be added to $KUBECONFIG env variable.
+
+Aliases are provided for easier use, when sourced three aliases will be created.
+
+kc (kubecontext): Sets session context.
+<sup>Will present a list of available contexts to choose from, accepts context name as argument.</sup>
+kcd (kubecontextdefault): Sets context across all shells.
+<sup>Will present a list of available contexts to choose from, accepts context name as argument.</sup>
+kn (kubenamespace) Sets session namespace
+
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -111,6 +111,6 @@ Use the alias, can be whatever you want it to be, and then pick one of the sugge
     - [x] output files to $HOME/.cache/kubesess
 - [x] Handle different namespaces per shell
 - [x] Use rust tui instead of fzf
-- [ ] Add option to make changes stick (all shells)
+- [x] Add option to make changes stick (default-context)
 - [ ] Add tab completion
 

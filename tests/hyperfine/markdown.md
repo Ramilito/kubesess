@@ -1,4 +1,4 @@
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `source ~/kubesess/kubesess.sh; eval kc -v docker-desktop context` | 1.2 ± 0.4 | 0.8 | 2.1 | 1.00 |
-| `kubectx docker-desktop` | 82.3 ± 3.9 | 77.1 | 101.5 | 66.05 ± 18.91 |
+| `kubesess -v docker-desktop context` | 1.3 ± 0.2 | 1.0 | 2.2 | 1.00 |
+| `kubectx docker-desktop` | 91.8 ± 3.3 | 85.1 | 100.7 | 71.23 ± 13.64 |
