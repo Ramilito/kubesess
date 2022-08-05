@@ -82,8 +82,8 @@ Tool: [hyperfine](./tests/hyperfine/markdown.md)
 
 Download and extract the binary.
 ```
-wget "https://github.com/Ramilito/kubesess/releases/download/0.1.0/kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz" && \
-mkdir $HOME/.kube/kubesess && tar zxpf kubesess_0.1.0_x86_64-unknown-linux-musl.tar.gz -C $HOME/.kube/kubesess
+wget "https://github.com/Ramilito/kubesess/releases/download/1.2.0/kubesess_1.2.0_x86_64-unknown-linux-musl.tar.gz" && \
+mkdir $HOME/.kube/kubesess && tar zxpf kubesess_1.2.0_x86_64-unknown-linux-musl.tar.gz -C $HOME/.kube/kubesess
 ```
 
 A script wrapper called kubesess.sh is provided for easier use, source the script wrapper in your .bashrc, .zshrc.
