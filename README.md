@@ -75,7 +75,7 @@ Tool: [hyperfine](./tests/hyperfine/markdown.md)
 | `kubesess -v monitoring namespace` | 42.8 ± 1.4 | 41.6 | 46.3 | 1.00 |
 | `kubens monitoring` | 914.1 ± 26.4 | 869.2 | 953.2 | 21.35 ± 0.92 |
 
-* Disclaimer *
+\* Disclaimer *
 kubectx and kubens are a wonderful tools, been using it allot but my workflow is different and thus this tool was created.
 Probably most of the speed gains are because I am bypassing kubectl and just editing config files.
 
