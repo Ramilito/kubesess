@@ -1,7 +1,7 @@
 on:
+  workflow_dispatch:
   release:
     types: [created, edited]
-
 jobs:
   release:
     name: release ${{ matrix.target }}
