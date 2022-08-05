@@ -4,7 +4,10 @@ use crate::config;
 
 pub fn set_default_cotext(ctx: &str) {
     Command::new("kubectl")
-        .args(["config", "use-context", ctx])
+        .arg("config")
+        .arg(format!("--kubeconfig={}/.kube/config", dirs::home_dir().unwrap().display().to_string()))
+        .arg("use-context")
+        .arg(ctx)
         .spawn()
         .unwrap()
         .wait().unwrap();
