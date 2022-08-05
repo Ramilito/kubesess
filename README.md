@@ -64,7 +64,7 @@ Tool | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://gith
 
 <sup>I am using the input argument variant for both tools, using fzf or tab completion is harder to do.</sup>
 
-[hyperfine](./tests/hyperfine/markdown.md
+[hyperfine](./tests/hyperfine/markdown.md)
 
 ## Getting Started
 
