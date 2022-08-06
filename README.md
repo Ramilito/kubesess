@@ -102,14 +102,14 @@ source ~/.kube/kubesess/kubesess.sh
 
 See the available commands by running kubesess -h, output from the program needs to be added to $KUBECONFIG env variable.
 
-Aliases are provided for easier use, when sourced three aliases will be created.
+#### Aliases are provided for easier use, when sourced three aliases will be created.
+``` bash
+kc #kube_context: Sets session context
 
-kc (kubecontext): Sets session context.
-<sup>Will present a list of available contexts to choose from, accepts context name as argument.</sup>
-kcd (kubecontextdefault): Sets context across all shells.
-<sup>Will present a list of available contexts to choose from, accepts context name as argument.</sup>
-kn (kubenamespace) Sets session namespace
+kcd #kube_context_default: Sets context across all shells
 
+kn #kube_namespace: Sets namespace
+```
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -122,7 +122,7 @@ kn (kubenamespace) Sets session namespace
 - [x] Cleanup after use
     - [x] clean prepended env variable
     - [x] output files to $HOME/.cache/kubesess
-- [x] Handle different namespaces per shell
+- [x] Handle different namespaces per context
 - [x] Use rust tui instead of fzf
 - [x] Add option to make changes stick (default-context)
 - [ ] Add tests 
