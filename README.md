@@ -128,4 +128,4 @@ kn #kube_namespace: Sets namespace
 - [x] Add option to make changes stick (default-context)
 - [ ] Add tests 
 - [ ] Add tab completion - https://github.com/clap-rs/clap/issues/1232
-
+- [ ] Add to brew
