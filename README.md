@@ -55,6 +55,7 @@ export KUBECONFIG=$SESSION_CONTEXT:$KUBECONFIG
 
 ### Benchmark
 
+Tool: [custom script](./tests/benchmark.sh)
 Command | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://github.com/ahmetb/kubectx/tree/master/cmd/kubectx)
 ---- | ---- | ----
 20 runs with no ctx switch and no kubectl calls | .024931342 | 1.744966963
