@@ -15,6 +15,7 @@
     + [Installation](#installation)
   * [Usage](#usage)
   * [Roadmap](#roadmap)
+  * [Troubleshooting](#troubleshooting))
 
 </details>
 
@@ -134,3 +135,10 @@ kn #kube_namespace: Sets namespace
 - [ ] Add tests 
 - [ ] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [ ] Add to brew
+
+## Troubleshooting
+
+A hard reset will fix most issues, to do that just remove the ~/.kube/kubesess/cache folder.
+
+\*The downside is that your last visited namespace per context will be lost.
+
