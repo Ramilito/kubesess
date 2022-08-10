@@ -77,10 +77,6 @@ Tool: [hyperfine](./tests/hyperfine/markdown.md)
 | `kubesess -v monitoring namespace` | 42.8 ± 1.4 | 41.6 | 46.3 | 1.00 |
 | `kubens monitoring` | 914.1 ± 26.4 | 869.2 | 953.2 | 21.35 ± 0.92 |
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| `kubesess -v docker-desktop context` | 1.4 ± 0.2 | 1.2 | 1.7 | 1.00 |
-| `kubie ctx docker-desktop` | 103.9 ± 8.0 | 98.1 | 124.0 | 76.51 ± 13.65 |
 
 \* Disclaimer *
 kubectx and kubens are a wonderful tools, been using it allot but my workflow is different and thus this tool was created.
@@ -135,6 +131,7 @@ kn #kube_namespace: Sets namespace
 - [ ] Add tests 
 - [ ] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [ ] Add to brew
+- [ ] Add error handling
 
 ## Troubleshooting
 
