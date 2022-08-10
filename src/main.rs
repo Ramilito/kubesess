@@ -19,6 +19,7 @@ enum Mode {
     Namespace,
     Context,
     DefaultContext,
+    DefaultNamespace,
 }
 
 impl Mode {
@@ -26,7 +27,8 @@ impl Mode {
         match self {
             Mode::Namespace => modes::namespace(Cli::parse(), dest),
             Mode::Context => modes::context(Cli::parse(), dest),
-            Mode::DefaultContext => modes::default_context(Cli::parse()),
+            Mode::DefaultContext => modes::default_context(Cli::parse(), dest),
+            Mode::DefaultNamespace => modes::default_namespace(Cli::parse(), dest),
         }
     }
 }

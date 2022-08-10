@@ -2,7 +2,19 @@ use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use std::process::{Command, Stdio};
 use crate::config;
 
-pub fn set_default_cotext(ctx: &str) {
+pub fn set_default_namespace(ns: &str) {
+    Command::new("kubectl")
+        .arg("config")
+        .arg(format!("--kubeconfig={}/.kube/config", dirs::home_dir().unwrap().display().to_string()))
+        .arg("set-context")
+        .arg("--current")
+        .arg(format!("--namespace={}", ns))
+        .spawn()
+        .unwrap()
+        .wait().unwrap();
+ }
+
+pub fn set_default_context(ctx: &str) {
     Command::new("kubectl")
         .arg("config")
         .arg(format!("--kubeconfig={}/.kube/config", dirs::home_dir().unwrap().display().to_string()))

@@ -107,11 +107,13 @@ See the available commands by running kubesess -h, output from the program needs
 
 #### Aliases are provided for easier use, when sourced three aliases will be created.
 ``` bash
-kc #kube_context: Sets session context
+kc  #kube_context: Sets session context
 
 kcd #kube_context_default: Sets context across all shells
 
-kn #kube_namespace: Sets namespace
+kn  #kube_namespace: Sets namespace
+
+knd #kube_namespace_default: Sets namespace across all shells
 ```
 
 <!-- ROADMAP -->
@@ -128,6 +130,7 @@ kn #kube_namespace: Sets namespace
 - [x] Handle different namespaces per context
 - [x] Use rust tui instead of fzf
 - [x] Add option to make changes stick (default-context)
+- [x] Add option to make changes stick (default-namespace)
 - [ ] Add tests 
 - [ ] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [ ] Add to brew
