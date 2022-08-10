@@ -10,6 +10,7 @@ build:
 
 .PHONY: deploy_local
 deploy_local: build
+	mkdir -p $$HOME/.kube/kubesess
 	cp ./target/debug/kubesess ./kubesess.sh ~/.kube/kubesess/
 	sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
 
