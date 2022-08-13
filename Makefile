@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+LATEST_TAG := $(shell git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))
+
 .PHONY: run
 run:
 	cargo run -- -v docker-desktop context 
@@ -7,6 +9,10 @@ run:
 .PHONY: build
 build:
 	cargo build
+
+.PHONY: bundle_release
+bundle_release:
+	tar -czvf ./target/${TARGET}/release/kubesess_${TARGET}.tar.gz kubesess.sh ./target/${TARGET}/release/kubesess 
 
 .PHONY: deploy_local
 deploy_local: build
@@ -23,3 +29,5 @@ benchmark: deploy_local
 .PHONY: benchmark-ns
 benchmark-ns:
 	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v monitoring namespace' 'kubens monitoring' --export-markdown ./tests/hyperfine/namespace-markdown.md
+
+

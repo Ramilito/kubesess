@@ -1,4 +1,5 @@
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -9,9 +10,57 @@ jobs:
   build_and_test:
     name: Rust project
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - armv7-unknown-linux-musleabi
+          - x86_64-pc-windows-gnu
+          - x86_64-unknown-linux-gnu
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - uses: actions/checkout@v3
+        with:
+           fetch-depth: 0
+
+      - name: Get latest tag
+        id: get-latest-tag
+        run: |
+           echo LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1)) >> $GITHUB_ENV
+
       - uses: actions-rs/toolchain@v1
         with:
-            toolchain: stable
-      - run: cargo build --release --all-features
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - uses: actions-rs/cargo@v1
+        name: Build and test
+        with:
+          use-cross: true
+          command: build
+          args: --release --target=${{ matrix.target }}
+
+      - name: list content
+        run: |
+          echo $(ls ./target/${{ matrix.target }}/release -a)
+
+
+      # - name: Package 
+      #   run: |
+      #     make bundle_release TARGET=${{ matrix.target }}
+
+      # - uses: svenstaro/upload-release-action@v2
+      #   name: Upload release
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: target/${{ matrix.target}}/release/kubesess_${{ matrix.target }}.tar.gz
+      #     asset_name: kubesess_${{ env.LATEST_TAG }}_${{ matrix.target }}.tar.gz
+      #     tag: ${{ env.LATEST_TAG }}
