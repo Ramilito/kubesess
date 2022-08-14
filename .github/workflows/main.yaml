@@ -52,15 +52,14 @@ jobs:
         run: |
           echo $(ls ./target/${{ matrix.target }}/release -a)
 
+      - name: Package 
+        run: |
+          make bundle_release TARGET=${{ matrix.target }}
 
-      # - name: Package 
-      #   run: |
-      #     make bundle_release TARGET=${{ matrix.target }}
-
-      # - uses: svenstaro/upload-release-action@v2
-      #   name: Upload release
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: target/${{ matrix.target}}/release/kubesess_${{ matrix.target }}.tar.gz
-      #     asset_name: kubesess_${{ env.LATEST_TAG }}_${{ matrix.target }}.tar.gz
-      #     tag: ${{ env.LATEST_TAG }}
+      - uses: svenstaro/upload-release-action@v2
+        name: Upload release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/${{ matrix.target}}/release/kubesess_${{ matrix.target }}.tar.gz
+          asset_name: kubesess_${{ env.LATEST_TAG }}_${{ matrix.target }}.tar.gz
+          tag: ${{ env.LATEST_TAG }}
