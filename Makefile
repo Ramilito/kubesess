@@ -2,6 +2,15 @@ SHELL := /bin/bash
 
 LATEST_TAG := $(shell git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))
 
+define bundle_release
+	@echo ""
+	if [[ "$(1)" == *"windows"* ]]; then  \
+		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz kubesess.sh ./target/$(1)/release/kubesess.exe; \
+	else \
+		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz kubesess.sh ./target/$(1)/release/kubesess; \
+	fi
+endef
+
 .PHONY: run
 run:
 	cargo run -- -v docker-desktop context 
@@ -12,8 +21,8 @@ build:
 
 .PHONY: bundle_release
 bundle_release:
-	tar -czvf ./target/${TARGET}/release/kubesess_${TARGET}.tar.gz kubesess.sh ./target/${TARGET}/release/kubesess 
-
+	$(call bundle_release,${TARGET})
+	
 .PHONY: deploy_local
 deploy_local: build
 	mkdir -p $$HOME/.kube/kubesess
