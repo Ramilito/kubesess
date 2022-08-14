@@ -98,7 +98,12 @@ mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_1.2.2_x86_64-unknown-linux-mu
 
 A script wrapper called kubesess.sh is provided for easier use, source the script wrapper in your .bashrc, .zshrc.
 ```
-source ~/.kube/kubesess/kubesess.sh
+source ~/.kube/kubesess/scripts/sh/kubesess.sh
+```
+
+For fish users, copy functions and completion scripts in your fish config.
+```shell
+rsync -a ~/.kub/kubesess/scripts/fish/ ~/.config/fish/
 ```
 
 ## Usage
