@@ -48,11 +48,8 @@ jobs:
           command: build
           args: --release --target=${{ matrix.target }}
 
-      - name: list content
-        run: |
-          echo $(ls ./target/${{ matrix.target }}/release -a)
-
       - name: Package 
+        if: github.event_name == 'release' && github.event.action == 'created'
         run: |
           make bundle_release TARGET=${{ matrix.target }}
 
