@@ -5,9 +5,9 @@ LATEST_TAG := $(shell git describe --abbrev=0 --tags $(git rev-list --tags --max
 define bundle_release
 	@echo ""
 	if [[ "$(1)" == *"windows"* ]]; then  \
-		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz kubesess.sh ./target/$(1)/release/kubesess.exe; \
+		tar -czvf ./target/$(1)/kubesess_$(1).tar.gz scripts/ ./target/$(1)/kubesess.exe; \
 	else \
-		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz kubesess.sh ./target/$(1)/release/kubesess; \
+		tar -czvf ./target/$(1)/kubesess_$(1).tar.gz scripts/ ./target/$(1)/kubesess; \
 	fi
 endef
 
@@ -26,7 +26,7 @@ bundle_release:
 .PHONY: deploy_local
 deploy_local: build
 	mkdir -p $$HOME/.kube/kubesess
-	cp ./target/debug/kubesess ./kubesess.sh ~/.kube/kubesess/
+	cp ./target/debug/kubesess ./scripts/sh/kubesess.sh ~/.kube/kubesess/
 	sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
 
 .PHONY: benchmark
