@@ -1,29 +1,37 @@
+use crate::config;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use std::process::{Command, Stdio};
-use crate::config;
 
 pub fn set_default_namespace(ns: &str) {
     Command::new("kubectl")
         .arg("config")
-        .arg(format!("--kubeconfig={}/.kube/config", dirs::home_dir().unwrap().display().to_string()))
+        .arg(format!(
+            "--kubeconfig={}/.kube/config",
+            dirs::home_dir().unwrap().display().to_string()
+        ))
         .arg("set-context")
         .arg("--current")
         .arg(format!("--namespace={}", ns))
         .spawn()
         .unwrap()
-        .wait().unwrap();
- }
+        .wait()
+        .unwrap();
+}
 
 pub fn set_default_context(ctx: &str) {
     Command::new("kubectl")
         .arg("config")
-        .arg(format!("--kubeconfig={}/.kube/config", dirs::home_dir().unwrap().display().to_string()))
+        .arg(format!(
+            "--kubeconfig={}/.kube/config",
+            dirs::home_dir().unwrap().display().to_string()
+        ))
         .arg("use-context")
         .arg(ctx)
         .spawn()
         .unwrap()
-        .wait().unwrap();
- }
+        .wait()
+        .unwrap();
+}
 
 pub fn get_context() -> Vec<String> {
     let output = Command::new("kubectl")
@@ -76,5 +84,3 @@ pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str) {
 pub fn set_context(ctx: &str, temp_dir: &str) {
     config::set(ctx, None, temp_dir)
 }
-
-

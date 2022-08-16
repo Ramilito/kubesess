@@ -45,7 +45,7 @@ pub fn default_namespace(args: Cli, dest: &str) {
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
         commands::selectable_list(namespaces)
-        });
+    });
 
     commands::set_default_namespace(&ns);
     commands::set_namespace(&ctx, &ns, &dest);
