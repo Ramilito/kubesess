@@ -3,8 +3,10 @@ on:
   push:
     branches:
       - main
+  release:
+    types: [created, edited]
 
-name: CI
+name: Main
 
 jobs:
   build_and_test:
