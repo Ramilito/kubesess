@@ -17,16 +17,21 @@ run:
 
 .PHONY: build
 build:
-	cargo build
+	cargo build --release
+
+.PHONY: clean
+clean:
+	rm -r -f $$HOME/.kube/kubesess
+	sudo rm -r -f /usr/local/bin/kubesess
 
 .PHONY: bundle_release
 bundle_release:
 	$(call bundle_release,${TARGET})
 	
 .PHONY: deploy_local
-deploy_local: build
+deploy_local: clean build
 	mkdir -p $$HOME/.kube/kubesess
-	cp ./target/debug/kubesess ./scripts/sh/kubesess.sh ~/.kube/kubesess/
+	cp ./target/release/kubesess ./scripts/sh/kubesess.sh ~/.kube/kubesess/
 	sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
 
 .PHONY: benchmark

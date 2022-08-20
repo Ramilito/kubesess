@@ -3,7 +3,7 @@ mod config;
 mod modes;
 
 use clap::Parser;
-use std::io;
+use std::{env, io};
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -34,6 +34,8 @@ impl Mode {
 }
 
 fn main() -> Result<(), io::Error> {
+    set_handlers();
+
     let args = Cli::parse();
     let dest = format!(
         "{}/.kube/kubesess/cache",
@@ -43,4 +45,16 @@ fn main() -> Result<(), io::Error> {
     Mode::invoke(&args.mode, &dest);
 
     Ok(())
+}
+
+fn set_handlers() {
+    ctrlc::set_handler(move || {
+        println!("{}", env::var("KUBECONFIG").unwrap());
+    })
+    .expect("Error setting Ctrl-C handler");
+
+    #[cfg(not(debug_assertions))]
+    std::panic::set_hook(Box::new(move |_info| {
+        std::process::exit(1);
+    }));
 }
