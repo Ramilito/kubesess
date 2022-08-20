@@ -5,9 +5,9 @@ LATEST_TAG := $(shell git describe --abbrev=0 --tags $(git rev-list --tags --max
 define bundle_release
 	@echo ""
 	if [[ "$(1)" == *"windows"* ]]; then  \
-		tar -czvf ./target/$(1)/kubesess_$(1).tar.gz scripts/ ./target/$(1)/kubesess.exe; \
+		tar -czvf ./target/$(1)/kubesess_$(1).tar.gz scripts/ ./target/$(1)/release/kubesess.exe; \
 	else \
-		tar -czvf ./target/$(1)/kubesess_$(1).tar.gz scripts/ ./target/$(1)/kubesess; \
+		tar -czvf ./target/$(1)/kubesess_$(1).tar.gz scripts/ ./target/$(1)/release/kubesess; \
 	fi
 endef
 
