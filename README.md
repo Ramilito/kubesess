@@ -93,7 +93,8 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 Download and extract the binary.
 ```
 wget "https://github.com/Ramilito/kubesess/releases/download/1.2.2/kubesess_1.2.2_x86_64-unknown-linux-musl.tar.gz" && \
-mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_1.2.2_x86_64-unknown-linux-musl.tar.gz -C $HOME/.kube/kubesess
+mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_1.2.2_x86_64-unknown-linux-musl.tar.gz -C $HOME/.kube/kubesess && \
+sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
 ```
 
 A script wrapper called kubesess.sh is provided for easier use, source the script wrapper in your .bashrc, .zshrc.
