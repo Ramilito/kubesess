@@ -60,6 +60,6 @@ jobs:
         name: Upload release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/${{ matrix.target}}/release/kubesess_${{ matrix.target }}.tar.gz
+          file: target/${{ matrix.target}}/kubesess_${{ matrix.target }}.tar.gz
           asset_name: kubesess_${{ env.LATEST_TAG }}_${{ matrix.target }}.tar.gz
           tag: ${{ env.LATEST_TAG }}
