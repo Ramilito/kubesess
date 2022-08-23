@@ -1,4 +1,5 @@
 use crate::config;
+use crate::model::Config;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use std::process::{Command, Stdio};
 
@@ -33,14 +34,16 @@ pub fn set_default_context(ctx: &str) {
         .unwrap();
 }
 
-pub fn get_context() -> Vec<String> {
+pub fn get_config() -> Config {
     let output = Command::new("kubectl")
-        .args(["config", "get-contexts", "-o", "name"])
+        .args(["config", "view", "-o", "json"])
         .output()
         .unwrap();
 
     let string = String::from_utf8(output.stdout).unwrap();
-    string.lines().map(ToOwned::to_owned).collect()
+    let config: Config = serde_json::from_str(&string.trim()).unwrap();
+
+    config
 }
 
 pub fn get_namespaces() -> Vec<String> {
@@ -77,10 +80,13 @@ pub fn selectable_list(input: Vec<String>) -> String {
     input[selection].to_string()
 }
 
-pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str) {
-    config::set(ctx, Some(selection), temp_dir)
+pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Config) {
+    let choice = config.contexts.iter().find(|x| x.name == ctx);
+    config::set(choice.unwrap(), Some(selection), temp_dir)
 }
 
-pub fn set_context(ctx: &str, temp_dir: &str) {
-    config::set(ctx, None, temp_dir)
+pub fn set_context(ctx: &str, temp_dir: &str, config: &Config) {
+    let choice = config.contexts.iter().find(|x| x.name == ctx);
+
+    config::set(choice.unwrap(), None, temp_dir);
 }
