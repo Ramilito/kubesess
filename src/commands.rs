@@ -1,6 +1,8 @@
 use crate::config;
 use crate::model::Config;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
+use std::fs::File;
+use std::io::{BufReader, Read};
 use std::process::{Command, Stdio};
 
 pub fn set_default_namespace(ns: &str) {
@@ -35,13 +37,20 @@ pub fn set_default_context(ctx: &str) {
 }
 
 pub fn get_config() -> Config {
-    let output = Command::new("kubectl")
-        .args(["config", "view", "-o", "json"])
-        .output()
-        .unwrap();
+    let f = File::open(format!(
+        "{}/.kube/config",
+        dirs::home_dir().unwrap().display().to_string()
+    ))
+    .unwrap();
 
-    let string = String::from_utf8(output.stdout).unwrap();
-    let config: Config = serde_json::from_str(&string.trim()).unwrap();
+    let mut reader = BufReader::new(f);
+    let mut string = String::new();
+
+    reader
+        .read_to_string(&mut string)
+        .expect("Unable to read file");
+
+    let config: Config = serde_yaml::from_str(&string.trim()).unwrap();
 
     config
 }
