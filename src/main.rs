@@ -1,6 +1,7 @@
 mod commands;
 mod config;
 mod modes;
+mod model;
 
 use clap::Parser;
 use std::{env, io};
