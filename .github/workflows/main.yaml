@@ -51,12 +51,12 @@ jobs:
           args: --release --target=${{ matrix.target }}
 
       - name: Package 
-        # if: github.event_name == 'release' && github.event.action == 'created'
+        if: github.event_name == 'release' && github.event.action == 'created'
         run: |
           make bundle_release TARGET=${{ matrix.target }}
 
       - uses: svenstaro/upload-release-action@v2
-        # if: github.event_name == 'release' && (github.event.action == 'created' || github.event.action == 'edited')
+        if: github.event_name == 'release' && (github.event.action == 'created' || github.event.action == 'edited')
         name: Upload release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
