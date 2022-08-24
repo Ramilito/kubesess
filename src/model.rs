@@ -1,12 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, PartialEq, Debug, Serialize, Deserialize)]
 pub struct Contexts {
+    #[serde(default)]
     pub context: Context,
+    #[serde(default)]
     pub name: String,
 }
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, PartialEq, Debug, Serialize, Deserialize)]
 pub struct Context {
     #[serde(skip_serializing_if = "String::is_empty", default)]
     pub namespace: String,
@@ -14,7 +16,7 @@ pub struct Context {
     pub user: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Config {
     #[serde(skip_serializing_if = "String::is_empty", default)]
     pub kind: String,
@@ -24,6 +26,6 @@ pub struct Config {
     #[serde(skip_serializing_if = "String::is_empty", default)]
     #[serde(rename = "current-context")]
     pub current_context: String,
-    #[serde(skip_serializing_if = "Vec::is_empty", default)]
+    #[serde(default)]
     pub contexts: Vec<Contexts>,
 }
