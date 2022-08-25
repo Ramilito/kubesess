@@ -147,16 +147,16 @@ knd #kube_namespace_default: Sets namespace across all shells
 ## Troubleshooting
 
 ### Just fix it
-A hard reset will fix most issues, to do that just remove the ~/.kube/kubesess/cache folder.
+A hard reset will fix most issues, to do that just remove the ```~/.kube/kubesess/cache``` folder.
 
 \*The downside is that your last visited namespace per context will be lost.
 
 
 ### Why is it happening?
-There are only two places that can go wrong, either the $KUBECONFIG env is 
+There are only two places that can go wrong, either the ```$KUBECONFIG``` env is 
 not set correctly or the generated file is corrupt.
 
-This is how the $KUBECONFIG should look like (replace ${USER} with your user name):
+This is how the ```$KUBECONFIG``` should look like (replace ```${USER}``` with your user name):
 ```
 /home/${USER}/.kube/kubesess/cache/docker-desktop:/home/${USER}/.kube/config
 ```
