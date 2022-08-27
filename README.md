@@ -104,9 +104,14 @@ A script wrapper called kubesess.sh is provided for easier use, source the scrip
 source ~/.kube/kubesess/scripts/sh/kubesess.sh
 ```
 
+For zsh users, source the completion script to your .zsh/.zshrc file
+```shell
+source ~/.kube/kubesess/completion.sh
+```
+
 For fish users, copy functions and completion scripts in your fish config.
 ```shell
-rsync -a ~/.kub/kubesess/scripts/fish/ ~/.config/fish/
+rsync -a ~/.kube/kubesess/scripts/fish/ ~/.config/fish/
 ```
 
 ## Usage
@@ -140,7 +145,7 @@ knd #kube_namespace_default: Sets namespace across all shells
 - [x] Add option to make changes stick (default-context)
 - [x] Add option to make changes stick (default-namespace)
 - [ ] Add tests 
-- [ ] Add tab completion - https://github.com/clap-rs/clap/issues/1232
+- [x] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [ ] Add to brew
 - [ ] Add error handling
 

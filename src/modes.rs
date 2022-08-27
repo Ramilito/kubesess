@@ -70,3 +70,26 @@ pub fn default_namespace(args: Cli, dest: &str) {
     commands::set_default_namespace(&ns);
     commands::set_namespace(&ctx, &ns, &dest, &config);
 }
+
+pub fn completion_context(args: Cli) {
+    let config = commands::get_config();
+
+    let mut options = Vec::new();
+    for context in &config.contexts {
+        if context.name.starts_with(&args.value.as_ref().unwrap().to_string()) {
+            options.push(context.name.to_string());
+        }
+    }
+    println!("{}", options.join(" "));
+}
+
+pub fn completion_namespace(args: Cli) {
+    let namespaces = commands::get_namespaces();
+    let mut options = Vec::new();
+    for ns in &namespaces {
+        if ns.starts_with(&args.value.as_ref().unwrap().to_string()) {
+            options.push(ns.to_string());
+        }
+    }
+    println!("{}", options.join(" "));
+}
