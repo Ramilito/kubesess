@@ -33,7 +33,7 @@ deploy_local: clean build
 	mkdir -p $$HOME/.kube/kubesess
 	cp ./target/release/kubesess ./scripts/sh/kubesess.sh ./scripts/sh/completion.sh ~/.kube/kubesess/
 	sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
-	source ~/.kube/kubesess/completion.sh
+	source ~/.kube/kubesess/scripts/sh/completion.sh
 
 .PHONY: benchmark
 benchmark: deploy_local
