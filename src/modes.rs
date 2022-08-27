@@ -82,3 +82,14 @@ pub fn completion_context(args: Cli) {
     }
     println!("{}", options.join(" "));
 }
+
+pub fn completion_namespace(args: Cli) {
+    let namespaces = commands::get_namespaces();
+    let mut options = Vec::new();
+    for ns in &namespaces {
+        if ns.starts_with(&args.value.as_ref().unwrap().to_string()) {
+            options.push(ns.to_string());
+        }
+    }
+    println!("{}", options.join(" "));
+}

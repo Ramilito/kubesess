@@ -1,10 +1,16 @@
 #/usr/bin/env bash
-# complete -W "now tomorrow never" kc
 
 _kc_completions()
 {
-  # COMPREPLY=($(compgen -W "$(fc kc | sed 's/\t//')" -- "${COMP_WORDS[1]}"))
   COMPREPLY=($(compgen -W "$(kubesess -v "${COMP_WORDS[1]}" completion-context)"))
 }
 
-complete -F _kc_completions kc
+_kn_completions()
+{
+  COMPREPLY=($(compgen -W "$(kubesess -v "${COMP_WORDS[1]}" completion-namespace)"))
+}
+
+complete -F _kc_completions kc 
+complete -F _kc_completions kcd
+complete -F _kn_completions kn
+complete -F _kn_completions knd

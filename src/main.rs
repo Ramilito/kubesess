@@ -22,6 +22,7 @@ enum Mode {
     DefaultContext,
     DefaultNamespace,
     CompletionContext,
+    CompletionNamespace,
 }
 
 impl Mode {
@@ -32,6 +33,7 @@ impl Mode {
             Mode::DefaultContext => modes::default_context(Cli::parse(), dest),
             Mode::DefaultNamespace => modes::default_namespace(Cli::parse(), dest),
             Mode::CompletionContext => modes::completion_context(Cli::parse()),
+            Mode::CompletionNamespace => modes::completion_namespace(Cli::parse()),
         }
     }
 }
