@@ -91,7 +91,7 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 ### Installation
 
 Download and extract the binary.
-```shell
+```zsh
 KUBESESS_VERSION=1.2.5 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
@@ -100,12 +100,12 @@ sudo mv ~/.kube/kubesess/target/${KUBESESS_OS}/release/kubesess /usr/local/bin/k
 ```
 
 A script wrapper called kubesess.sh is provided for easier use, source the script wrapper in your .bashrc, .zshrc.
-```shell
+```zsh
 source ~/.kube/kubesess/scripts/sh/kubesess.sh
 ```
 
 For zsh users, source the completion script to your .zsh/.zshrc file
-```shell
+```zsh
 source ~/.kube/kubesess/scripts/sh/completion.sh
 ```
 
@@ -119,7 +119,7 @@ rsync -a ~/.kube/kubesess/scripts/fish/ ~/.config/fish/
 See the available commands by running kubesess -h, output from the program needs to be added to $KUBECONFIG env variable.
 
 #### Aliases are provided for easier use, when sourced three aliases will be created.
-``` bash
+```zsh
 kc  #kube_context: Sets session context
 
 kcd #kube_context_default: Sets context across all shells
@@ -162,12 +162,12 @@ There are only two places that can go wrong, either the ```$KUBECONFIG``` env is
 not set correctly or the generated file is corrupt.
 
 This is how the ```$KUBECONFIG``` should look like (replace ```${USER}``` with your user name):
-```
+```zsh
 /home/${USER}/.kube/kubesess/cache/docker-desktop:/home/${USER}/.kube/config
 ```
 
 This is how the generated file should look like:
-```
+```yaml
 kind: Config
 apiVersion: v1
 current-context: docker-desktop
