@@ -1,7 +1,7 @@
 mod commands;
 mod config;
-mod modes;
 mod model;
+mod modes;
 
 use clap::Parser;
 use std::{env, io};
@@ -21,6 +21,7 @@ enum Mode {
     Context,
     DefaultContext,
     DefaultNamespace,
+    CompletionContext,
 }
 
 impl Mode {
@@ -30,13 +31,13 @@ impl Mode {
             Mode::Context => modes::context(Cli::parse(), dest),
             Mode::DefaultContext => modes::default_context(Cli::parse(), dest),
             Mode::DefaultNamespace => modes::default_namespace(Cli::parse(), dest),
+            Mode::CompletionContext => modes::completion_context(Cli::parse()),
         }
     }
 }
 
 fn main() -> Result<(), io::Error> {
     set_handlers();
-
     let args = Cli::parse();
     let dest = format!(
         "{}/.kube/kubesess/cache",
