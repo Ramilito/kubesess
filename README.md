@@ -92,7 +92,7 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 
 Download and extract the binary.
 ```
-KUBESESS_VERSION=1.2.3 && \
+KUBESESS_VERSION=1.2.5 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
 mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz -C $HOME/.kube/kubesess && \
@@ -106,7 +106,7 @@ source ~/.kube/kubesess/scripts/sh/kubesess.sh
 
 For zsh users, source the completion script to your .zsh/.zshrc file
 ```shell
-source ~/.kube/kubesess/completion.sh
+source ~/.kube/kubesess/scripts/sh/completion.sh
 ```
 
 For fish users, copy functions and completion scripts in your fish config.
