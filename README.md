@@ -118,7 +118,7 @@ rsync -a ~/.kube/kubesess/scripts/fish/ ~/.config/fish/
 
 See the available commands by running kubesess -h, output from the program needs to be added to $KUBECONFIG env variable.
 
-#### Aliases are provided for easier use, when sourced three aliases will be created.
+#### Aliases are provided for easier use, when sourced these aliases will be created.
 ```zsh
 kc  #kube_context: Sets session context
 
