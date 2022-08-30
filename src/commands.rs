@@ -59,11 +59,7 @@ pub fn get_config() -> Config {
 pub fn get_session_config() -> Config {
     let session = env::var("KUBECONFIG").unwrap();
 
-    let f = File::open(format!(
-        "{}",
-        session.split(":").next().unwrap()
-    ))
-    .unwrap();
+    let f = File::open(format!("{}", session.split(":").next().unwrap())).unwrap();
 
     let mut reader = BufReader::new(f);
     let mut string = String::new();
@@ -112,7 +108,10 @@ pub fn selectable_list(input: Vec<String>) -> String {
 }
 
 pub fn set_session_namespace(selection: &str, temp_dir: &str, config: &Config) {
-    let choice = config.contexts.iter().find(|x| x.name == config.current_context);
+    let choice = config
+        .contexts
+        .iter()
+        .find(|x| x.name == config.current_context);
     config::set(choice.unwrap(), Some(selection), temp_dir)
 }
 
