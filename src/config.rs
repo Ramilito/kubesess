@@ -73,30 +73,24 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
 }
 
 pub fn get(path: Option<PathBuf>) -> Config {
-    let mut p = dirs::home_dir()
-        .unwrap()
-        .join(".kube/config")
-        .as_path()
-        .to_owned();
-
-    match path {
+    let p = match path {
         Some(path) => {
             if !path.as_path().exists() {
-                p = dirs::home_dir()
+                dirs::home_dir()
                     .unwrap()
                     .join(".kube/config")
                     .as_path()
                     .to_owned()
+            } else {
+                path
             }
         }
-        None => {
-            p = dirs::home_dir()
-                .unwrap()
-                .join(".kube/config")
-                .as_path()
-                .to_owned()
-        }
-    }
+        None => dirs::home_dir()
+            .unwrap()
+            .join(".kube/config")
+            .as_path()
+            .to_owned(),
+    };
 
     let f = File::open(p).unwrap();
 
