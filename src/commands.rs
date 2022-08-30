@@ -1,6 +1,7 @@
 use crate::config;
 use crate::model::Config;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
+use std::env;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::process::{Command, Stdio};
@@ -55,6 +56,27 @@ pub fn get_config() -> Config {
     config
 }
 
+pub fn get_session_config() -> Config {
+    let session = env::var("KUBECONFIG").unwrap();
+
+    let f = File::open(format!(
+        "{}",
+        session.split(":").next().unwrap()
+    ))
+    .unwrap();
+
+    let mut reader = BufReader::new(f);
+    let mut string = String::new();
+
+    reader
+        .read_to_string(&mut string)
+        .expect("Unable to read file");
+
+    let config: Config = serde_yaml::from_str(&string.trim()).unwrap();
+
+    config
+}
+
 pub fn get_namespaces() -> Vec<String> {
     let output = Command::new("kubectl")
         .args(["get", "namespace", "-o=custom-columns=Name:.metadata.name"])
@@ -87,6 +109,11 @@ pub fn selectable_list(input: Vec<String>) -> String {
         .unwrap();
 
     input[selection].to_string()
+}
+
+pub fn set_session_namespace(selection: &str, temp_dir: &str, config: &Config) {
+    let choice = config.contexts.iter().find(|x| x.name == config.current_context);
+    config::set(choice.unwrap(), Some(selection), temp_dir)
 }
 
 pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Config) {

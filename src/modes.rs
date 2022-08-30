@@ -47,16 +47,15 @@ pub fn context(args: Cli, dest: &str) {
 }
 
 pub fn namespace(args: Cli, dest: &str) {
-    let config = commands::get_config();
-    let ctx = commands::get_current_context();
+    let config = commands::get_session_config();
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
         commands::selectable_list(namespaces)
     });
 
-    commands::set_namespace(&ctx, &ns, &dest, &config);
+    commands::set_session_namespace(&ns, &dest, &config);
 
-    println!("{}/{}", &dest, str::replace(&ctx, ":", "_"));
+    println!("{}/{}", &dest, str::replace(&config.current_context, ":", "_"));
 }
 
 pub fn default_namespace(args: Cli, dest: &str) {
