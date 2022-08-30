@@ -44,7 +44,8 @@ benchmark: deploy_local
 	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v docker-desktop context' 'kubie ctx docker-desktop' --export-markdown ./tests/hyperfine/context-markdown-kubie.md
 
 .PHONY: benchmark-ns
-benchmark-ns:
+benchmark-ns: deploy_local
+	sh ./tests/benchmark.sh
 	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v monitoring namespace' 'kubens monitoring' --export-markdown ./tests/hyperfine/namespace-markdown.md
 
 
