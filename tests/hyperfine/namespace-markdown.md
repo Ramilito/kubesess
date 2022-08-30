@@ -1,4 +1,4 @@
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `kubesess -v monitoring namespace` | 0.9 ± 0.1 | 0.8 | 1.1 | 1.00 |
-| `kubens monitoring` | 198.7 ± 5.4 | 192.7 | 212.3 | 217.06 ± 24.81 |
+| `kubesess -v monitoring namespace` | 0.8 ± 0.1 | 0.7 | 0.9 | 1.00 |
+| `kubens monitoring` | 215.3 ± 27.0 | 199.5 | 288.9 | 270.22 ± 38.34 |
