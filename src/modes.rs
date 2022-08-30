@@ -53,7 +53,7 @@ pub fn namespace(args: Cli, dest: &str) {
         commands::selectable_list(namespaces)
     });
 
-    commands::set_session_namespace(&ns, &dest, &config);
+    commands::set_namespace(&config.current_context, &ns, &dest, &config);
 
     println!("{}/{}", &dest, str::replace(&config.current_context, ":", "_"));
 }
