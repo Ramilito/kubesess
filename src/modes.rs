@@ -1,4 +1,4 @@
-use crate::{commands, Cli};
+use crate::{commands, Cli, config};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
@@ -8,7 +8,7 @@ fn selection(value: Option<String>, callback: fn() -> String) -> String {
 }
 
 pub fn default_context(args: Cli, dest: &str) {
-    let config = commands::get_config();
+    let config = config::get(None);
 
     let ctx = match args.value {
         None => {
@@ -27,7 +27,7 @@ pub fn default_context(args: Cli, dest: &str) {
 }
 
 pub fn context(args: Cli, dest: &str) {
-    let config = commands::get_config();
+    let config = config::get(None);
 
     let ctx = match args.value {
         None => {
@@ -47,7 +47,7 @@ pub fn context(args: Cli, dest: &str) {
 }
 
 pub fn namespace(args: Cli, dest: &str) {
-    let config = commands::get_session_config();
+    let config = config::get_current_session();
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
         commands::selectable_list(namespaces)
@@ -59,7 +59,7 @@ pub fn namespace(args: Cli, dest: &str) {
 }
 
 pub fn default_namespace(args: Cli, dest: &str) {
-    let config = commands::get_config();
+    let config = config::get(None);
     let ctx = commands::get_current_context();
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
@@ -71,7 +71,7 @@ pub fn default_namespace(args: Cli, dest: &str) {
 }
 
 pub fn completion_context(args: Cli) {
-    let config = commands::get_config();
+    let config = config::get(None);
 
     let mut options = Vec::new();
     for context in &config.contexts {
