@@ -5,11 +5,13 @@ on:
       - main
   release:
     types: [created, edited]
+  pull_request:
 
 name: Main
 
 jobs:
   build_and_test:
+
     name: Rust project
     runs-on: ubuntu-latest
     strategy:
@@ -19,6 +21,9 @@ jobs:
           - x86_64-pc-windows-gnu
           - x86_64-unknown-linux-gnu
     steps:
+      - uses: actions/checkout@v3
+        with:
+           fetch-depth: 0
       - uses: actions/cache@v3
         with:
           path: |
@@ -28,14 +33,11 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions/checkout@v3
-        with:
-           fetch-depth: 0
 
-      - name: Get latest tag
-        id: get-latest-tag
+      - name: Test
         run: |
-           echo LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1)) >> $GITHUB_ENV
+          cargo check
+          cargo test --all  
 
       - uses: actions-rs/toolchain@v1
         with:
@@ -50,13 +52,19 @@ jobs:
           command: build
           args: --release --target=${{ matrix.target }}
 
+      - name: Get latest tag
+        if: github.event_name == 'release'
+        id: get-latest-tag
+        run: |
+           echo LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1)) >> $GITHUB_ENV
+
       - name: Package 
-        if: github.event_name == 'release' && github.event.action == 'created'
+        if: github.event_name == 'release'
         run: |
           make bundle_release TARGET=${{ matrix.target }}
 
       - uses: svenstaro/upload-release-action@v2
-        if: github.event_name == 'release' && (github.event.action == 'created' || github.event.action == 'edited')
+        if: github.event_name == 'release')
         name: Upload release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
