@@ -3,7 +3,7 @@ on:
 
 name: "[reusable] rust test"
 jobs:
-  build_and_test:
+  build:
     name: Rust project
     runs-on: ubuntu-latest
     strategy:
@@ -16,16 +16,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
            fetch-depth: 0
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -33,7 +23,7 @@ jobs:
           override: true
 
       - uses: actions-rs/cargo@v1
-        name: Build and test
+        name: Build
         with:
           use-cross: true
           command: build

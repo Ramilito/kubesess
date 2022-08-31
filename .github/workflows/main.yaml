@@ -10,9 +10,10 @@ on:
 name: Main
 
 jobs:
+  cache:
+    uses: ./.github/workflows/cache.yml
   run_tests:
     uses: ./.github/workflows/run_tests.yaml
-
   package_and_release:
     if: github.event_name == 'release'
     uses: ./.github/workflows/package_and_release.yaml
