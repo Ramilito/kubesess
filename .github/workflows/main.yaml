@@ -11,7 +11,7 @@ name: Main
 
 jobs:
   run_tests:
-    uses: ./.github/workflows/run-tests.yaml
+    uses: ./.github/workflows/run_tests.yaml
 
   package_and_release::
     if: github.event_name == 'release'
