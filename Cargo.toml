@@ -11,3 +11,7 @@ dialoguer = { version = "0.10.2", features = ["fuzzy-select"] }
 serde_yaml = "0.9.3"
 serde = { version = "1.0.141", features = ["derive"] }
 ctrlc = "3.2.3"
+lazy_static = "1.4.0"
+
+[dev-dependencies]
+assert_cmd = "2.0"
