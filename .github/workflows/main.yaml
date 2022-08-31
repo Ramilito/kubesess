@@ -5,61 +5,18 @@ on:
       - main
   release:
     types: [created, edited]
+  pull_request:
 
 name: Main
 
 jobs:
-  build_and_test:
-    name: Rust project
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - armv7-unknown-linux-musleabi
-          - x86_64-pc-windows-gnu
-          - x86_64-unknown-linux-gnu
-    steps:
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - uses: actions/checkout@v3
-        with:
-           fetch-depth: 0
+  cache:
+    uses: ./.github/workflows/cache.yaml
+  run_tests:
+    uses: ./.github/workflows/run_tests.yaml
+    secrets:
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+  package_and_release:
+    if: github.event_name == 'release'
+    uses: ./.github/workflows/package_and_release.yaml
 
-      - name: Get latest tag
-        id: get-latest-tag
-        run: |
-           echo LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1)) >> $GITHUB_ENV
-
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.target }}
-          override: true
-
-      - uses: actions-rs/cargo@v1
-        name: Build and test
-        with:
-          use-cross: true
-          command: build
-          args: --release --target=${{ matrix.target }}
-
-      - name: Package 
-        if: github.event_name == 'release' && github.event.action == 'created'
-        run: |
-          make bundle_release TARGET=${{ matrix.target }}
-
-      - uses: svenstaro/upload-release-action@v2
-        if: github.event_name == 'release' && (github.event.action == 'created' || github.event.action == 'edited')
-        name: Upload release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/${{ matrix.target}}/release/kubesess_${{ matrix.target }}.tar.gz
-          asset_name: kubesess_${{ env.LATEST_TAG }}_${{ matrix.target }}.tar.gz
-          tag: ${{ env.LATEST_TAG }}
