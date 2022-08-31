@@ -31,7 +31,7 @@ fn set_default_context() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(
         output_string,
-        format!("Switched to context \"docker-desktop\".\n{}", kubeconfig)
+        format!("{}", kubeconfig)
     );
 
     Ok(())
@@ -68,7 +68,7 @@ fn set_default_namespace() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(
         output_string,
-        format!("Context \"docker-desktop\" modified.")
+        format!("")
     );
 
     Ok(())
