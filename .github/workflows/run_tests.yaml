@@ -1,5 +1,8 @@
 on:
   workflow_call:
+    secrets:
+      KUBECONFIG:
+        required: true
 
 name: "[reusable] rust test"
 jobs:
@@ -9,7 +12,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
+      - uses: tale/kubectl-action@v1
+        with:
+          base64-kube-config: ${{ secrets.KUBE_CONFIG }}
       - name: Test
         run: |
           cargo check

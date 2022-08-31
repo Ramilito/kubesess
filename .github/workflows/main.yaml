@@ -14,6 +14,9 @@ jobs:
     uses: ./.github/workflows/cache.yml
   run_tests:
     uses: ./.github/workflows/run_tests.yaml
+    secrets:
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
   package_and_release:
     if: github.event_name == 'release'
     uses: ./.github/workflows/package_and_release.yaml
