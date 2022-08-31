@@ -1,0 +1,60 @@
+on:
+  workflow_call:
+
+name: "[reusable] rust test"
+jobs:
+  build_and_test:
+    name: Rust project
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - armv7-unknown-linux-musleabi
+          - x86_64-pc-windows-gnu
+          - x86_64-unknown-linux-gnu
+    steps:
+      - uses: actions/checkout@v3
+        with:
+           fetch-depth: 0
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - uses: actions-rs/cargo@v1
+        name: Build and test
+        with:
+          use-cross: true
+          command: build
+          args: --release --target=${{ matrix.target }}
+
+      - name: Get latest tag
+        if: github.event_name == 'release'
+        id: get-latest-tag
+        run: |
+           echo LATEST_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1)) >> $GITHUB_ENV
+
+      - name: Package 
+        if: github.event_name == 'release'
+        run: |
+          make bundle_release TARGET=${{ matrix.target }}
+
+      - uses: svenstaro/upload-release-action@v2
+        if: github.event_name == 'release'
+        name: Upload release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/${{ matrix.target}}/release/kubesess_${{ matrix.target }}.tar.gz
+          asset_name: kubesess_${{ env.LATEST_TAG }}_${{ matrix.target }}.tar.gz
+          tag: ${{ env.LATEST_TAG }}
