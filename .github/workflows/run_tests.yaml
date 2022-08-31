@@ -18,5 +18,7 @@ jobs:
       - name: Test
         run: |
           cargo check
-          cargo test --all  
+          cargo test --all
+        env:
+          KUBECONFIG: "/home/runner/.kube/config"
 
