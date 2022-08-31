@@ -1,10 +1,8 @@
 timekubesess(){
   start=`date +%s.%N`
   for i in $(seq 1 20); do
-    export KUBECONFIG=$(kubesess -v docker-desktop context):$HOME/.kube/config;
-    kubectl get nodes;
-    export KUBECONFIG=$(kubesess -v docker-desktop-2 context):$HOME/.kube/config;
-    kubectl get nodes;
+    export KUBECONFIG=$(kubesess -v back-end namespace):$HOME/.kube/config;
+    export KUBECONFIG=$(kubesess -v monitoring namespace):$HOME/.kube/config;
   done
   end=`date +%s.%N`
   echo time
@@ -15,10 +13,8 @@ timekubesess(){
 timekubectx(){
   start=`date +%s.%N`
   for i in $(seq 1 20); do 
-    kubectx docker-desktop > /dev/null 2>&1;
-    kubectl get nodes;
-    kubectx docker-desktop-2 > /dev/null 2>&1; 
-    kubectl get nodes;
+    kubens back-end > /dev/null 2>&1;
+    kubens monitoring > /dev/null 2>&1; 
   done
   end=`date +%s.%N`
   echo time

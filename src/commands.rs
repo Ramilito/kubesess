@@ -1,8 +1,6 @@
 use crate::config;
 use crate::model::Config;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
-use std::fs::File;
-use std::io::{BufReader, Read};
 use std::process::{Command, Stdio};
 
 pub fn set_default_namespace(ns: &str) {
@@ -34,25 +32,6 @@ pub fn set_default_context(ctx: &str) {
         .unwrap()
         .wait()
         .unwrap();
-}
-
-pub fn get_config() -> Config {
-    let f = File::open(format!(
-        "{}/.kube/config",
-        dirs::home_dir().unwrap().display().to_string()
-    ))
-    .unwrap();
-
-    let mut reader = BufReader::new(f);
-    let mut string = String::new();
-
-    reader
-        .read_to_string(&mut string)
-        .expect("Unable to read file");
-
-    let config: Config = serde_yaml::from_str(&string.trim()).unwrap();
-
-    config
 }
 
 pub fn get_namespaces() -> Vec<String> {
@@ -91,11 +70,10 @@ pub fn selectable_list(input: Vec<String>) -> String {
 
 pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Config) {
     let choice = config.contexts.iter().find(|x| x.name == ctx);
-    config::set(choice.unwrap(), Some(selection), temp_dir)
+    config::write(choice.unwrap(), Some(selection), temp_dir)
 }
 
 pub fn set_context(ctx: &str, temp_dir: &str, config: &Config) {
     let choice = config.contexts.iter().find(|x| x.name == ctx);
-
-    config::set(choice.unwrap(), None, temp_dir);
+    config::write(choice.unwrap(), None, temp_dir);
 }

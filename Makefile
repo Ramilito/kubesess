@@ -30,9 +30,11 @@ bundle_release:
 	
 .PHONY: deploy_local
 deploy_local: clean build
-	mkdir -p $$HOME/.kube/kubesess
-	cp ./target/release/kubesess ./scripts/sh/kubesess.sh ./scripts/sh/completion.sh ~/.kube/kubesess/
+	mkdir -p $$HOME/.kube/kubesess/scripts/sh
+	cp ./target/release/kubesess  ~/.kube/kubesess
+	cp ./scripts/sh/completion.sh ./scripts/sh/kubesess.sh ~/.kube/kubesess/scripts/sh
 	sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
+	source ~/.kube/kubesess/scripts/sh/kubesess.sh
 	source ~/.kube/kubesess/scripts/sh/completion.sh
 
 .PHONY: benchmark
@@ -42,7 +44,8 @@ benchmark: deploy_local
 	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v docker-desktop context' 'kubie ctx docker-desktop' --export-markdown ./tests/hyperfine/context-markdown-kubie.md
 
 .PHONY: benchmark-ns
-benchmark-ns:
+benchmark-ns: deploy_local
+	sh ./tests/benchmark.sh
 	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v monitoring namespace' 'kubens monitoring' --export-markdown ./tests/hyperfine/namespace-markdown.md
 
 

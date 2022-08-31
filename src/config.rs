@@ -1,10 +1,11 @@
 use crate::model::{Config, Context, Contexts};
 
+use std::env;
 use std::fs::{self, File};
-use std::io::BufWriter;
-use std::path::Path;
+use std::io::{BufReader, BufWriter, Read};
+use std::path::{Path, PathBuf};
 
-fn build_config(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> Config {
+fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> Config {
     let mut config: Config = serde_yaml::from_str(&strbuf).unwrap();
     config.api_version = "v1".to_string();
     config.kind = "Config".to_string();
@@ -32,7 +33,7 @@ fn build_config(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> Config {
     config
 }
 
-fn get_config_file(path: &String) -> File {
+fn get_file(path: &String) -> File {
     let f = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
@@ -50,21 +51,68 @@ fn get_path(ctx: &Contexts, dest: &str) -> String {
 
     fs::create_dir_all(format!("{}/{}", dest, dirname)).expect("Could not create destination dir");
 
-    let path = Path::new(dest).join(&dirname).join(path.file_name().unwrap());
+    let path = Path::new(dest)
+        .join(&dirname)
+        .join(path.file_name().unwrap());
     path.display().to_string()
 }
 
-pub fn set(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
+pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
     let path = get_path(ctx, dest);
 
-   let strbuf = match fs::read_to_string(&path) {
+    let strbuf = match fs::read_to_string(&path) {
         Ok(file) => file,
         Err(_error) => "".to_string(),
     };
 
-    let options = get_config_file(&path);
+    let options = get_file(&path);
     let writer = BufWriter::new(&options);
-    let config = build_config(&ctx, namespace, &strbuf);
+    let config = build(&ctx, namespace, &strbuf);
 
     serde_yaml::to_writer(writer, &config).unwrap();
+}
+
+pub fn get(path: Option<PathBuf>) -> Config {
+    let p = match path {
+        Some(path) => {
+            if !path.as_path().exists() {
+                dirs::home_dir()
+                    .unwrap()
+                    .join(".kube/config")
+                    .as_path()
+                    .to_owned()
+            } else {
+                path
+            }
+        }
+        None => dirs::home_dir()
+            .unwrap()
+            .join(".kube/config")
+            .as_path()
+            .to_owned(),
+    };
+
+    let f = File::open(p).unwrap();
+
+    let mut reader = BufReader::new(f);
+    let mut string = String::new();
+
+    reader
+        .read_to_string(&mut string)
+        .expect("Unable to read file");
+
+    let config: Config = serde_yaml::from_str(&string.trim()).unwrap();
+
+    config
+}
+
+pub fn get_current_session() -> Config {
+    let path = env::split_paths(&env::var_os("KUBECONFIG").unwrap())
+        .next()
+        .unwrap()
+        .to_owned();
+
+    let config = get(Some(path));
+
+    config
 }
