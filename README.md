@@ -143,7 +143,7 @@ knd #kube_namespace_default: Sets namespace across all shells
 - [x] Use rust tui instead of fzf
 - [x] Add option to make changes stick (default-context)
 - [x] Add option to make changes stick (default-namespace)
-- [ ] Add tests 
+- [x] Add tests 
 - [x] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [ ] Add to brew
 - [ ] Add error handling
