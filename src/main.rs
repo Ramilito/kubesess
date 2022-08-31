@@ -51,7 +51,7 @@ impl Mode {
 fn main() -> Result<(), io::Error> {
     set_handlers();
     let args = Cli::parse();
-    println!("{}", KUBECONFIG.to_string());
+
     Mode::invoke(&args.mode);
 
     Ok(())
