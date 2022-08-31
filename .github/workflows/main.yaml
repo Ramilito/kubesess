@@ -64,7 +64,7 @@ jobs:
           make bundle_release TARGET=${{ matrix.target }}
 
       - uses: svenstaro/upload-release-action@v2
-        if: github.event_name == 'release')
+        if: github.event_name == 'release'
         name: Upload release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
