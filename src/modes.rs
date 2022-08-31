@@ -1,4 +1,4 @@
-use crate::{commands, Cli, config};
+use crate::{commands, Cli, config, KUBECONFIG, DEST};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
@@ -7,7 +7,7 @@ fn selection(value: Option<String>, callback: fn() -> String) -> String {
     }
 }
 
-pub fn default_context(args: Cli, dest: &str) {
+pub fn default_context(args: Cli) {
     let config = config::get(None);
 
     let ctx = match args.value {
@@ -23,10 +23,10 @@ pub fn default_context(args: Cli, dest: &str) {
     };
 
     commands::set_default_context(&ctx);
-    commands::set_context(&ctx, &dest, &config);
+    commands::set_context(&ctx, &DEST, &config);
 }
 
-pub fn context(args: Cli, dest: &str) {
+pub fn context(args: Cli) {
     let config = config::get(None);
 
     let ctx = match args.value {
@@ -41,24 +41,24 @@ pub fn context(args: Cli, dest: &str) {
         Some(x) => x.trim().to_string(),
     };
 
-    commands::set_context(&ctx, &dest, &config);
+    commands::set_context(&ctx, &DEST, &config);
 
     println!("{}/{}", &dest, str::replace(&ctx, ":", "_"));
 }
 
-pub fn namespace(args: Cli, dest: &str) {
+pub fn namespace(args: Cli) {
     let config = config::get_current_session();
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
         commands::selectable_list(namespaces)
     });
 
-    commands::set_namespace(&config.current_context, &ns, &dest, &config);
+    commands::set_namespace(&config.current_context, &ns, &DEST, &config);
 
     println!("{}/{}", &dest, str::replace(&config.current_context, ":", "_"));
 }
 
-pub fn default_namespace(args: Cli, dest: &str) {
+pub fn default_namespace(args: Cli) {
     let config = config::get(None);
     let ctx = commands::get_current_context();
     let ns = selection(args.value, || -> String {
@@ -67,7 +67,7 @@ pub fn default_namespace(args: Cli, dest: &str) {
     });
 
     commands::set_default_namespace(&ns);
-    commands::set_namespace(&ctx, &ns, &dest, &config);
+    commands::set_namespace(&ctx, &ns, &DEST, &config);
 }
 
 pub fn completion_context(args: Cli) {

@@ -1,7 +1,5 @@
 kc() {
-  config=$(kubesess ${1:+"-v "$1} context);
-  # Prepend the $KUBECONFIG with new config
-  export KUBECONFIG=$config:$HOME/.kube/config;
+  export KUBECONFIG=$(kubesess ${1:+"-v "$1} context);
 }
 
 kcd() {
@@ -11,9 +9,7 @@ kcd() {
 }
 
 kn() {
-  config=$(kubesess ${1:+"-v "$1} namespace);
-  # Prepend the $KUBECONFIG with new config
-  export KUBECONFIG=$config:$HOME/.kube/config;
+  export KUBECONFIG=$(kubesess ${1:+"-v "$1} namespace);
 }
 
 knd() {
