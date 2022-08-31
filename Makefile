@@ -39,13 +39,13 @@ deploy_local: clean build
 
 .PHONY: benchmark
 benchmark: deploy_local
-	sh ./tests/benchmark.sh
-	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v docker-desktop context' 'kubectx docker-desktop' --export-markdown ./tests/hyperfine/context-markdown-kubectx.md
-	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v docker-desktop context' 'kubie ctx docker-desktop' --export-markdown ./tests/hyperfine/context-markdown-kubie.md
+	sh ./benches/benchmark.sh
+	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v docker-desktop context' 'kubectx docker-desktop' --export-markdown ./benches/hyperfine/context-markdown-kubectx.md
+	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v docker-desktop context' 'kubie ctx docker-desktop' --export-markdown ./benches/hyperfine/context-markdown-kubie.md
 
 .PHONY: benchmark-ns
 benchmark-ns: deploy_local
-	sh ./tests/benchmark.sh
-	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v monitoring namespace' 'kubens monitoring' --export-markdown ./tests/hyperfine/namespace-markdown.md
+	sh ./benches/benchmark.sh
+	hyperfine --warmup 5 --runs 10 --shell none 'kubesess -v monitoring namespace' 'kubens monitoring' --export-markdown ./benches/hyperfine/namespace-markdown.md
 
 
