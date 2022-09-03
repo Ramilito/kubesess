@@ -89,6 +89,7 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 
 ### Installation
 
+#### Binary
 Download and extract the binary.
 ```zsh
 KUBESESS_VERSION=1.2.5 && \
@@ -112,6 +113,12 @@ For fish users, copy functions and completion scripts in your fish config.
 ```shell
 rsync -a ~/.kube/kubesess/scripts/fish/ ~/.config/fish/
 ```
+
+#### Brew
+```zsh
+brew install kubesess
+```
+If you have https://docs.brew.sh/Shell-Completion setup then you are done, if not, you will need to source the script wrapper manually like in the binary installation.
 
 ## Usage
 
