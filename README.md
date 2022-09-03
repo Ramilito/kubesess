@@ -152,7 +152,7 @@ knd #kube_namespace_default: Sets namespace across all shells
 - [x] Add option to make changes stick (default-namespace)
 - [x] Add tests 
 - [x] Add tab completion - https://github.com/clap-rs/clap/issues/1232
-- [ ] Add to brew
+- [x] Add to brew
 - [ ] Add error handling
 - [ ] Add support for multiple .kube/config files
 
