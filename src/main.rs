@@ -23,6 +23,8 @@ pub struct Cli {
     mode: Mode,
     #[clap(short, long, value_parser, display_order = 2)]
     value: Option<String>,
+    #[clap(short, long, action)]
+    current: bool,
 }
 
 #[derive(clap::ValueEnum, Clone)]
