@@ -67,6 +67,19 @@ pub fn context(args: Cli) {
 
 pub fn namespace(args: Cli) {
     let config = config::get_current_session();
+    if args.current {
+        let ctx = config
+            .contexts
+            .iter()
+            .find(|x| x.name == config.current_context)
+            .unwrap()
+            .context
+            .namespace
+            .to_string();
+        println!("{}", ctx);
+        return;
+    }
+
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
         commands::selectable_list(namespaces)
