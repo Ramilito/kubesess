@@ -98,6 +98,21 @@ pub fn namespace(args: Cli) {
 pub fn default_namespace(args: Cli) {
     let config = config::get(None);
     let ctx = commands::get_current_context();
+
+    if args.current {
+        let ctx = config
+            .contexts
+            .iter()
+            .find(|x| x.name == config.current_context)
+            .unwrap()
+            .context
+            .namespace
+            .to_string();
+
+        println!("{}", ctx);
+        return;
+    }
+
     let ns = selection(args.value, || -> String {
         let namespaces = commands::get_namespaces();
         commands::selectable_list(namespaces)
