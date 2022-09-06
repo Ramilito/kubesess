@@ -1,4 +1,4 @@
-use crate::{commands, Cli, config, KUBECONFIG, DEST};
+use crate::{commands, config, Cli, DEST, KUBECONFIG};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
@@ -45,7 +45,12 @@ pub fn context(args: Cli) {
 
     commands::set_context(&ctx, &DEST, &config);
 
-    println!("{}/{}:{}", &DEST.as_str(), str::replace(&ctx, ":", "_"), KUBECONFIG.as_str());
+    println!(
+        "{}/{}:{}",
+        &DEST.as_str(),
+        str::replace(&ctx, ":", "_"),
+        KUBECONFIG.as_str()
+    );
 }
 
 pub fn namespace(args: Cli) {
@@ -57,7 +62,12 @@ pub fn namespace(args: Cli) {
 
     commands::set_namespace(&config.current_context, &ns, &DEST, &config);
 
-    println!("{}/{}:{}", &DEST.as_str(), str::replace(&config.current_context, ":", "_"), KUBECONFIG.as_str());
+    println!(
+        "{}/{}:{}",
+        &DEST.as_str(),
+        str::replace(&config.current_context, ":", "_"),
+        KUBECONFIG.as_str()
+    );
 }
 
 pub fn default_namespace(args: Cli) {
@@ -77,7 +87,10 @@ pub fn completion_context(args: Cli) {
 
     let mut options = Vec::new();
     for context in &config.contexts {
-        if context.name.starts_with(&args.value.as_ref().unwrap().to_string()) {
+        if context
+            .name
+            .starts_with(&args.value.as_ref().unwrap().to_string())
+        {
             options.push(context.name.to_string());
         }
     }
