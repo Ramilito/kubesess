@@ -35,8 +35,14 @@ pub fn default_context(args: Cli) {
 }
 
 pub fn context(args: Cli) {
-    let config = config::get(None);
+    if args.current {
+        let config = config::get_current_session();
+        let ctx = config.current_context;
+        println!("{}", ctx);
+        return;
+    }
 
+    let config = config::get(None);
     let ctx = match args.value {
         None => {
             let mut options = Vec::new();
