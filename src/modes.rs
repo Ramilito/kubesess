@@ -11,8 +11,7 @@ pub fn default_context(args: Cli) {
     let config = config::get(None);
 
     if args.current {
-        let ctx = config.current_context;
-        println!("{}", ctx);
+        println!("{}", config.current_context);
         return;
     }
 
@@ -37,8 +36,7 @@ pub fn default_context(args: Cli) {
 pub fn context(args: Cli) {
     if args.current {
         let config = config::get_current_session();
-        let ctx = config.current_context;
-        println!("{}", ctx);
+        println!("{}", config.current_context);
         return;
     }
 
@@ -72,11 +70,9 @@ pub fn namespace(args: Cli) {
             .contexts
             .iter()
             .find(|x| x.name == config.current_context)
-            .unwrap()
-            .context
-            .namespace
-            .to_string();
-        println!("{}", ctx);
+            .unwrap();
+
+        println!("{}", ctx.context.namespace);
         return;
     }
 
@@ -104,12 +100,9 @@ pub fn default_namespace(args: Cli) {
             .contexts
             .iter()
             .find(|x| x.name == config.current_context)
-            .unwrap()
-            .context
-            .namespace
-            .to_string();
+            .unwrap();
 
-        println!("{}", ctx);
+        println!("{}", ctx.context.namespace);
         return;
     }
 
