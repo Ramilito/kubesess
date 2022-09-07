@@ -1,0 +1,19 @@
+on:
+  workflow_call:
+    secrets:
+      TOKEN:
+        required: true
+
+name: "[reusable] bump brew"
+jobs:
+  bump_brew:
+    name: Update Homebrew formula
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Homebrew formula
+        uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          # Required, custom GitHub access token with the 'public_repo' and 'workflow' scopes
+          token: ${{secrets.TOKEN}}
+          # Formula name, required
+          formula: kubesess
