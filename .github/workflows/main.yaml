@@ -20,6 +20,7 @@ jobs:
     if: github.event_name == 'release'
     uses: ./.github/workflows/package_and_release.yaml
   bump_brew:
+    needs: package_and_release
     if: github.event_name == 'release'
     uses: ./.github/workflows/bump_brew.yaml
     secrets:
