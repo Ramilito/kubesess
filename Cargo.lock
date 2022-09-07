@@ -261,7 +261,7 @@ checksum = "112c678d4050afce233f4f2852bb2eb519230b3cf12f33585275537d7e41578d"
 
 [[package]]
 name = "kubesess"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "assert_cmd",
  "clap",
