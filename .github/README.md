@@ -135,6 +135,24 @@ kn  #kube_namespace: Sets namespace
 knd #kube_namespace_default: Sets namespace across all shells
 ```
 
+#### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
+```
+prompt_context() {
+    KUBE_CTX=$(kubesess -c context)
+    KUBE_NS=$(kubesess -c namespace)
+
+    if [[ $KUBE_CTX == *"prod"* ]]; then
+      echo "(%{$fg[red]%}|$KUBE_CTX%{$reset_color%}:%F{6}$KUBE_NS%f)"
+    else
+      echo "(%{$fg[green]%}|$KUBE_CTX%{$reset_color%}:%F{6}$KUBE_NS%f)"
+    fi
+}
+
+RPROMPT='$(prompt_context)'
+```
+<img width="609" alt="image" src="https://user-images.githubusercontent.com/8473233/189049590-63b8f8b1-6e7b-45a2-beab-0db17046bca0.png">
+
+
 <!-- ROADMAP -->
 ## Roadmap
 
