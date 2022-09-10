@@ -142,9 +142,9 @@ prompt_context() {
     KUBE_NS=$(kubesess -c namespace)
 
     if [[ $KUBE_CTX == *"prod"* ]]; then
-      echo "(%{$fg[red]%}|$KUBE_CTX%{$reset_color%}:%F{6}$KUBE_NS%f)"
+      echo "❗%{$fg[yellow]%}|$KUBE_CTX%{$reset_color%}:%F{6}$KUBE_NS%f"
     else
-      echo "(%{$fg[green]%}|$KUBE_CTX%{$reset_color%}:%F{6}$KUBE_NS%f)"
+      echo "✅️%{$fg[green]%}|$KUBE_CTX%{$reset_color%}:%F{6}$KUBE_NS%f"
     fi
 }
 
