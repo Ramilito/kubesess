@@ -150,8 +150,8 @@ prompt_context() {
 
 RPROMPT='$(prompt_context)'
 ```
-<img width="609" alt="image" src="https://user-images.githubusercontent.com/8473233/189049590-63b8f8b1-6e7b-45a2-beab-0db17046bca0.png">
 
+![showcase](https://raw.github.com/Ramilito/kubesess/main/docs/images/prompt.png)
 
 <!-- ROADMAP -->
 ## Roadmap
