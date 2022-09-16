@@ -4,7 +4,6 @@ about: Create a report to help us improve
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 **Describe the bug**
@@ -12,9 +11,9 @@ assignees: ''
 
 **To Reproduce**
 <!-- Steps to reproduce the behavior: -->
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. Install with '...'
+2. Type '....'
+3. Select '....'
 4. See error
 
 **Expected behavior**
@@ -24,9 +23,10 @@ assignees: ''
 <!-- If applicable, add screenshots to help explain your problem. -->
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+ - OS: [e.g. ArchLinux]
+ - Terminal: [e.g. Gnome Terminal]
+ - Shell: [e.g. Bash]
+ - Version: [e.g. 1.2.6]
 
 **Additional context**
 <!-- Add any other context about the problem here. -->
