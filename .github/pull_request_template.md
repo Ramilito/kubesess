@@ -21,10 +21,10 @@ Fixes # (issue)
 - [ ] Test B
 
 **Test Configuration**:
-* Firmware version:
-* Hardware:
+* OS:
+* Terminal:
+* Shell:
 * Toolchain:
-* SDK:
 
 # Checklist:
 
