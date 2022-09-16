@@ -61,6 +61,8 @@ fn main() -> Result<(), io::Error> {
 
 fn set_handlers() {
     ctrlc::set_handler(move || {
+        let term = dialoguer::console::Term::stdout();
+        let _ = term.show_cursor();
         println!("{}", env::var("KUBECONFIG").unwrap());
     })
     .expect("Error setting Ctrl-C handler");
