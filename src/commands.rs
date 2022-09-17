@@ -65,14 +65,23 @@ pub fn get_current_context() -> String {
 
 pub fn selectable_list(input: Vec<String>) -> String {
     let input: Vec<String> = input.into_iter().rev().collect();
-    let options = SkimOptionsBuilder::default().multi(false).build().unwrap();
+    let options = SkimOptionsBuilder::default()
+        .multi(false)
+        .build()
+        .unwrap();
     let item_reader = SkimItemReader::default();
 
     let items = item_reader.of_bufread(Cursor::new(input.join("\n")));
     let selected_items = Skim::run_with(&options, Some(items))
-        .map(|out| out.selected_items)
-        .unwrap_or_else(|| Vec::new());
+        .map(|out| match out.final_key {
+            Key::Enter => out.selected_items,
+            _ => Vec::new(),
+        })
+        .unwrap_or_default(); // .unwrap_or_else(|| Vec::new());
 
+    if selected_items.is_empty() {
+        panic!("No item selected");
+    }
     selected_items[0].output().to_string()
 }
 
