@@ -9,7 +9,6 @@ clap = { version = "3.2.16", features = ["derive"] }
 dirs = "4.0"
 serde_yaml = "0.9.3"
 serde = { version = "1.0.141", features = ["derive"] }
-ctrlc = "3.2.3"
 lazy_static = "1.4.0"
 skim = "0.9.4"
 

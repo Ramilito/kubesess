@@ -60,11 +60,6 @@ fn main() -> Result<(), io::Error> {
 }
 
 fn set_handlers() {
-    ctrlc::set_handler(move || {
-        println!("{}", env::var("KUBECONFIG").unwrap());
-    })
-    .expect("Error setting Ctrl-C handler");
-
     #[cfg(not(debug_assertions))]
     std::panic::set_hook(Box::new(move |_info| {
         std::process::exit(1);

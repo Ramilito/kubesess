@@ -1,6 +1,7 @@
 use crate::config;
 use crate::model::Config;
 use std::{
+    env,
     io::Cursor,
     process::{Command, Stdio},
 };
@@ -65,10 +66,7 @@ pub fn get_current_context() -> String {
 
 pub fn selectable_list(input: Vec<String>) -> String {
     let input: Vec<String> = input.into_iter().rev().collect();
-    let options = SkimOptionsBuilder::default()
-        .multi(false)
-        .build()
-        .unwrap();
+    let options = SkimOptionsBuilder::default().multi(false).build().unwrap();
     let item_reader = SkimItemReader::default();
 
     let items = item_reader.of_bufread(Cursor::new(input.join("\n")));
@@ -80,8 +78,10 @@ pub fn selectable_list(input: Vec<String>) -> String {
         .unwrap_or_default(); // .unwrap_or_else(|| Vec::new());
 
     if selected_items.is_empty() {
+        println!("{}", env::var("KUBECONFIG").unwrap());
         panic!("No item selected");
     }
+
     selected_items[0].output().to_string()
 }
 
