@@ -1,7 +1,12 @@
 use crate::config;
 use crate::model::Config;
-use dialoguer::{theme::ColorfulTheme, FuzzySelect};
-use std::process::{Command, Stdio};
+use std::{
+    env,
+    io::Cursor,
+    process::{Command, Stdio},
+};
+extern crate skim;
+use skim::prelude::*;
 
 pub fn set_default_namespace(ns: &str) {
     Command::new("kubectl")
@@ -60,14 +65,24 @@ pub fn get_current_context() -> String {
 }
 
 pub fn selectable_list(input: Vec<String>) -> String {
-    let selection = FuzzySelect::with_theme(&ColorfulTheme::default())
-        // .with_prompt("Pick")
-        .default(0)
-        .items(&input[..])
-        .interact()
-        .unwrap();
+    let input: Vec<String> = input.into_iter().rev().collect();
+    let options = SkimOptionsBuilder::default().multi(false).build().unwrap();
+    let item_reader = SkimItemReader::default();
 
-    input[selection].to_string()
+    let items = item_reader.of_bufread(Cursor::new(input.join("\n")));
+    let selected_items = Skim::run_with(&options, Some(items))
+        .map(|out| match out.final_key {
+            Key::Enter => out.selected_items,
+            _ => Vec::new(),
+        })
+        .unwrap_or_default(); // .unwrap_or_else(|| Vec::new());
+
+    if selected_items.is_empty() {
+        println!("{}", env::var("KUBECONFIG").unwrap());
+        panic!("No item selected");
+    }
+
+    selected_items[0].output().to_string()
 }
 
 pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Config) {
