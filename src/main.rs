@@ -4,7 +4,7 @@ mod model;
 mod modes;
 
 use clap::Parser;
-use std::{env, io};
+use std::io;
 #[macro_use]
 extern crate lazy_static;
 
