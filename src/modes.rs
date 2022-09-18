@@ -111,7 +111,7 @@ pub fn default_namespace(args: Cli) {
         commands::selectable_list(namespaces)
     });
 
-    commands::set_default_namespace(&ns);
+    commands::set_default_namespace(&ns, &ctx);
     commands::set_namespace(&ctx, &ns, &DEST, &config);
 }
 

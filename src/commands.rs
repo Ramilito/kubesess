@@ -8,7 +8,7 @@ use std::{
 extern crate skim;
 use skim::prelude::*;
 
-pub fn set_default_namespace(ns: &str) {
+pub fn set_default_namespace(ns: &str, ctx: &str) {
     Command::new("kubectl")
         .arg("config")
         .arg(format!(
@@ -16,7 +16,7 @@ pub fn set_default_namespace(ns: &str) {
             dirs::home_dir().unwrap().display().to_string()
         ))
         .arg("set-context")
-        .arg("--current")
+        .arg(ctx)
         .arg(format!("--namespace={}", ns))
         .stdout(Stdio::null())
         .spawn()
