@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 kc() {
   export KUBECONFIG=$(kubesess ${1:+"-v "$1} context);
 }
