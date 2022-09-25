@@ -107,10 +107,19 @@ pub fn default_namespace(args: Cli) {
         let ctx = config
             .contexts
             .iter()
-            .find(|x| x.name == config.current_context)
-            .unwrap();
+            .find(|x| x.name == config.current_context);
 
-        println!("{}", ctx.context.namespace);
+        match ctx {
+            Some(x) => {
+                if x.context.namespace.is_empty() {
+                    println!("default");
+                } else {
+                    println!("{}", x.context.namespace);
+                }
+            }
+            None => println!("default"),
+        }
+
         return;
     }
 
