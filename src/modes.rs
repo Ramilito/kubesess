@@ -29,6 +29,8 @@ pub fn default_context(args: Cli) {
 
     commands::set_default_context(&ctx);
     commands::set_context(&ctx, &DEST, &config);
+
+    println!("");
 }
 
 pub fn context(args: Cli) {
