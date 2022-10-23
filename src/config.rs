@@ -3,7 +3,7 @@ use crate::model::{Config, Context, Contexts};
 use std::env;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> Config {
     let mut config: Config = serde_yaml::from_str(&strbuf).unwrap();
@@ -76,10 +76,11 @@ pub fn get() -> Config {
     let p = env::var("KUBECONFIG").unwrap();
     let mut configs = Config::default();
 
-    for s in p.split(":") {
+    for s in p.rsplit(":") {
         if s.contains("/kubesess/cache") {
             continue;
         }
+
         let f = File::open(s).unwrap();
 
         let mut reader = BufReader::new(f);
@@ -90,6 +91,9 @@ pub fn get() -> Config {
 
         let config: Config = serde_yaml::from_str(&tmp.trim()).unwrap();
 
+        configs.current_context = config.current_context;
+        configs.api_version = config.api_version;
+        configs.kind = config.kind;
         configs.contexts.extend(config.contexts);
     }
 
