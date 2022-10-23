@@ -1,4 +1,4 @@
-use crate::{commands, config, Cli, DEST, KUBECONFIG, model::Config};
+use crate::{commands, config, Cli, DEST, KUBECONFIG};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
