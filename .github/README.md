@@ -180,8 +180,9 @@ RPROMPT='$(prompt_context)'
 - [x] Add tests 
 - [x] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [x] Add to brew
+- [x] Add support for multiple .kube/config files
+- [ ] Add support for multiple namespace per session
 - [ ] Add error handling
-- [ ] Add support for multiple .kube/config files
 
 ## Troubleshooting
 
