@@ -106,16 +106,21 @@ pub fn get_current_session() -> Config {
         .unwrap()
         .to_owned();
 
-    let f = File::open(path).unwrap();
+    let config;
 
-    let mut reader = BufReader::new(f);
-    let mut string = String::new();
+    if path.to_str().unwrap().contains("/kubesess/cache") {
+        let f = File::open(path).unwrap();
 
-    reader
-        .read_to_string(&mut string)
-        .expect("Unable to read file");
+        let mut reader = BufReader::new(f);
+        let mut tmp = String::new();
+        reader
+            .read_to_string(&mut tmp)
+            .expect("Unable to read file");
 
-    let config: Config = serde_yaml::from_str(&string.trim()).unwrap();
+        config = serde_yaml::from_str(&tmp.trim()).unwrap();
+    } else {
+        config = get();
+    }
 
     config
 }
