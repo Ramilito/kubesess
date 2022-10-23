@@ -1,4 +1,5 @@
 use crate::model::{Config, Context, Contexts};
+use crate::{KUBECONFIG, KUBESESSCONFIG};
 
 use std::env;
 use std::fs::{self, File};
@@ -73,14 +74,12 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
 }
 
 pub fn get() -> Config {
-    let p = env::var("KUBECONFIG").unwrap();
     let mut configs = Config::default();
 
-    for s in p.rsplit(":") {
+    for s in KUBECONFIG.rsplit(":") {
         if s.contains("/kubesess/cache") {
             continue;
         }
-
         let f = File::open(s).unwrap();
 
         let mut reader = BufReader::new(f);
@@ -101,15 +100,12 @@ pub fn get() -> Config {
 }
 
 pub fn get_current_session() -> Config {
-    let path = env::split_paths(&env::var_os("KUBECONFIG").unwrap())
-        .next()
-        .unwrap()
-        .to_owned();
-
     let config;
 
-    if path.to_str().unwrap().contains("/kubesess/cache") {
-        let f = File::open(path).unwrap();
+    if KUBESESSCONFIG.is_empty() {
+        config = get();
+    } else {
+        let f = File::open(KUBESESSCONFIG.to_string()).unwrap();
 
         let mut reader = BufReader::new(f);
         let mut tmp = String::new();
@@ -118,8 +114,6 @@ pub fn get_current_session() -> Config {
             .expect("Unable to read file");
 
         config = serde_yaml::from_str(&tmp.trim()).unwrap();
-    } else {
-        config = get();
     }
 
     config

@@ -13,19 +13,17 @@ extern crate lazy_static;
 lazy_static! {
     static ref KUBECONFIG: String = {
         match env::var("KUBECONFIG") {
-            Ok(val) => {
-                let mut paths: String = String::new();
-                for s in val.split(":") {
-                    if s.contains("/kubesess/cache") {
-                        continue;
-                    }
-                    paths.push_str(s);
-                }
-                paths
-            }
+            Ok(val) => val,
             Err(_e) => format!("{}/.kube/config", dirs::home_dir().unwrap().display()),
         }
     };
+    static ref KUBESESSCONFIG: String = {
+        match env::var("KUBESESSCONFIG") {
+            Ok(val) => val,
+            Err(_e) => "".to_string()
+        }
+    };
+
     static ref DEST: String = format!(
         "{}/.kube/kubesess/cache",
         dirs::home_dir().unwrap().display()

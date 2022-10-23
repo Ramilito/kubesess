@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 kc() {
-  export KUBECONFIG=$(kubesess ${1:+"-v "$1} context);
+  export KUBESESSCONFIG=$(kubesess ${1:+"-v "$1} context);
 }
 
 kcd() {
-  export KUBECONFIG=$(kubesess ${1:+"-v "$1} default-context);
+  export KUBESESSCONFIG=$(kubesess ${1:+"-v "$1} default-context);
 }
 
 kn() {
-  export KUBECONFIG=$(kubesess ${1:+"-v "$1} namespace);
+  export KUBESESSCONFIG=$(kubesess ${1:+"-v "$1} namespace);
 }
 
 knd() {
