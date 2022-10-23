@@ -16,7 +16,7 @@ pub struct Context {
     pub user: String,
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Config {
     #[serde(skip_serializing_if = "String::is_empty", default)]
     pub kind: String,

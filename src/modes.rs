@@ -1,4 +1,4 @@
-use crate::{commands, config, Cli, DEST, KUBECONFIG};
+use crate::{commands, config, Cli, DEST, KUBECONFIG, model::Config};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
@@ -8,7 +8,7 @@ fn selection(value: Option<String>, callback: fn() -> String) -> String {
 }
 
 pub fn default_context(args: Cli) {
-    let config = config::get(None);
+    let config = config::get();
 
     if args.current {
         println!("{}", config.current_context);
@@ -40,7 +40,7 @@ pub fn context(args: Cli) {
         return;
     }
 
-    let config = config::get(None);
+    let config = config::get();
     let ctx = match args.value {
         None => {
             let mut options = Vec::new();
@@ -100,7 +100,7 @@ pub fn namespace(args: Cli) {
 }
 
 pub fn default_namespace(args: Cli) {
-    let config = config::get(None);
+    let config = config::get();
     let ctx = commands::get_current_context();
 
     if args.current {
@@ -133,7 +133,7 @@ pub fn default_namespace(args: Cli) {
 }
 
 pub fn completion_context(args: Cli) {
-    let config = config::get(None);
+    let config = config::get();
 
     let mut options = Vec::new();
     for context in &config.contexts {
