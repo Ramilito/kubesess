@@ -1,7 +1,5 @@
 use crate::model::{Config, Context, Contexts};
 use crate::{KUBECONFIG, KUBESESSCONFIG};
-
-use std::env;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
