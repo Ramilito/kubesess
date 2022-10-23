@@ -77,6 +77,9 @@ pub fn get() -> Config {
     let mut configs = Config::default();
 
     for s in p.split(":") {
+        if s.contains("/kubesess/cache") {
+            continue;
+        }
         let f = File::open(s).unwrap();
 
         let mut reader = BufReader::new(f);
@@ -86,6 +89,7 @@ pub fn get() -> Config {
             .expect("Unable to read file");
 
         let config: Config = serde_yaml::from_str(&tmp.trim()).unwrap();
+
         configs.contexts.extend(config.contexts);
     }
 
