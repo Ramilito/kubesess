@@ -135,6 +135,13 @@ kn  #kube_namespace: Sets namespace
 knd #kube_namespace_default: Sets namespace across all shells
 ```
 
+#### Multiple config files
+We follow kubectl recommended way of adding multiconfig files found [here](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#create-a-second-configuration-file).
+Example:
+```
+export KUBECONFIG=$HOME/.kube/config:$HOME/.kube/config-demo:$HOME/.kube/config-demo-2
+```
+
 #### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
 ```
 prompt_context() {
