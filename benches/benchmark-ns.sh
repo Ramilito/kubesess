@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 timekubesess(){
   start=`date +%s.%N`
   for i in $(seq 1 20); do
