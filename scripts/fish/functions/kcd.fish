@@ -4,5 +4,5 @@ function kcd --argument-names context --description "Switch global kubernetes co
         set -a cmd -v $context
     end
     set -l config (command $cmd) || return $status
-    set -gx KUBESESSCONFIG $config
+    set -gx KUBECONFIG $config
 end

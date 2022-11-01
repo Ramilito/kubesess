@@ -3,8 +3,8 @@
 timekubesess(){
   start=`date +%s.%N`
   for i in $(seq 1 20); do
-    export KUBESESSCONFIG=$(kubesess -v back-end namespace):$HOME/.kube/config;
-    export KUBESESSCONFIG=$(kubesess -v monitoring namespace):$HOME/.kube/config;
+    export KUBECONFIG=$(kubesess -v back-end namespace):$HOME/.kube/config;
+    export KUBECONFIG=$(kubesess -v monitoring namespace):$HOME/.kube/config;
   done
   end=`date +%s.%N`
   echo time

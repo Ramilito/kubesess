@@ -4,5 +4,5 @@ function kn --argument-names namespace --description "Switch current kubernetes 
         set -a cmd -v $namespace
     end
     set -l config (command $cmd) || return $status
-    set -gx KUBESESSCONFIG $config
+    set -gx KUBECONFIG $config
 end

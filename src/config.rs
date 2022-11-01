@@ -1,5 +1,5 @@
 use crate::model::{Config, Context, Contexts};
-use crate::{KUBECONFIG, KUBESESSCONFIG};
+use crate::KUBECONFIG;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
@@ -100,10 +100,10 @@ pub fn get() -> Config {
 pub fn get_current_session() -> Config {
     let config;
 
-    if KUBESESSCONFIG.is_empty() {
+    if KUBECONFIG.is_empty() {
         config = get();
     } else {
-        let f = File::open(KUBESESSCONFIG.to_string()).unwrap();
+        let f = File::open(KUBECONFIG.to_string()).unwrap();
 
         let mut reader = BufReader::new(f);
         let mut tmp = String::new();

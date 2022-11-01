@@ -17,12 +17,6 @@ lazy_static! {
             Err(_e) => format!("{}/.kube/config", dirs::home_dir().unwrap().display()),
         }
     };
-    static ref KUBESESSCONFIG: String = {
-        match env::var("KUBESESSCONFIG") {
-            Ok(val) => val,
-            Err(_e) => "".to_string()
-        }
-    };
     static ref DEST: String = format!(
         "{}/.kube/kubesess/cache",
         dirs::home_dir().unwrap().display()
@@ -64,7 +58,6 @@ impl Mode {
 }
 
 fn main() -> Result<(), io::Error> {
-    set_handlers();
     let args = Cli::parse();
 
     Mode::invoke(&args.mode);
@@ -72,9 +65,3 @@ fn main() -> Result<(), io::Error> {
     Ok(())
 }
 
-fn set_handlers() {
-    #[cfg(not(debug_assertions))]
-    std::panic::set_hook(Box::new(move |_info| {
-        std::process::exit(1);
-    }));
-}
