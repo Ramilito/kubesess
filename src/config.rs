@@ -107,12 +107,14 @@ pub fn get(path: Option<PathBuf>) -> Config {
 }
 
 pub fn get_current_session() -> Config {
-    let path = env::split_paths(&env::var_os("KUBECONFIG").unwrap())
-        .next()
-        .unwrap()
-        .to_owned();
-
-    let config = get(Some(path));
-
-    config
+    match &env::var_os("KUBECONFIG") {
+        Some(paths) => {
+            let path = env::split_paths(paths)
+                .next()
+                .unwrap()
+                .to_owned();
+            get(Some(path))
+        }
+        None => get(None),
+    }
 }
