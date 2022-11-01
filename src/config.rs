@@ -99,10 +99,11 @@ pub fn get() -> Config {
 
 pub fn get_current_session() -> Config {
     let config;
+    let current;
 
-    let mut current = KUBECONFIG.split(":").next().unwrap();
-
-    if !KUBESESSCONFIG.is_empty() {
+    if KUBESESSCONFIG.is_empty() {
+        current = KUBECONFIG.split(":").next().unwrap();
+    } else {
         current = KUBESESSCONFIG.as_str();
     }
 
