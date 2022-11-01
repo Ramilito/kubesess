@@ -1,3 +1,4 @@
+use crate::KUBECONFIG;
 use crate::model::{Config, Context, Contexts};
 
 use std::env;
@@ -107,14 +108,12 @@ pub fn get(path: Option<PathBuf>) -> Config {
 }
 
 pub fn get_current_session() -> Config {
-    match &env::var_os("KUBECONFIG") {
-        Some(paths) => {
-            let path = env::split_paths(paths)
-                .next()
-                .unwrap()
-                .to_owned();
-            get(Some(path))
-        }
-        None => get(None),
-    }
+   let path = env::split_paths(&KUBECONFIG.to_string())
+        .next()
+        .unwrap()
+        .to_owned();
+
+    let config = get(Some(path));
+
+    config
 }

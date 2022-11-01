@@ -4,12 +4,19 @@ mod model;
 mod modes;
 
 use clap::Parser;
+use std::env;
 use std::io;
+
 #[macro_use]
 extern crate lazy_static;
 
 lazy_static! {
-    static ref KUBECONFIG: String = format!("{}/.kube/config", dirs::home_dir().unwrap().display());
+    static ref KUBECONFIG: String = {
+        match env::var("KUBECONFIG") {
+            Ok(val) => val,
+            Err(_e) => format!("{}/.kube/config", dirs::home_dir().unwrap().display()),
+        }
+    };
     static ref DEST: String = format!(
         "{}/.kube/kubesess/cache",
         dirs::home_dir().unwrap().display()

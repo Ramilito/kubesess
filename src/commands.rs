@@ -1,5 +1,5 @@
-use crate::config;
 use crate::model::Config;
+use crate::{config, KUBECONFIG};
 use std::{
     env,
     io::Cursor,
@@ -78,7 +78,7 @@ pub fn selectable_list(input: Vec<String>) -> String {
         .unwrap_or_default(); // .unwrap_or_else(|| Vec::new());
 
     if selected_items.is_empty() {
-        println!("{}", env::var("KUBECONFIG").unwrap());
+        println!("{}", KUBECONFIG.to_string());
         panic!("No item selected");
     }
 
