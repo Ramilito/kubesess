@@ -1,3 +1,4 @@
+use crate::KUBECONFIG;
 use crate::model::{Config, Context, Contexts};
 use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
@@ -110,7 +111,6 @@ pub fn get_current_session() -> Config {
         reader
             .read_to_string(&mut tmp)
             .expect("Unable to read file");
-
         config = serde_yaml::from_str(&tmp.trim()).unwrap();
     }
 

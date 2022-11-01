@@ -23,7 +23,6 @@ lazy_static! {
             Err(_e) => "".to_string()
         }
     };
-
     static ref DEST: String = format!(
         "{}/.kube/kubesess/cache",
         dirs::home_dir().unwrap().display()
