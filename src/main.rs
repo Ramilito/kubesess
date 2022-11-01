@@ -58,17 +58,9 @@ impl Mode {
 }
 
 fn main() -> Result<(), io::Error> {
-    set_handlers();
     let args = Cli::parse();
 
     Mode::invoke(&args.mode);
 
     Ok(())
-}
-
-fn set_handlers() {
-    #[cfg(not(debug_assertions))]
-    std::panic::set_hook(Box::new(move |_info| {
-        std::process::exit(1);
-    }));
 }
