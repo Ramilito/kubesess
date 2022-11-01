@@ -1,4 +1,3 @@
-use crate::KUBECONFIG;
 use crate::model::{Config, Context, Contexts};
 use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
