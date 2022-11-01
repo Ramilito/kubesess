@@ -1,5 +1,5 @@
 use crate::model::{Config, Context, Contexts};
-use crate::KUBECONFIG;
+use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
@@ -100,18 +100,21 @@ pub fn get() -> Config {
 pub fn get_current_session() -> Config {
     let config;
 
-    if KUBECONFIG.is_empty() {
-        config = get();
-    } else {
-        let f = File::open(KUBECONFIG.to_string()).unwrap();
+    let mut current = KUBECONFIG.split(":").next().unwrap();
 
-        let mut reader = BufReader::new(f);
-        let mut tmp = String::new();
-        reader
-            .read_to_string(&mut tmp)
-            .expect("Unable to read file");
-        config = serde_yaml::from_str(&tmp.trim()).unwrap();
+    if !KUBESESSCONFIG.is_empty() {
+        current = KUBESESSCONFIG.as_str();
     }
+
+    let f = File::open(current).unwrap();
+
+    let mut reader = BufReader::new(f);
+    let mut tmp = String::new();
+    reader
+        .read_to_string(&mut tmp)
+        .expect("Unable to read file");
+
+    config = serde_yaml::from_str(&tmp.trim()).unwrap();
 
     config
 }

@@ -1,4 +1,4 @@
-use crate::{commands, config, Cli, DEST};
+use crate::{commands, config, Cli, DEST, KUBECONFIG};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
@@ -55,7 +55,12 @@ pub fn context(args: Cli) {
 
     commands::set_context(&ctx, &DEST, &config);
 
-    println!("{}/{}", &DEST.as_str(), str::replace(&ctx, ":", "_"));
+    println!(
+        "{}/{}:{}",
+        &DEST.as_str(),
+        str::replace(&ctx, ":", "_"),
+        KUBECONFIG.to_string()
+    );
 }
 
 pub fn namespace(args: Cli) {
@@ -87,9 +92,10 @@ pub fn namespace(args: Cli) {
     commands::set_namespace(&config.current_context, &ns, &DEST, &config);
 
     println!(
-        "{}/{}",
+        "{}/{}:{}",
         &DEST.as_str(),
-        str::replace(&config.current_context, ":", "_")
+        str::replace(&config.current_context, ":", "_"),
+        KUBECONFIG.to_string()
     );
 }
 
