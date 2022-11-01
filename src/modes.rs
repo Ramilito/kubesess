@@ -8,7 +8,7 @@ fn selection(value: Option<String>, callback: fn() -> String) -> String {
 }
 
 pub fn default_context(args: Cli) {
-    let config = config::get(None);
+    let config = config::get();
 
     if args.current {
         println!("{}", config.current_context);
@@ -40,7 +40,7 @@ pub fn context(args: Cli) {
         return;
     }
 
-    let config = config::get(None);
+    let config = config::get();
     let ctx = match args.value {
         None => {
             let mut options = Vec::new();
@@ -59,7 +59,7 @@ pub fn context(args: Cli) {
         "{}/{}:{}",
         &DEST.as_str(),
         str::replace(&ctx, ":", "_"),
-        KUBECONFIG.as_str()
+        KUBECONFIG.to_string()
     );
 }
 
@@ -95,12 +95,12 @@ pub fn namespace(args: Cli) {
         "{}/{}:{}",
         &DEST.as_str(),
         str::replace(&config.current_context, ":", "_"),
-        KUBECONFIG.as_str()
+        KUBECONFIG.to_string()
     );
 }
 
 pub fn default_namespace(args: Cli) {
-    let config = config::get(None);
+    let config = config::get();
     let ctx = commands::get_current_context();
 
     if args.current {
@@ -133,7 +133,7 @@ pub fn default_namespace(args: Cli) {
 }
 
 pub fn completion_context(args: Cli) {
-    let config = config::get(None);
+    let config = config::get();
 
     let mut options = Vec::new();
     for context in &config.contexts {

@@ -1,10 +1,8 @@
-use crate::KUBECONFIG;
 use crate::model::{Config, Context, Contexts};
-
-use std::env;
+use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> Config {
     let mut config: Config = serde_yaml::from_str(&strbuf).unwrap();
@@ -73,47 +71,51 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
     serde_yaml::to_writer(writer, &config).unwrap();
 }
 
-pub fn get(path: Option<PathBuf>) -> Config {
-    let p = match path {
-        Some(path) => {
-            if !path.as_path().exists() {
-                dirs::home_dir()
-                    .unwrap()
-                    .join(".kube/config")
-                    .as_path()
-                    .to_owned()
-            } else {
-                path
-            }
+pub fn get() -> Config {
+    let mut configs = Config::default();
+
+    for s in KUBECONFIG.rsplit(":") {
+        if s.contains("/kubesess/cache") {
+            continue;
         }
-        None => dirs::home_dir()
-            .unwrap()
-            .join(".kube/config")
-            .as_path()
-            .to_owned(),
-    };
+        let f = File::open(s).unwrap();
 
-    let f = File::open(p).unwrap();
+        let mut reader = BufReader::new(f);
+        let mut tmp = String::new();
+        reader
+            .read_to_string(&mut tmp)
+            .expect("Unable to read file");
 
-    let mut reader = BufReader::new(f);
-    let mut string = String::new();
+        let config: Config = serde_yaml::from_str(&tmp.trim()).unwrap();
 
-    reader
-        .read_to_string(&mut string)
-        .expect("Unable to read file");
+        configs.current_context = config.current_context;
+        configs.api_version = config.api_version;
+        configs.kind = config.kind;
+        configs.contexts.extend(config.contexts);
+    }
 
-    let config: Config = serde_yaml::from_str(&string.trim()).unwrap();
-
-    config
+    configs
 }
 
 pub fn get_current_session() -> Config {
-   let path = env::split_paths(&KUBECONFIG.to_string())
-        .next()
-        .unwrap()
-        .to_owned();
+    let config;
+    let current;
 
-    let config = get(Some(path));
+    if KUBESESSCONFIG.is_empty() {
+        current = KUBECONFIG.split(":").next().unwrap();
+    } else {
+        current = KUBESESSCONFIG.as_str();
+    }
+
+    let f = File::open(current).unwrap();
+
+    let mut reader = BufReader::new(f);
+    let mut tmp = String::new();
+    reader
+        .read_to_string(&mut tmp)
+        .expect("Unable to read file");
+
+    config = serde_yaml::from_str(&tmp.trim()).unwrap();
 
     config
 }

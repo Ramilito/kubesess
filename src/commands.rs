@@ -74,7 +74,7 @@ pub fn selectable_list(input: Vec<String>) -> String {
             Key::Enter => out.selected_items,
             _ => Vec::new(),
         })
-        .unwrap_or_default(); // .unwrap_or_else(|| Vec::new());
+        .unwrap_or_default();
 
     if selected_items.is_empty() {
         println!("{}", KUBECONFIG.to_string());

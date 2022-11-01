@@ -1,60 +1,50 @@
 use assert_cmd::prelude::*;
-use std::process::Command;
+use std::{env, process::Command};
 
 #[test]
 fn set_context() -> Result<(), Box<dyn std::error::Error>> {
-    let kubeconfig: String = format!("{}/.kube/config", dirs::home_dir().unwrap().display());
-    let dest: String = format!(
-        "{}/.kube/kubesess/cache",
-        dirs::home_dir().unwrap().display()
+    let expected: String = format!(
+        "{}/.kube/kubesess/cache/docker-desktop:{}",
+        dirs::home_dir().unwrap().display(),
+        env::var("KUBECONFIG").unwrap()
     );
 
     let mut cmd = Command::cargo_bin("kubesess")?;
     let output = cmd.arg("-v docker-desktop").arg("context").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
-
-    assert_eq!(
-        output_string,
-        format!("{}/docker-desktop:{}", dest, kubeconfig)
-    );
+    assert_eq!(output_string, expected);
 
     Ok(())
 }
 
 #[test]
 fn set_default_context() -> Result<(), Box<dyn std::error::Error>> {
-    let kubeconfig: String = format!("{}/.kube/config", dirs::home_dir().unwrap().display());
+    let expected: String = env::var("KUBECONFIG").unwrap();
+
     let mut cmd = Command::cargo_bin("kubesess")?;
 
     let output = cmd.arg("-v docker-desktop").arg("default-context").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
 
-    assert_eq!(
-        output_string,
-        format!("{}", kubeconfig)
-    );
+    assert_eq!(output_string, expected);
 
     Ok(())
 }
 
 #[test]
 fn set_namespace() -> Result<(), Box<dyn std::error::Error>> {
-    let kubeconfig: String = format!("{}/.kube/config", dirs::home_dir().unwrap().display());
-    let dest: String = format!(
-        "{}/.kube/kubesess/cache",
-        dirs::home_dir().unwrap().display()
+    let expected: String = format!(
+        "{}/.kube/kubesess/cache/docker-desktop:{}",
+        dirs::home_dir().unwrap().display(),
+        env::var("KUBECONFIG").unwrap()
     );
-
 
     let mut cmd = Command::cargo_bin("kubesess")?;
 
     let output = cmd.arg("-v default").arg("namespace").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
 
-    assert_eq!(
-        output_string,
-        format!("{}/docker-desktop:{}", dest, kubeconfig)
-    );
+    assert_eq!(output_string, expected);
 
     Ok(())
 }
@@ -66,11 +56,7 @@ fn set_default_namespace() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd.arg("-v default").arg("default-namespace").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
 
-    assert_eq!(
-        output_string,
-        format!("")
-    );
+    assert_eq!(output_string, format!(""));
 
     Ok(())
 }
-

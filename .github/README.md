@@ -92,7 +92,7 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 #### Binary
 Download and extract the binary.
 ```zsh
-KUBESESS_VERSION=1.2.8 && \
+KUBESESS_VERSION=1.2.9 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
 mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz -C $HOME/.kube/kubesess && \
@@ -135,6 +135,15 @@ kn  #kube_namespace: Sets namespace
 knd #kube_namespace_default: Sets namespace across all shells
 ```
 
+#### Multiple config files
+We follow kubectl recommended way of adding multiconfig files found [here](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#create-a-second-configuration-file).
+Example:
+```
+export KUBECONFIG=$HOME/.kube/config:$HOME/.kube/config-demo:$HOME/.kube/config-demo-2
+```
+
+> :Note: **The order is important*: the first file will be the master config!
+
 #### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
 ```
 prompt_context() {
@@ -171,8 +180,9 @@ RPROMPT='$(prompt_context)'
 - [x] Add tests 
 - [x] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [x] Add to brew
+- [x] Add support for multiple .kube/config files
+- [ ] Add support for multiple namespace per session
 - [ ] Add error handling
-- [ ] Add support for multiple .kube/config files
 
 ## Troubleshooting
 
