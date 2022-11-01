@@ -30,7 +30,7 @@ pub fn default_context(args: Cli) {
     commands::set_default_context(&ctx);
     commands::set_context(&ctx, &DEST, &config);
 
-    println!("");
+    println!("{}", KUBECONFIG.as_str());
 }
 
 pub fn context(args: Cli) {
