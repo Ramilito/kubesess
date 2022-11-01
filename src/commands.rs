@@ -1,7 +1,6 @@
 use crate::model::Config;
 use crate::{config, KUBECONFIG};
 use std::{
-    env,
     io::Cursor,
     process::{Command, Stdio},
 };
