@@ -78,15 +78,7 @@ pub fn get() -> Config {
         if s.contains("/kubesess/cache") {
             continue;
         }
-        let f = File::open(s).unwrap();
-
-        let mut reader = BufReader::new(f);
-        let mut tmp = String::new();
-        reader
-            .read_to_string(&mut tmp)
-            .expect("Unable to read file");
-
-        let config: Config = serde_yaml::from_str(&tmp.trim()).unwrap();
+        let config: Config = get_config(s);
 
         configs.current_context = config.current_context;
         configs.api_version = config.api_version;
@@ -94,7 +86,33 @@ pub fn get() -> Config {
         configs.contexts.extend(config.contexts);
     }
 
+    let dir = format!("{}/.kube", dirs::home_dir().unwrap().display());
+    for entry in fs::read_dir(dir).unwrap() {
+        let path = entry.unwrap().path();
+        if let Some(extension) = path.extension() {
+            if extension == "yaml" {
+                let config: Config = get_config(path.to_str().unwrap());
+
+                configs.contexts.extend(config.contexts);
+            }
+        }
+    }
+
     configs
+}
+
+fn get_config(path: &str) -> Config {
+    let f = File::open(path).unwrap();
+
+    let mut reader = BufReader::new(f);
+    let mut tmp = String::new();
+    reader
+        .read_to_string(&mut tmp)
+        .expect("Unable to read file");
+
+    let config: Config = serde_yaml::from_str(&tmp.trim()).unwrap();
+
+    config
 }
 
 pub fn get_current_session() -> Config {
