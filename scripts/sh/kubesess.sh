@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 
+__kubesess_export() {
+  local OUTPUT
+  OUTPUT="$(kubesess "$@")" || return $?
+  export KUBECONFIG="$OUTPUT"
+}
+
 kc() {
-  export KUBECONFIG=$(kubesess ${1:+"-v "$1} context);
+  __kubesess_export ${1:+"-v "$1} context
 }
 
 kcd() {
-  export KUBECONFIG=$(kubesess ${1:+"-v "$1} default-context);
+  __kubesess_export ${1:+"-v "$1} default-context
 }
 
 kn() {
-  export KUBECONFIG=$(kubesess ${1:+"-v "$1} namespace);
+  __kubesess_export ${1:+"-v "$1} namespace
 }
 
 knd() {
