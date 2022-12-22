@@ -1,5 +1,5 @@
 use crate::model::Config;
-use crate::{config, ORIGINALKUBECONFIG};
+use crate::config;
 
 use std::process;
 use std::{
@@ -79,7 +79,7 @@ pub fn selectable_list(input: Vec<String>) -> String {
         .unwrap_or_default();
 
     if selected_items.is_empty() {
-        println!("{}", ORIGINALKUBECONFIG.to_string());
+        eprintln!("No item selected");
         process::exit(1);
     }
 
