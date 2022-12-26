@@ -11,12 +11,6 @@ use std::io;
 extern crate lazy_static;
 
 lazy_static! {
-    static ref ORIGINALKUBECONFIG: String = {
-        match env::var("KUBECONFIG") {
-            Ok(val) => val,
-            Err(_e) => format!("{}/.kube/config", dirs::home_dir().unwrap().display()),
-        }
-    };
     static ref KUBECONFIG: String = {
         match env::var("KUBECONFIG") {
             Ok(val) => {
