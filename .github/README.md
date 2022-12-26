@@ -136,13 +136,15 @@ knd #kube_namespace_default: Sets namespace across all shells
 ```
 
 #### Multiple config files
-We follow kubectl recommended way of adding multiconfig files found [here](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#create-a-second-configuration-file).
+We have two ways of handling multiple config files, the first one is to use kubectl recommended way of adding multiconfig files found [here](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#create-a-second-configuration-file).
 Example:
 ```
 export KUBECONFIG=$HOME/.kube/config:$HOME/.kube/config-demo:$HOME/.kube/config-demo-2
 ```
 
 > :Note: **The order is important*: the first file will be the master config!
+
+The second way is to let Kubesess handle it by adding one or more .yaml files under the $HOME/.kube folder and it will be automatically merged.
 
 #### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
 ```
