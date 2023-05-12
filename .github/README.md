@@ -120,11 +120,11 @@ brew install kubesess
 ```
 
 Add the following to your .zshrc:
-
 ```zsh
 ${HOMEBREW_PREFIX}/share/zsh/site-functions/kubesess.sh
 ```
 
+Or if you use fish:
 ```fish
 cp /$HOMEBREW_PREFIX/share/fish/vendor_functions.d/{kcd.fish,kc.fish,knd.fish,kn.fish} ~/.config/fish/functions/
 ```
