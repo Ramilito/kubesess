@@ -118,7 +118,16 @@ rsync -a ~/.kube/kubesess/scripts/fish/ ~/.config/fish/
 ```zsh
 brew install kubesess
 ```
-If you have https://docs.brew.sh/Shell-Completion setup then you are done, if not, you will need to source the script wrapper manually like in the binary installation.
+
+Add the following to your .zshrc:
+
+```zsh
+${HOMEBREW_PREFIX}/share/zsh/site-functions/kubesess.sh
+```
+
+```fish
+cp /$HOMEBREW_PREFIX/share/fish/vendor_functions.d/{kcd.fish,kc.fish,knd.fish,kn.fish} ~/.config/fish/functions/
+```
 
 ## Usage
 
