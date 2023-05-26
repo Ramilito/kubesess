@@ -121,7 +121,9 @@ brew install kubesess
 
 Add the following to your .zshrc:
 ```zsh
-${HOMEBREW_PREFIX}/share/zsh/site-functions/kubesess.sh
+source ${HOMEBREW_PREFIX}/share/zsh/site-functions/kubesess.sh
+source ${HOMEBREW_PREFIX}/opt/kubesess/etc/bash_completion.d/completion.sh
+
 ```
 
 Or if you use fish:
