@@ -1,4 +1,4 @@
-use crate::model::Config;
+use crate::model::KubeConfig;
 use crate::config;
 
 use std::process;
@@ -86,12 +86,12 @@ pub fn selectable_list(input: Vec<String>) -> String {
     selected_items[0].output().to_string()
 }
 
-pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Config) {
+pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &KubeConfig) {
     let choice = config.contexts.iter().find(|x| x.name == ctx);
     config::write(choice.unwrap(), Some(selection), temp_dir)
 }
 
-pub fn set_context(ctx: &str, temp_dir: &str, config: &Config) {
+pub fn set_context(ctx: &str, temp_dir: &str, config: &KubeConfig) {
     let choice = config.contexts.iter().find(|x| x.name == ctx);
     config::write(choice.unwrap(), None, temp_dir);
 }

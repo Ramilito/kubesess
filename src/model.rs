@@ -17,7 +17,7 @@ pub struct Context {
 }
 
 #[derive(Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct Config {
+pub struct KubeConfig {
     #[serde(skip_serializing_if = "String::is_empty", default)]
     pub kind: String,
     #[serde(rename = "apiVersion")]

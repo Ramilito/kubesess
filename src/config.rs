@@ -1,11 +1,11 @@
-use crate::model::{Config, Context, Contexts};
+use crate::model::{KubeConfig, Context, Contexts};
 use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
 
-fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> Config {
-    let mut config: Config = serde_yaml::from_str(&strbuf).unwrap();
+fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> KubeConfig {
+    let mut config: KubeConfig = serde_yaml::from_str(&strbuf).unwrap();
     config.api_version = "v1".to_string();
     config.kind = "Config".to_string();
     config.current_context = format!("{}", ctx.name);
@@ -71,14 +71,14 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
     serde_yaml::to_writer(writer, &config).unwrap();
 }
 
-pub fn get() -> Config {
-    let mut configs = Config::default();
+pub fn get() -> KubeConfig {
+    let mut configs = KubeConfig::default();
 
     for s in KUBECONFIG.rsplit(":") {
         if s.contains("/kubesess/cache") {
             continue;
         }
-        let config: Config = get_config(s);
+        let config: KubeConfig = get_config(s);
 
         configs.current_context = config.current_context;
         configs.api_version = config.api_version;
@@ -91,7 +91,7 @@ pub fn get() -> Config {
         let path = entry.unwrap().path();
         if let Some(extension) = path.extension() {
             if extension == "yaml" {
-                let config: Config = get_config(path.to_str().unwrap());
+                let config: KubeConfig = get_config(path.to_str().unwrap());
 
                 configs.contexts.extend(config.contexts);
             }
@@ -101,7 +101,7 @@ pub fn get() -> Config {
     configs
 }
 
-fn get_config(path: &str) -> Config {
+fn get_config(path: &str) -> KubeConfig {
     let f = File::open(path).unwrap();
 
     let mut reader = BufReader::new(f);
@@ -110,12 +110,12 @@ fn get_config(path: &str) -> Config {
         .read_to_string(&mut tmp)
         .expect("Unable to read file");
 
-    let config: Config = serde_yaml::from_str(&tmp.trim()).unwrap();
+    let config: KubeConfig = serde_yaml::from_str(&tmp.trim()).unwrap();
 
     config
 }
 
-pub fn get_current_session() -> Config {
+pub fn get_current_session() -> KubeConfig {
     let config;
     let current;
 
