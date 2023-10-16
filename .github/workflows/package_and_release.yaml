@@ -25,11 +25,11 @@ jobs:
           rust: stable
           target: x86_64-apple-darwin
           name: x86_64-macos
-        - build: macos-arm
-          os: macos-12
-          rust: stable
-          target: aarch64-apple-darwin
-          name: aarch64-macos
+        # - build: macos-arm
+        #   os: macos-12
+        #   rust: stable
+        #   target: aarch64-apple-darwin
+        #   name: aarch64-macos
     steps:
       - uses: actions/checkout@v3
         with:
