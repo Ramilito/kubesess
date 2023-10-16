@@ -11,6 +11,8 @@ jobs:
         target:
           - armv7-unknown-linux-musleabi
           - x86_64-unknown-linux-gnu
+          - x86_64-apple-darwin
+          - aarch64-apple-darwin
     steps:
       - uses: actions/checkout@v3
         with:
