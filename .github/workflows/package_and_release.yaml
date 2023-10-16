@@ -45,7 +45,7 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --release --target=${{ matrix.target }}
+          args: --release --target ${{ matrix.target }}
 
       - name: Get latest tag
         if: github.event_name == 'release'
