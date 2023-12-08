@@ -1,4 +1,6 @@
-use crate::{commands, config, Cli, DEST, KUBECONFIG};
+use std::process;
+
+use crate::{commands::{self}, config, Cli, DEST, KUBECONFIG};
 
 fn selection(value: Option<String>, callback: fn() -> String) -> String {
     match value {
@@ -28,9 +30,13 @@ pub fn default_context(args: Cli) {
     };
 
     commands::set_default_context(&ctx);
-    commands::set_context(&ctx, &DEST, &config);
-
-    println!("{}", KUBECONFIG.as_str());
+    match commands::set_context(&ctx, &DEST, &config) {
+        Ok(()) => println!("{}", KUBECONFIG.as_str()),
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            process::exit(1);
+        }
+    }
 }
 
 pub fn context(args: Cli) {
@@ -53,14 +59,20 @@ pub fn context(args: Cli) {
         Some(x) => x.trim().to_string(),
     };
 
-    commands::set_context(&ctx, &DEST, &config);
-
-    println!(
-        "{}/{}:{}",
-        &DEST.as_str(),
-        str::replace(&ctx, ":", "_"),
-        KUBECONFIG.to_string()
-    );
+    match commands::set_context(&ctx, &DEST, &config) {
+        Ok(()) => {
+            println!(
+                "{}/{}:{}",
+                &DEST.as_str(),
+                str::replace(&ctx, ":", "_"),
+                KUBECONFIG.to_string()
+            );
+        },
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            process::exit(1);
+        }
+    }
 }
 
 pub fn namespace(args: Cli) {

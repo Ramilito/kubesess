@@ -1,6 +1,7 @@
 use crate::model::KubeConfig;
 use crate::config;
 
+use core::fmt;
 use std::process;
 use std::{
     io::Cursor,
@@ -91,7 +92,26 @@ pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &KubeCo
     config::write(choice.unwrap(), Some(selection), temp_dir)
 }
 
-pub fn set_context(ctx: &str, temp_dir: &str, config: &KubeConfig) {
-    let choice = config.contexts.iter().find(|x| x.name == ctx);
-    config::write(choice.unwrap(), None, temp_dir);
+pub fn set_context(ctx: &str, temp_dir: &str, config: &KubeConfig) -> Result<(), SetContextError> {
+    if let Some(choice) = config.contexts.iter().find(|x| x.name == ctx) {
+        config::write(choice, None, temp_dir);
+        Ok(())
+    } else {
+        Err(SetContextError::ContextNotFound{ctx: ctx.to_owned()})
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum SetContextError {
+    ContextNotFound {
+        ctx : String
+    },
+}
+
+impl fmt::Display for SetContextError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            SetContextError::ContextNotFound{ctx} => write!(f, "couldn't find context {}", ctx),
+        }
+    }
 }
