@@ -111,7 +111,7 @@ pub enum SetContextError {
 impl fmt::Display for SetContextError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            SetContextError::ContextNotFound{ctx} => write!(f, "couldn't find context {}", ctx),
+            SetContextError::ContextNotFound{ctx} => write!(f, "no context exists with the name: \"{}\"", ctx),
         }
     }
 }

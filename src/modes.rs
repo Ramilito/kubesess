@@ -33,7 +33,7 @@ pub fn default_context(args: Cli) {
     match commands::set_context(&ctx, &DEST, &config) {
         Ok(()) => println!("{}", KUBECONFIG.as_str()),
         Err(e) => {
-            eprintln!("Error: {}", e);
+            eprintln!("error: {}", e);
             process::exit(1);
         }
     }
@@ -69,7 +69,7 @@ pub fn context(args: Cli) {
             );
         },
         Err(e) => {
-            eprintln!("Error: {}", e);
+            eprintln!("error: {}", e);
             process::exit(1);
         }
     }
