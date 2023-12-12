@@ -15,7 +15,7 @@ lazy_static! {
         match env::var("KUBECONFIG") {
             Ok(val) => {
                 let mut paths: String = String::new();
-                for s in val.split_inclusive(":") {
+                for s in val.split_inclusive(':') {
                     if s.contains("/kubesess/cache") {
                         continue;
                     }
@@ -30,7 +30,7 @@ lazy_static! {
         match env::var("KUBECONFIG") {
             Ok(val) => {
                 let mut paths: String = String::new();
-                for s in val.split(":") {
+                for s in val.split(':') {
                     if s.contains("/kubesess/cache") {
                         paths.push_str(s);
                     }

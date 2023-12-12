@@ -15,7 +15,7 @@ pub fn set_default_namespace(ns: &str, ctx: &str) {
         .arg("config")
         .arg(format!(
             "--kubeconfig={}/.kube/config",
-            dirs::home_dir().unwrap().display().to_string()
+            dirs::home_dir().unwrap().display()
         ))
         .arg("set-context")
         .arg(ctx)
@@ -32,7 +32,7 @@ pub fn set_default_context(ctx: &str) {
         .arg("config")
         .arg(format!(
             "--kubeconfig={}/.kube/config",
-            dirs::home_dir().unwrap().display().to_string()
+            dirs::home_dir().unwrap().display()
         ))
         .arg("use-context")
         .arg(ctx)
