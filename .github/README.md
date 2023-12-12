@@ -1,5 +1,9 @@
 # kubesess(ion)
 
+<p align="center">
+  <img width="512" height="512" src="https://github.com/Ramilito/kubesess/assets/8473233/c84dd0b1-0856-414b-98ff-7f3b4a9a301e">
+</p>
+
 <details>
   <summary>Table of Contents</summary>
 
