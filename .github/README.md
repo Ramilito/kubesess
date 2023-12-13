@@ -92,7 +92,7 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 #### Binary
 Download and extract the binary.
 ```zsh
-KUBESESS_VERSION=1.2.10 && \
+KUBESESS_VERSION=1.2.11 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
 mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz -C $HOME/.kube/kubesess && \
