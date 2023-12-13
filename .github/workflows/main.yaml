@@ -15,7 +15,6 @@ jobs:
   run_tests:
     uses: ./.github/workflows/run_tests.yaml
     with:
-      working-directory: ${{ needs.set_project_folder.outputs.project_folder }}
       KUBECONFIG: ${{ vars.KUBECONFIG }}
   package_and_release:
     if: github.event_name == 'release'
