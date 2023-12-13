@@ -1,7 +1,8 @@
 on:
   workflow_call:
-    vars:
+    inputs:
       KUBECONFIG:
+        type: string
         required: true
 
 name: "[reusable] rust test"
@@ -14,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - uses: tale/kubectl-action@v1
         with:
-          base64-kube-config: ${{ vars.KUBECONFIG }}
+          base64-kube-config: ${{ inputs.KUBECONFIG }}
       - name: Test
         run: |
           cargo check
