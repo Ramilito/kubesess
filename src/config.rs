@@ -5,24 +5,27 @@ use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
 
 fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> KubeConfig {
-    let mut config: KubeConfig = serde_yaml::from_str(&strbuf).unwrap();
+    let mut config: KubeConfig = serde_yaml::from_str(strbuf).unwrap();
     config.api_version = "v1".to_string();
     config.kind = "Config".to_string();
-    config.current_context = format!("{}", ctx.name);
+    config.current_context = ctx.name.to_string();
 
-    let ns = if ns.is_some() {
-        ns.unwrap().to_string()
-    } else if config.contexts.len() > 0 && !config.contexts[0].context.namespace.is_empty() {
-        config.contexts[0].context.namespace.to_string()
-    } else if !ctx.context.namespace.is_empty() {
-        ctx.context.namespace.to_string()
-    } else {
-        "default".to_string()
+    let ns = match ns {
+        Some(namespace) => namespace.to_string(),
+        None => {
+            if !config.contexts.is_empty() && !config.contexts[0].context.namespace.is_empty() {
+                config.contexts[0].context.namespace.to_string()
+            } else if !ctx.context.namespace.is_empty() {
+                ctx.context.namespace.to_string()
+            } else {
+                "default".to_string()
+            }
+        }
     };
 
     config.contexts = vec![Contexts {
         context: Context {
-            namespace: ns.to_string(),
+            namespace: ns,
             cluster: ctx.context.cluster.to_string(),
             user: ctx.context.user.to_string(),
         },
@@ -66,7 +69,7 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
 
     let options = get_file(&path);
     let writer = BufWriter::new(&options);
-    let config = build(&ctx, namespace, &strbuf);
+    let config = build(ctx, namespace, &strbuf);
 
     serde_yaml::to_writer(writer, &config).unwrap();
 }
@@ -74,7 +77,7 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
 pub fn get() -> KubeConfig {
     let mut configs = KubeConfig::default();
 
-    for s in KUBECONFIG.rsplit(":") {
+    for s in KUBECONFIG.rsplit(':') {
         if s.contains("/kubesess/cache") {
             continue;
         }
@@ -110,20 +113,17 @@ fn get_config(path: &str) -> KubeConfig {
         .read_to_string(&mut tmp)
         .expect("Unable to read file");
 
-    let config: KubeConfig = serde_yaml::from_str(&tmp.trim()).unwrap();
+    let config: KubeConfig = serde_yaml::from_str(tmp.trim()).unwrap();
 
     config
 }
 
 pub fn get_current_session() -> KubeConfig {
-    let config;
-    let current;
-
-    if KUBESESSCONFIG.is_empty() {
-        current = KUBECONFIG.split(":").next().unwrap();
+    let current= if KUBESESSCONFIG.is_empty() {
+        KUBECONFIG.split(':').next().unwrap()
     } else {
-        current = KUBESESSCONFIG.as_str();
-    }
+        KUBESESSCONFIG.as_str()
+    };
 
     let f = File::open(current).unwrap();
 
@@ -133,7 +133,7 @@ pub fn get_current_session() -> KubeConfig {
         .read_to_string(&mut tmp)
         .expect("Unable to read file");
 
-    config = serde_yaml::from_str(&tmp.trim()).unwrap();
+    let config = serde_yaml::from_str(tmp.trim()).unwrap();
 
     config
 }
