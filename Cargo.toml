@@ -11,6 +11,7 @@ serde_yaml = "0.9.3"
 serde = { version = "1.0.141", features = ["derive"] }
 lazy_static = "1.4.0"
 skim = "0.9.4"
+thiserror = "1.0.56"
 
 [dev-dependencies]
 assert_cmd = "2.0"
