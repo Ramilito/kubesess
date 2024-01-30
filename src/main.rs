@@ -2,7 +2,9 @@ mod commands;
 mod config;
 mod model;
 mod modes;
+mod error;
 
+use crate::error::Error;
 use clap::Parser;
 use std::env;
 use std::io;
@@ -69,7 +71,7 @@ enum Mode {
 }
 
 impl Mode {
-    fn invoke(&self) -> Result <(), String> {
+    fn invoke(&self) -> Result <(), Error> {
         let args = Cli::parse();
         match self {
             Mode::Namespace => modes::namespace(args),

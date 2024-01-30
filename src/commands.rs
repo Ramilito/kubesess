@@ -1,7 +1,6 @@
-use crate::model::KubeConfig;
+use crate::{error::SetContextError, model::KubeConfig};
 use crate::config;
 
-use core::fmt;
 use std::{
     io::Cursor,
     process::{Command, Stdio},
@@ -92,21 +91,6 @@ pub fn set_context(ctx: &str, temp_dir: &str, config: &KubeConfig) -> Result<(),
         config::write(choice, None, temp_dir);
         Ok(())
     } else {
-        Err(SetContextError::ContextNotFound{ctx: ctx.to_owned()})
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum SetContextError {
-    ContextNotFound {
-        ctx : String
-    },
-}
-
-impl fmt::Display for SetContextError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            SetContextError::ContextNotFound{ctx} => write!(f, "no context exists with the name: \"{}\"", ctx),
-        }
+        Err(SetContextError::KubeContextNotFound{ctx: ctx.to_owned()})
     }
 }

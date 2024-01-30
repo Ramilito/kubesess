@@ -1,6 +1,6 @@
-use crate::{commands::{self}, config, Cli, DEST, KUBECONFIG};
+use crate::{commands::{self}, config, error::Error, Cli, DEST, KUBECONFIG};
 
-pub fn default_context(args: Cli) -> Result<(), String> {
+pub fn default_context(args: Cli) -> Result<(), Error> {
     let config = config::get();
 
     if args.current {
@@ -14,7 +14,8 @@ pub fn default_context(args: Cli) -> Result<(), String> {
                 .map(|context| context.name.to_string())
                 .collect();
 
-            commands::selectable_list(options).expect("No item selected")
+            commands::selectable_list(options)
+                .ok_or(Error::NoItemSelected{prompt: "context" })?
         }
         Some(x) => x.trim().to_string(),
     };
@@ -22,7 +23,7 @@ pub fn default_context(args: Cli) -> Result<(), String> {
     commands::set_default_context(&ctx);
 
     let set_context_result = commands::set_context(&ctx, &DEST, &config)
-        .map_err(|err| err.to_string());
+        .map_err(Error::SetContext);
 
     if set_context_result.is_ok() {
         println!("{}", KUBECONFIG.as_str());
@@ -31,7 +32,7 @@ pub fn default_context(args: Cli) -> Result<(), String> {
     set_context_result
 }
 
-pub fn context(args: Cli) -> Result<(), String> {
+pub fn context(args: Cli) -> Result<(), Error> {
     if args.current {
         let config = config::get_current_session();
         println!("{}", config.current_context);
@@ -45,13 +46,14 @@ pub fn context(args: Cli) -> Result<(), String> {
                 .map(|context| context.name.to_string())
                 .collect();
 
-            commands::selectable_list(options).ok_or("No item selected")?
+            commands::selectable_list(options)
+                .ok_or(Error::NoItemSelected{prompt: "context"})?
         }
         Some(x) => x.trim().to_string(),
     };
 
     let set_context_result = commands::set_context(&ctx, &DEST, &config)
-        .map_err(|err| err.to_string());
+        .map_err(Error::SetContext);
 
     if set_context_result.is_ok() {
         println!(
@@ -65,7 +67,7 @@ pub fn context(args: Cli) -> Result<(), String> {
     set_context_result
 }
 
-pub fn namespace(args: Cli) -> Result<(), String> {
+pub fn namespace(args: Cli) -> Result<(), Error> {
     let config = config::get_current_session();
     if args.current {
         let ctx = config
@@ -89,7 +91,8 @@ pub fn namespace(args: Cli) -> Result<(), String> {
     let ns = match args.value {
         None => {
             let namespaces : Vec<String> = commands::get_namespaces();
-            commands::selectable_list(namespaces).ok_or("No item selected")?
+            commands::selectable_list(namespaces)
+                .ok_or(Error::NoItemSelected{prompt: "namespace"})?
         }
         Some(x) => x.trim().to_string(),
     };
@@ -105,7 +108,7 @@ pub fn namespace(args: Cli) -> Result<(), String> {
     Ok(())
 }
 
-pub fn default_namespace(args: Cli) -> Result<(), String> {
+pub fn default_namespace(args: Cli) -> Result<(), Error> {
     let config = config::get();
     let ctx = commands::get_current_context();
 
@@ -132,7 +135,8 @@ pub fn default_namespace(args: Cli) -> Result<(), String> {
     let ns = match args.value {
         None => {
             let namespaces : Vec<String> = commands::get_namespaces();
-            commands::selectable_list(namespaces).ok_or("No item selected")?
+            commands::selectable_list(namespaces)
+                .ok_or(Error::NoItemSelected{prompt: "namespace"})?
         }
         Some(x) => x.trim().to_string(),
     };
