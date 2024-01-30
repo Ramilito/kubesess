@@ -1,81 +1,71 @@
-use std::process;
-
 use crate::{commands::{self}, config, Cli, DEST, KUBECONFIG};
 
-fn selection(value: Option<String>, callback: fn() -> String) -> String {
-    match value {
-        None => callback(),
-        Some(x) => x.trim().to_string(),
-    }
-}
-
-pub fn default_context(args: Cli) {
+pub fn default_context(args: Cli) -> Result<(), String> {
     let config = config::get();
 
     if args.current {
         println!("{}", config.current_context);
-        return;
+        return Ok(());
     }
 
     let ctx = match args.value {
         None => {
-            let mut options = Vec::new();
-            for context in &config.contexts {
-                options.push(context.name.to_string());
-            }
+            let options : Vec<String> = config.contexts.iter()
+                .map(|context| context.name.to_string())
+                .collect();
 
-            commands::selectable_list(options)
+            commands::selectable_list(options).expect("No item selected")
         }
         Some(x) => x.trim().to_string(),
     };
 
     commands::set_default_context(&ctx);
-    match commands::set_context(&ctx, &DEST, &config) {
-        Ok(()) => println!("{}", KUBECONFIG.as_str()),
-        Err(e) => {
-            eprintln!("error: {}", e);
-            process::exit(1);
-        }
+
+    let set_context_result = commands::set_context(&ctx, &DEST, &config)
+        .map_err(|err| err.to_string());
+
+    if set_context_result.is_ok() {
+        println!("{}", KUBECONFIG.as_str());
     }
+
+    set_context_result
 }
 
-pub fn context(args: Cli) {
+pub fn context(args: Cli) -> Result<(), String> {
     if args.current {
         let config = config::get_current_session();
         println!("{}", config.current_context);
-        return;
+        return Ok(());
     }
 
     let config = config::get();
     let ctx = match args.value {
         None => {
-            let mut options = Vec::new();
-            for context in &config.contexts {
-                options.push(context.name.to_string());
-            }
+            let options : Vec<String> = config.contexts.iter()
+                .map(|context| context.name.to_string())
+                .collect();
 
-            commands::selectable_list(options)
+            commands::selectable_list(options).ok_or("No item selected")?
         }
         Some(x) => x.trim().to_string(),
     };
 
-    match commands::set_context(&ctx, &DEST, &config) {
-        Ok(()) => {
-            println!(
-                "{}/{}:{}",
-                &DEST.as_str(),
-                str::replace(&ctx, ":", "_"),
-                KUBECONFIG.to_string()
-            );
-        },
-        Err(e) => {
-            eprintln!("error: {}", e);
-            process::exit(1);
-        }
+    let set_context_result = commands::set_context(&ctx, &DEST, &config)
+        .map_err(|err| err.to_string());
+
+    if set_context_result.is_ok() {
+        println!(
+            "{}/{}:{}",
+            &DEST.as_str(),
+            str::replace(&ctx, ":", "_"),
+            KUBECONFIG.to_string()
+        );
     }
+
+    set_context_result
 }
 
-pub fn namespace(args: Cli) {
+pub fn namespace(args: Cli) -> Result<(), String> {
     let config = config::get_current_session();
     if args.current {
         let ctx = config
@@ -93,13 +83,16 @@ pub fn namespace(args: Cli) {
             }
             None => println!("default"),
         }
-        return;
+        return Ok(());
     }
 
-    let ns = selection(args.value, || -> String {
-        let namespaces = commands::get_namespaces();
-        commands::selectable_list(namespaces)
-    });
+    let ns = match args.value {
+        None => {
+            let namespaces : Vec<String> = commands::get_namespaces();
+            commands::selectable_list(namespaces).ok_or("No item selected")?
+        }
+        Some(x) => x.trim().to_string(),
+    };
 
     commands::set_namespace(&config.current_context, &ns, &DEST, &config);
 
@@ -109,9 +102,10 @@ pub fn namespace(args: Cli) {
         str::replace(&config.current_context, ":", "_"),
         KUBECONFIG.to_string()
     );
+    Ok(())
 }
 
-pub fn default_namespace(args: Cli) {
+pub fn default_namespace(args: Cli) -> Result<(), String> {
     let config = config::get();
     let ctx = commands::get_current_context();
 
@@ -132,16 +126,20 @@ pub fn default_namespace(args: Cli) {
             None => println!("default"),
         }
 
-        return;
+        return Ok(());
     }
 
-    let ns = selection(args.value, || -> String {
-        let namespaces = commands::get_namespaces();
-        commands::selectable_list(namespaces)
-    });
+    let ns = match args.value {
+        None => {
+            let namespaces : Vec<String> = commands::get_namespaces();
+            commands::selectable_list(namespaces).ok_or("No item selected")?
+        }
+        Some(x) => x.trim().to_string(),
+    };
 
     commands::set_default_namespace(&ns, &ctx);
     commands::set_namespace(&ctx, &ns, &DEST, &config);
+    Ok(())
 }
 
 pub fn completion_context(args: Cli) {

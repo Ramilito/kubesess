@@ -6,6 +6,7 @@ mod modes;
 use clap::Parser;
 use std::env;
 use std::io;
+use std::process;
 
 #[macro_use]
 extern crate lazy_static;
@@ -68,14 +69,21 @@ enum Mode {
 }
 
 impl Mode {
-    fn invoke(&self) {
+    fn invoke(&self) -> Result <(), String> {
+        let args = Cli::parse();
         match self {
-            Mode::Namespace => modes::namespace(Cli::parse()),
-            Mode::Context => modes::context(Cli::parse()),
-            Mode::DefaultContext => modes::default_context(Cli::parse()),
-            Mode::DefaultNamespace => modes::default_namespace(Cli::parse()),
-            Mode::CompletionContext => modes::completion_context(Cli::parse()),
-            Mode::CompletionNamespace => modes::completion_namespace(Cli::parse()),
+            Mode::Namespace => modes::namespace(args),
+            Mode::Context => modes::context(args),
+            Mode::DefaultContext => modes::default_context(args),
+            Mode::DefaultNamespace => modes::default_namespace(args),
+            Mode::CompletionContext => {
+                modes::completion_context(args);
+                Ok(())
+            },
+            Mode::CompletionNamespace => {
+                modes::completion_namespace(args);
+                Ok(())
+            }
         }
     }
 }
@@ -83,7 +91,10 @@ impl Mode {
 fn main() -> Result<(), io::Error> {
     let args = Cli::parse();
 
-    Mode::invoke(&args.mode);
+    if let Err(err) = Mode::invoke(&args.mode) {
+        eprintln!("error: {}", err);
+        process::exit(1);
+    }
 
     Ok(())
 }

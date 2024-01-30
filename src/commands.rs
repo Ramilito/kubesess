@@ -2,7 +2,6 @@ use crate::model::KubeConfig;
 use crate::config;
 
 use core::fmt;
-use std::process;
 use std::{
     io::Cursor,
     process::{Command, Stdio},
@@ -66,25 +65,21 @@ pub fn get_current_context() -> String {
     String::from_utf8(output.stdout).unwrap().trim().to_owned()
 }
 
-pub fn selectable_list(input: Vec<String>) -> String {
+/// Prompts the user to select an item from a list.
+/// Returns the selected item or `None` if no item was selected
+pub fn selectable_list(input: Vec<String>) -> Option<String> {
     let input: Vec<String> = input.into_iter().rev().collect();
     let options = SkimOptionsBuilder::default().multi(false).build().unwrap();
     let item_reader = SkimItemReader::default();
 
     let items = item_reader.of_bufread(Cursor::new(input.join("\n")));
-    let selected_items = Skim::run_with(&options, Some(items))
-        .map(|out| match out.final_key {
-            Key::Enter => out.selected_items,
-            _ => Vec::new(),
+    Skim::run_with(&options, Some(items))
+        .and_then(|out| match out.final_key {
+            Key::Enter => Some(out.selected_items),
+            _ => None,
         })
-        .unwrap_or_default();
-
-    if selected_items.is_empty() {
-        eprintln!("No item selected");
-        process::exit(1);
-    }
-
-    selected_items[0].output().to_string()
+        .filter(|selected_items| !selected_items.is_empty())
+        .map(|selected_items| selected_items[0].output().to_string())
 }
 
 pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &KubeConfig) {
