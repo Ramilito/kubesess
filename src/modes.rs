@@ -58,7 +58,7 @@ pub fn context(args: Cli) -> Result<(), String> {
             "{}/{}:{}",
             &DEST.as_str(),
             str::replace(&ctx, ":", "_"),
-            KUBECONFIG.to_string()
+            *KUBECONFIG
         );
     }
 
@@ -100,7 +100,7 @@ pub fn namespace(args: Cli) -> Result<(), String> {
         "{}/{}:{}",
         &DEST.as_str(),
         str::replace(&config.current_context, ":", "_"),
-        KUBECONFIG.to_string()
+        *KUBECONFIG
     );
     Ok(())
 }
