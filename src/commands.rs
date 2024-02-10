@@ -89,12 +89,12 @@ pub fn selectable_list(input: Vec<String>) -> String {
 
 pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &KubeConfig) {
     let choice = config.contexts.iter().find(|x| x.name == ctx);
-    config::write(choice.unwrap(), Some(selection), temp_dir)
+    config::write(choice.unwrap(), config, Some(selection), temp_dir)
 }
 
 pub fn set_context(ctx: &str, temp_dir: &str, config: &KubeConfig) -> Result<(), SetContextError> {
     if let Some(choice) = config.contexts.iter().find(|x| x.name == ctx) {
-        config::write(choice, None, temp_dir);
+        config::write(choice, config, None, temp_dir);
         Ok(())
     } else {
         Err(SetContextError::ContextNotFound{ctx: ctx.to_owned()})
