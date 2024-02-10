@@ -32,21 +32,20 @@ fn build(ctx: &Contexts, kube_config: &KubeConfig, ns: Option<&str>, strbuf: &st
         name: ctx.name.to_string(),
     }];
 
-    if let Some(u) = kube_config.users.iter().find(|x| x.name == ctx.context.user) {
-        let usr = u.clone();
+    if let Some(user) = kube_config.users.iter().find(|x| x.name == ctx.context.user) {
         config.users = vec![Users {
-            name: usr.name,
-            user: usr.user,
+            name: user.name.clone(),
+            user: user.user.clone(),
         }];
     }
 
-    if let Some(c) = kube_config.clusters.iter().find(|x| x.name == ctx.context.cluster) {
-        let cluster = c.clone();
+    if let Some(cluster) = kube_config.clusters.iter().find(|x| x.name == ctx.context.cluster) {
         config.clusters = vec![Clusters {
-            name: cluster.name,
-            cluster: cluster.cluster,
+            name: cluster.name.clone(),
+            cluster: cluster.cluster.clone(),
         }];
     }
+
     config
 }
 
