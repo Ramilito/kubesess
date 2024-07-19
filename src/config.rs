@@ -1,10 +1,10 @@
-use crate::model::{KubeConfig, Context, Contexts};
+use crate::model::{Clusters, Context, Contexts, KubeConfig, Users};
 use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
 
-fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> KubeConfig {
+fn build(ctx: &Contexts, kube_config: &KubeConfig, ns: Option<&str>, strbuf: &str) -> KubeConfig {
     let mut config: KubeConfig = serde_yaml::from_str(strbuf).unwrap();
     config.api_version = "v1".to_string();
     config.kind = "Config".to_string();
@@ -31,6 +31,20 @@ fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> KubeConfig {
         },
         name: ctx.name.to_string(),
     }];
+
+    if let Some(user) = kube_config.users.iter().find(|x| x.name == ctx.context.user) {
+        config.users = vec![Users {
+            name: user.name.clone(),
+            user: user.user.clone(),
+        }];
+    }
+
+    if let Some(cluster) = kube_config.clusters.iter().find(|x| x.name == ctx.context.cluster) {
+        config.clusters = vec![Clusters {
+            name: cluster.name.clone(),
+            cluster: cluster.cluster.clone(),
+        }];
+    }
 
     config
 }
@@ -59,7 +73,7 @@ fn get_path(ctx: &Contexts, dest: &str) -> String {
     path.display().to_string()
 }
 
-pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
+pub fn write(ctx: &Contexts, config: &KubeConfig, namespace: Option<&str>, dest: &str) {
     let path = get_path(ctx, dest);
 
     let strbuf = match fs::read_to_string(&path) {
@@ -69,7 +83,7 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
 
     let options = get_file(&path);
     let writer = BufWriter::new(&options);
-    let config = build(ctx, namespace, &strbuf);
+    let config = build(ctx, config, namespace, &strbuf);
 
     serde_yaml::to_writer(writer, &config).unwrap();
 }
@@ -87,6 +101,8 @@ pub fn get() -> KubeConfig {
         configs.api_version = config.api_version;
         configs.kind = config.kind;
         configs.contexts.extend(config.contexts);
+        configs.users.extend(config.users);
+        configs.clusters.extend(config.clusters);
     }
 
     let dir = format!("{}/.kube", dirs::home_dir().unwrap().display());
@@ -97,6 +113,8 @@ pub fn get() -> KubeConfig {
                 let config: KubeConfig = get_config(path.to_str().unwrap());
 
                 configs.contexts.extend(config.contexts);
+                configs.users.extend(config.users);
+                configs.clusters.extend(config.clusters);
             }
         }
     }
@@ -119,7 +137,7 @@ fn get_config(path: &str) -> KubeConfig {
 }
 
 pub fn get_current_session() -> KubeConfig {
-    let current= if KUBESESSCONFIG.is_empty() {
+    let current = if KUBESESSCONFIG.is_empty() {
         KUBECONFIG.split(':').next().unwrap()
     } else {
         KUBESESSCONFIG.as_str()
