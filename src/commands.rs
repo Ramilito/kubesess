@@ -51,7 +51,7 @@ pub fn get_namespaces() -> Vec<String> {
     let string = String::from_utf8(output.stdout).unwrap();
     string.lines().skip(1).map(ToOwned::to_owned).collect()
 }
-//
+
 // pub fn get_current_context() -> String {
 //     let output = Command::new("kubectl")
 //         .args(["config", "current-context"])

@@ -66,8 +66,8 @@ enum Mode {
     Context,
     // DefaultContext,
     // DefaultNamespace,
-    // CompletionContext,
-    // CompletionNamespace,
+    CompletionContext,
+    CompletionNamespace,
 }
 
 impl Mode {
@@ -78,14 +78,14 @@ impl Mode {
             Mode::Context => modes::context(args),
             // Mode::DefaultContext => modes::default_context(args),
             // Mode::DefaultNamespace => modes::default_namespace(args),
-            // Mode::CompletionContext => {
-            //     modes::completion_context(args);
-            //     Ok(())
-            // }
-            // Mode::CompletionNamespace => {
-            //     modes::completion_namespace(args);
-            //     Ok(())
-            // }
+            Mode::CompletionContext => {
+                modes::completion_context(args);
+                Ok(())
+            }
+            Mode::CompletionNamespace => {
+                modes::completion_namespace(args);
+                Ok(())
+            }
         }
     }
 }

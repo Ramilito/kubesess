@@ -164,29 +164,33 @@ pub fn namespace(args: Cli) -> Result<(), Error> {
 //     commands::set_namespace(&ctx, &ns, &DEST, &config);
 //     Ok(())
 // }
-//
-// pub fn completion_context(args: Cli) {
-//     let config = config::get();
-//
-//     let mut options = Vec::new();
-//     for context in &config.contexts {
-//         if context
-//             .name
-//             .starts_with(&args.value.as_ref().unwrap().to_string())
-//         {
-//             options.push(context.name.to_string());
-//         }
-//     }
-//     println!("{}", options.join(" "));
-// }
-//
-// pub fn completion_namespace(args: Cli) {
-//     let namespaces = commands::get_namespaces();
-//     let mut options = Vec::new();
-//     for ns in &namespaces {
-//         if ns.starts_with(&args.value.as_ref().unwrap().to_string()) {
-//             options.push(ns.to_string());
-//         }
-//     }
-//     println!("{}", options.join(" "));
-// }
+
+pub fn completion_context(args: Cli) {
+    let config = config::get();
+
+    let search_value = args.value.as_deref().unwrap_or("");
+
+    let options: Vec<String> = config
+        .contexts
+        .iter()
+        .filter(|context| context.name.starts_with(search_value))
+        .map(|context| context.name.clone())
+        .collect();
+
+    println!("{}", options.join(" "));
+}
+
+pub fn completion_namespace(args: Cli) {
+    let namespaces = commands::get_namespaces();
+    let mut options = Vec::new();
+
+    let search_value = args.value.as_deref().unwrap_or("");
+
+    for ns in &namespaces {
+        if ns.starts_with(search_value) {
+            options.push(ns.to_string());
+        }
+    }
+
+    println!("{}", options.join(" "));
+}
