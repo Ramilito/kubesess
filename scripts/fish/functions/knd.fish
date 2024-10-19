@@ -3,5 +3,6 @@ function knd --argument-names context --description "Switch global kubernetes na
     if test -n "$argv"
         set -a cmd -v $context
     end
-    command $cmd
+    set -l config (command $cmd) || return $status
+    set -gx KUBECONFIG $config
 end

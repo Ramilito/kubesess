@@ -19,5 +19,5 @@ kn() {
 }
 
 knd() {
-  kubesess ${1:+"-v "$1} default-namespace;
+  __kubesess_export ${1:+"-v "$1} default-namespace
 }

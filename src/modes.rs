@@ -133,8 +133,11 @@ pub fn namespace(args: Cli) -> Result<(), Error> {
 }
 
 pub fn default_namespace(args: Cli) -> Result<(), Error> {
-    let config = config::get();
-    let ctx = commands::get_current_context();
+    let config = config::get_current_session();
+    let ctx = &config
+        .current_context
+        .as_deref()
+        .unwrap_or("No current context set");
 
     if args.current {
         if let Some(ctx) = config.contexts.iter().find(|x| {
@@ -168,7 +171,14 @@ pub fn default_namespace(args: Cli) -> Result<(), Error> {
     };
 
     commands::set_default_namespace(&ns, &ctx);
-    commands::set_namespace(&ctx, &ns, &DEST, &config);
+    let result = commands::set_namespace(&ctx, &ns, &DEST, &config);
+    println!(
+        "{}/{}:{}",
+        &DEST.as_str(),
+        str::replace(&result, ":", "_"),
+        *KUBECONFIG
+    );
+
     Ok(())
 }
 
