@@ -84,9 +84,7 @@ pub fn selectable_list(input: Vec<String>) -> Option<String> {
 
 pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Kubeconfig) -> String {
     let choice = config.contexts.iter().find(|x| x.name == ctx);
-    let filename = config::write(choice.unwrap(), Some(selection), temp_dir, config);
-
-    filename
+    config::write(choice.unwrap(), Some(selection), temp_dir, config)
 }
 
 pub fn set_context(
