@@ -1,9 +1,9 @@
 use crate::{KUBECONFIG, KUBESESSCONFIG};
+use kube::config::Kubeconfig;
 use kube::config::NamedContext;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
-use kube::config::Kubeconfig;
 
 pub fn get() -> Kubeconfig {
     let mut merged_config = Kubeconfig::default();
@@ -13,21 +13,19 @@ pub fn get() -> Kubeconfig {
         .expect("Failed to find home directory");
 
     if let Ok(entries) = fs::read_dir(&kube_dir) {
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let path = entry.path();
+        for entry in entries.flatten() {
+            let path = entry.path();
 
-                if path.is_file() {
-                    match Kubeconfig::read_from(&path) {
-                        Ok(kubeconfig) => {
-                            println!("Loaded Kubeconfig from: {:?}", path);
-                            merged_config.contexts.extend(kubeconfig.contexts);
-                            merged_config.clusters.extend(kubeconfig.clusters);
-                            merged_config.auth_infos.extend(kubeconfig.auth_infos);
-                        }
-                        Err(err) => {
-                            println!("Failed to parse file {:?} as a Kubeconfig: {:?}", path, err);
-                        }
+            if path.is_file() {
+                match Kubeconfig::read_from(&path) {
+                    Ok(kubeconfig) => {
+                        println!("Loaded Kubeconfig from: {:?}", path);
+                        merged_config.contexts.extend(kubeconfig.contexts);
+                        merged_config.clusters.extend(kubeconfig.clusters);
+                        merged_config.auth_infos.extend(kubeconfig.auth_infos);
+                    }
+                    Err(err) => {
+                        println!("Failed to parse file {:?} as a Kubeconfig: {:?}", path, err);
                     }
                 }
             }
