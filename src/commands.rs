@@ -86,7 +86,7 @@ pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Kubeco
     let choice = config.contexts.iter().find(|x| x.name == ctx);
     let filename = config::write(choice.unwrap(), Some(selection), temp_dir, config);
 
-    return filename;
+    filename
 }
 
 pub fn set_context(

@@ -140,7 +140,7 @@ pub fn write(
     let writer = BufWriter::new(&options);
 
     serde_yaml::to_writer(writer, &minimal_config).unwrap();
-    return filename;
+    filename
 }
 
 pub fn get_current_session() -> Kubeconfig {

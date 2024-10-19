@@ -81,7 +81,7 @@ pub fn context(args: Cli) -> Result<(), Error> {
         );
     }
 
-    return Ok(());
+    Ok(())
 }
 
 pub fn namespace(args: Cli) -> Result<(), Error> {
