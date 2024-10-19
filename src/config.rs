@@ -107,9 +107,7 @@ fn get_file(path: &String) -> File {
     f
 }
 
-fn get_path(ctx: &str, namespace: &str, dest: &str) -> String {
-    let filename = ctx.to_owned() + "_" + &namespace.to_owned();
-
+fn get_path(filename: &str, dest: &str) -> String {
     let path = Path::new(&filename);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
@@ -122,7 +120,12 @@ fn get_path(ctx: &str, namespace: &str, dest: &str) -> String {
     path.display().to_string()
 }
 
-pub fn write(ctx: &NamedContext, namespace: Option<&str>, dest: &str, config: &Kubeconfig) {
+pub fn write(
+    ctx: &NamedContext,
+    namespace: Option<&str>,
+    dest: &str,
+    config: &Kubeconfig,
+) -> String {
     let minimal_config = build(ctx, namespace, config);
     let selected_context = minimal_config.current_context.clone().unwrap_or_default();
     let selected_ns = minimal_config
@@ -131,12 +134,14 @@ pub fn write(ctx: &NamedContext, namespace: Option<&str>, dest: &str, config: &K
         .and_then(|ctx| ctx.context.as_ref().and_then(|c| c.namespace.clone()))
         .unwrap_or_else(|| "default".to_string());
 
-    let path = get_path(&selected_context, &selected_ns, dest);
+    let filename = selected_context.to_owned() + "_" + &selected_ns.to_owned();
+    let path = get_path(&filename, dest);
 
     let options = get_file(&path);
     let writer = BufWriter::new(&options);
 
     serde_yaml::to_writer(writer, &minimal_config).unwrap();
+    return filename;
 }
 
 pub fn get_current_session() -> KubeConfig {

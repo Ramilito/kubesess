@@ -87,10 +87,14 @@ pub fn selectable_list(input: Vec<String>) -> Option<String> {
 //     config::write(choice.unwrap(), Some(selection), temp_dir)
 // }
 
-pub fn set_context(ctx: &str, temp_dir: &str, config: &Kubeconfig) -> Result<(), SetContextError> {
+pub fn set_context(
+    ctx: &str,
+    temp_dir: &str,
+    config: &Kubeconfig,
+) -> Result<String, SetContextError> {
     if let Some(choice) = config.contexts.iter().find(|x| x.name == ctx) {
-        config::write(choice, None, temp_dir, config);
-        Ok(())
+        let filename = config::write(choice, None, temp_dir, config);
+        Ok(filename)
     } else {
         Err(SetContextError::KubeContextNotFound {
             ctx: ctx.to_owned(),

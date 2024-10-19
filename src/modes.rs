@@ -38,11 +38,11 @@ use crate::{
 // }
 
 pub fn context(args: Cli) -> Result<(), Error> {
-    if args.current {
-        let config = config::get_current_session();
-        println!("{}", config.current_context);
-        return Ok(());
-    }
+    // if args.current {
+    //     let config = config::get_current_session();
+    //     println!("{}", config.current_context);
+    //     return Ok(config);
+    // }
 
     let config = config::get();
     let ctx = match args.value {
@@ -64,12 +64,12 @@ pub fn context(args: Cli) -> Result<(), Error> {
         println!(
             "{}/{}:{}",
             &DEST.as_str(),
-            str::replace(&ctx, ":", "_"),
+            str::replace(&set_context_result.unwrap(), ":", "_"),
             *KUBECONFIG
         );
     }
 
-    set_context_result
+    return Ok(());
 }
 
 // pub fn namespace(args: Cli) -> Result<(), Error> {
