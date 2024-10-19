@@ -1,27 +1,30 @@
 use crate::config;
 use crate::error::SetContextError;
 
-use std::{io::Cursor, process::Command};
+use std::{
+    io::Cursor,
+    process::{Command, Stdio},
+};
 extern crate skim;
 use kube::config::Kubeconfig;
 use skim::prelude::*;
 
-// pub fn set_default_namespace(ns: &str, ctx: &str) {
-//     Command::new("kubectl")
-//         .arg("config")
-//         .arg(format!(
-//             "--kubeconfig={}/.kube/config",
-//             dirs::home_dir().unwrap().display()
-//         ))
-//         .arg("set-context")
-//         .arg(ctx)
-//         .arg(format!("--namespace={}", ns))
-//         .stdout(Stdio::null())
-//         .spawn()
-//         .unwrap()
-//         .wait()
-//         .unwrap();
-// }
+pub fn set_default_namespace(ns: &str, ctx: &str) {
+    Command::new("kubectl")
+        .arg("config")
+        .arg(format!(
+            "--kubeconfig={}/.kube/config",
+            dirs::home_dir().unwrap().display()
+        ))
+        .arg("set-context")
+        .arg(ctx)
+        .arg(format!("--namespace={}", ns))
+        .stdout(Stdio::null())
+        .spawn()
+        .unwrap()
+        .wait()
+        .unwrap();
+}
 //
 // pub fn set_default_context(ctx: &str) {
 //     Command::new("kubectl")
@@ -49,18 +52,18 @@ pub fn get_namespaces() -> Vec<String> {
     string.lines().skip(1).map(ToOwned::to_owned).collect()
 }
 
-// pub fn get_current_context() -> String {
-//     let output = Command::new("kubectl")
-//         .args(["config", "current-context"])
-//         .stdin(Stdio::piped())
-//         .stdout(Stdio::piped())
-//         .spawn()
-//         .unwrap()
-//         .wait_with_output()
-//         .unwrap();
-//
-//     String::from_utf8(output.stdout).unwrap().trim().to_owned()
-// }
+pub fn get_current_context() -> String {
+    let output = Command::new("kubectl")
+        .args(["config", "current-context"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap()
+        .wait_with_output()
+        .unwrap();
+
+    String::from_utf8(output.stdout).unwrap().trim().to_owned()
+}
 
 /// Prompts the user to select an item from a list.
 /// Returns the selected item or `None` if no item was selected

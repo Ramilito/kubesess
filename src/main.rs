@@ -64,7 +64,7 @@ enum Mode {
     Namespace,
     Context,
     // DefaultContext,
-    // DefaultNamespace,
+    DefaultNamespace,
     CompletionContext,
     CompletionNamespace,
 }
@@ -76,7 +76,7 @@ impl Mode {
             Mode::Namespace => modes::namespace(args),
             Mode::Context => modes::context(args),
             // Mode::DefaultContext => modes::default_context(args),
-            // Mode::DefaultNamespace => modes::default_namespace(args),
+            Mode::DefaultNamespace => modes::default_namespace(args),
             Mode::CompletionContext => {
                 modes::completion_context(args);
                 Ok(())

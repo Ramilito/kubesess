@@ -125,45 +125,46 @@ pub fn namespace(args: Cli) -> Result<(), Error> {
     );
     Ok(())
 }
-//
-// pub fn default_namespace(args: Cli) -> Result<(), Error> {
-//     let config = config::get();
-//     let ctx = commands::get_current_context();
-//
-//     if args.current {
-//         let ctx = config
-//             .contexts
-//             .iter()
-//             .find(|x| x.name == config.current_context);
-//
-//         match ctx {
-//             Some(x) => {
-//                 if x.context.namespace.is_empty() {
-//                     println!("default");
-//                 } else {
-//                     println!("{}", x.context.namespace);
-//                 }
-//             }
-//             None => println!("default"),
-//         }
-//
-//         return Ok(());
-//     }
-//
-//     let ns = match args.value {
-//         None => {
-//             let namespaces: Vec<String> = commands::get_namespaces();
-//             commands::selectable_list(namespaces).ok_or(Error::NoItemSelected {
-//                 prompt: "namespace",
-//             })?
-//         }
-//         Some(x) => x.trim().to_string(),
-//     };
-//
-//     commands::set_default_namespace(&ns, &ctx);
-//     commands::set_namespace(&ctx, &ns, &DEST, &config);
-//     Ok(())
-// }
+
+pub fn default_namespace(args: Cli) -> Result<(), Error> {
+    let config = config::get();
+    let ctx = commands::get_current_context();
+
+    if args.current {
+        if let Some(ctx) = config.contexts.iter().find(|x| {
+            x.name
+                == config
+                    .current_context
+                    .as_deref()
+                    .unwrap_or("No current context set")
+        }) {
+            let namespace = ctx
+                .context
+                .as_ref()
+                .and_then(|c| c.namespace.as_deref())
+                .unwrap_or("default");
+
+            println!("{}", namespace);
+        } else {
+            println!("default");
+        }
+        return Ok(());
+    }
+
+    let ns = match args.value {
+        None => {
+            let namespaces: Vec<String> = commands::get_namespaces();
+            commands::selectable_list(namespaces).ok_or(Error::NoItemSelected {
+                prompt: "namespace",
+            })?
+        }
+        Some(x) => x.trim().to_string(),
+    };
+
+    commands::set_default_namespace(&ns, &ctx);
+    commands::set_namespace(&ctx, &ns, &DEST, &config);
+    Ok(())
+}
 
 pub fn completion_context(args: Cli) {
     let config = config::get();
