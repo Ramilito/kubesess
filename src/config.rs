@@ -1,11 +1,8 @@
-use kube::config::NamedContext;
-
 use crate::{KUBECONFIG, KUBESESSCONFIG};
+use kube::config::NamedContext;
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
-
-use dirs;
 use kube::config::Kubeconfig;
 
 pub fn get() -> Kubeconfig {
