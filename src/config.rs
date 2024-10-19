@@ -19,13 +19,12 @@ pub fn get() -> Kubeconfig {
             if path.is_file() {
                 match Kubeconfig::read_from(&path) {
                     Ok(kubeconfig) => {
-                        println!("Loaded Kubeconfig from: {:?}", path);
                         merged_config.contexts.extend(kubeconfig.contexts);
                         merged_config.clusters.extend(kubeconfig.clusters);
                         merged_config.auth_infos.extend(kubeconfig.auth_infos);
                     }
                     Err(err) => {
-                        println!("Failed to parse file {:?} as a Kubeconfig: {:?}", path, err);
+                        eprintln!("Failed to parse file {:?} as a Kubeconfig: {:?}", path, err);
                     }
                 }
             }
