@@ -1,10 +1,7 @@
 use crate::config;
 use crate::error::SetContextError;
 
-use std::{
-    io::Cursor,
-    process::{Command, Stdio},
-};
+use std::{io::Cursor, process::Command};
 extern crate skim;
 use kube::config::Kubeconfig;
 use skim::prelude::*;

@@ -1,7 +1,6 @@
 mod commands;
 mod config;
 mod error;
-mod model;
 mod modes;
 
 use crate::error::Error;

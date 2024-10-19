@@ -1,6 +1,5 @@
 use kube::config::NamedContext;
 
-use crate::model::KubeConfig;
 use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
