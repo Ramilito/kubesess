@@ -5,37 +5,43 @@ use crate::{
     Cli, DEST, KUBECONFIG,
 };
 
-// pub fn default_context(args: Cli) -> Result<(), Error> {
-//     let config = config::get();
-//
-//     if args.current {
-//         println!("{}", config.current_context);
-//         return Ok(());
-//     }
-//
-//     let ctx = match args.value {
-//         None => {
-//             let options: Vec<String> = config
-//                 .contexts
-//                 .iter()
-//                 .map(|context| context.name.to_string())
-//                 .collect();
-//
-//             commands::selectable_list(options).ok_or(Error::NoItemSelected { prompt: "context" })?
-//         }
-//         Some(x) => x.trim().to_string(),
-//     };
-//
-//     commands::set_default_context(&ctx);
-//
-//     let set_context_result = commands::set_context(&ctx, &DEST, &config).map_err(Error::SetContext);
-//
-//     if set_context_result.is_ok() {
-//         println!("{}", KUBECONFIG.as_str());
-//     }
-//
-//     set_context_result
-// }
+pub fn default_context(args: Cli) -> Result<(), Error> {
+    let config = config::get();
+
+    if args.current {
+        println!(
+            "{}",
+            config
+                .current_context
+                .as_deref()
+                .unwrap_or("No current context set")
+        );
+        return Ok(());
+    }
+
+    let ctx = match args.value {
+        None => {
+            let options: Vec<String> = config
+                .contexts
+                .iter()
+                .map(|context| context.name.to_string())
+                .collect();
+
+            commands::selectable_list(options).ok_or(Error::NoItemSelected { prompt: "context" })?
+        }
+        Some(x) => x.trim().to_string(),
+    };
+
+    commands::set_default_context(&ctx);
+
+    let set_context_result = commands::set_context(&ctx, &DEST, &config).map_err(Error::SetContext);
+
+    if set_context_result.is_ok() {
+        println!("{}", KUBECONFIG.as_str());
+    }
+
+    Ok(())
+}
 
 pub fn context(args: Cli) -> Result<(), Error> {
     if args.current {

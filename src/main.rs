@@ -63,7 +63,7 @@ pub struct Cli {
 enum Mode {
     Namespace,
     Context,
-    // DefaultContext,
+    DefaultContext,
     DefaultNamespace,
     CompletionContext,
     CompletionNamespace,
@@ -75,7 +75,7 @@ impl Mode {
         match self {
             Mode::Namespace => modes::namespace(args),
             Mode::Context => modes::context(args),
-            // Mode::DefaultContext => modes::default_context(args),
+            Mode::DefaultContext => modes::default_context(args),
             Mode::DefaultNamespace => modes::default_namespace(args),
             Mode::CompletionContext => {
                 modes::completion_context(args);

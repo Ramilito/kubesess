@@ -25,22 +25,22 @@ pub fn set_default_namespace(ns: &str, ctx: &str) {
         .wait()
         .unwrap();
 }
-//
-// pub fn set_default_context(ctx: &str) {
-//     Command::new("kubectl")
-//         .arg("config")
-//         .arg(format!(
-//             "--kubeconfig={}/.kube/config",
-//             dirs::home_dir().unwrap().display()
-//         ))
-//         .arg("use-context")
-//         .arg(ctx)
-//         .stdout(Stdio::null())
-//         .spawn()
-//         .unwrap()
-//         .wait()
-//         .unwrap();
-// }
+
+pub fn set_default_context(ctx: &str) {
+    Command::new("kubectl")
+        .arg("config")
+        .arg(format!(
+            "--kubeconfig={}/.kube/config",
+            dirs::home_dir().unwrap().display()
+        ))
+        .arg("use-context")
+        .arg(ctx)
+        .stdout(Stdio::null())
+        .spawn()
+        .unwrap()
+        .wait()
+        .unwrap();
+}
 
 pub fn get_namespaces() -> Vec<String> {
     let output = Command::new("kubectl")
