@@ -1,10 +1,47 @@
-use crate::model::{KubeConfig, Context, Contexts};
+use kube::config::NamedContext;
+
+use crate::model::KubeConfig;
 use crate::{KUBECONFIG, KUBESESSCONFIG};
 use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read};
 use std::path::Path;
 
-fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> KubeConfig {
+use dirs;
+use kube::config::Kubeconfig;
+
+pub fn get() -> Kubeconfig {
+    let mut merged_config = Kubeconfig::default();
+
+    let kube_dir = dirs::home_dir()
+        .map(|home| home.join(".kube"))
+        .expect("Failed to find home directory");
+
+    if let Ok(entries) = fs::read_dir(&kube_dir) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                let path = entry.path();
+
+                if path.is_file() {
+                    match Kubeconfig::read_from(&path) {
+                        Ok(kubeconfig) => {
+                            println!("Loaded Kubeconfig from: {:?}", path);
+                            merged_config.contexts.extend(kubeconfig.contexts);
+                            merged_config.clusters.extend(kubeconfig.clusters);
+                            // base.auth_infos.extend(additional.auth_infos);
+                        }
+                        Err(err) => {
+                            println!("Failed to parse file {:?} as a Kubeconfig: {:?}", path, err);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    merged_config
+}
+
+fn build(ctx: &NamedContext, ns: Option<&str>, strbuf: &str) -> KubeConfig {
     let mut config: KubeConfig = serde_yaml::from_str(strbuf).unwrap();
     config.api_version = "v1".to_string();
     config.kind = "Config".to_string();
@@ -15,22 +52,22 @@ fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> KubeConfig {
         None => {
             if !config.contexts.is_empty() && !config.contexts[0].context.namespace.is_empty() {
                 config.contexts[0].context.namespace.to_string()
-            } else if !ctx.context.namespace.is_empty() {
-                ctx.context.namespace.to_string()
+            // } else if !ctx.context.namespace.is_empty() {
+            //     ctx.context.namespace.to_string()
             } else {
                 "default".to_string()
             }
         }
     };
 
-    config.contexts = vec![Contexts {
-        context: Context {
-            namespace: ns,
-            cluster: ctx.context.cluster.to_string(),
-            user: ctx.context.user.to_string(),
-        },
-        name: ctx.name.to_string(),
-    }];
+    // config.contexts = vec![NamedContext {
+    //     context: NamedContext {
+    //         namespace: ns,
+    //         cluster: ctx.context.cluster.to_string(),
+    //         user: ctx.context.user.to_string(),
+    //     },
+    //     name: ctx.name.to_string(),
+    // }];
 
     config
 }
@@ -46,7 +83,7 @@ fn get_file(path: &String) -> File {
     f
 }
 
-fn get_path(ctx: &Contexts, dest: &str) -> String {
+fn get_path(ctx: &NamedContext, dest: &str) -> String {
     let path = Path::new(ctx.name.as_str());
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
@@ -59,7 +96,7 @@ fn get_path(ctx: &Contexts, dest: &str) -> String {
     path.display().to_string()
 }
 
-pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
+pub fn write(ctx: &NamedContext, namespace: Option<&str>, dest: &str) {
     let path = get_path(ctx, dest);
 
     let strbuf = match fs::read_to_string(&path) {
@@ -74,35 +111,35 @@ pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
     serde_yaml::to_writer(writer, &config).unwrap();
 }
 
-pub fn get() -> KubeConfig {
-    let mut configs = KubeConfig::default();
-
-    for s in KUBECONFIG.rsplit(':') {
-        if s.contains("/kubesess/cache") {
-            continue;
-        }
-        let config: KubeConfig = get_config(s);
-
-        configs.current_context = config.current_context;
-        configs.api_version = config.api_version;
-        configs.kind = config.kind;
-        configs.contexts.extend(config.contexts);
-    }
-
-    let dir = format!("{}/.kube", dirs::home_dir().unwrap().display());
-    for entry in fs::read_dir(dir).unwrap() {
-        let path = entry.unwrap().path();
-        if let Some(extension) = path.extension() {
-            if extension == "yaml" {
-                let config: KubeConfig = get_config(path.to_str().unwrap());
-
-                configs.contexts.extend(config.contexts);
-            }
-        }
-    }
-
-    configs
-}
+// pub fn get() -> KubeConfig {
+//     let mut configs = KubeConfig::default();
+//
+//     for s in KUBECONFIG.rsplit(':') {
+//         if s.contains("/kubesess/cache") {
+//             continue;
+//         }
+//         let config: KubeConfig = get_config(s);
+//
+//         configs.current_context = config.current_context;
+//         configs.api_version = config.api_version;
+//         configs.kind = config.kind;
+//         configs.contexts.extend(config.contexts);
+//     }
+//
+//     let dir = format!("{}/.kube", dirs::home_dir().unwrap().display());
+//     for entry in fs::read_dir(dir).unwrap() {
+//         let path = entry.unwrap().path();
+//         if let Some(extension) = path.extension() {
+//             if extension == "yaml" {
+//                 let config: KubeConfig = get_config(path.to_str().unwrap());
+//
+//                 configs.contexts.extend(config.contexts);
+//             }
+//         }
+//     }
+//
+//     configs
+// }
 
 fn get_config(path: &str) -> KubeConfig {
     let f = File::open(path).unwrap();
@@ -119,7 +156,7 @@ fn get_config(path: &str) -> KubeConfig {
 }
 
 pub fn get_current_session() -> KubeConfig {
-    let current= if KUBESESSCONFIG.is_empty() {
+    let current = if KUBESESSCONFIG.is_empty() {
         KUBECONFIG.split(':').next().unwrap()
     } else {
         KUBESESSCONFIG.as_str()

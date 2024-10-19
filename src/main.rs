@@ -1,8 +1,8 @@
 mod commands;
 mod config;
+mod error;
 mod model;
 mod modes;
-mod error;
 
 use crate::error::Error;
 use clap::Parser;
@@ -62,35 +62,36 @@ pub struct Cli {
 
 #[derive(clap::ValueEnum, Clone)]
 enum Mode {
-    Namespace,
+    // Namespace,
     Context,
-    DefaultContext,
-    DefaultNamespace,
-    CompletionContext,
-    CompletionNamespace,
+    // DefaultContext,
+    // DefaultNamespace,
+    // CompletionContext,
+    // CompletionNamespace,
 }
 
 impl Mode {
-    fn invoke(&self) -> Result <(), Error> {
+    fn invoke(&self) -> Result<(), Error> {
         let args = Cli::parse();
         match self {
-            Mode::Namespace => modes::namespace(args),
+            // Mode::Namespace => modes::namespace(args),
             Mode::Context => modes::context(args),
-            Mode::DefaultContext => modes::default_context(args),
-            Mode::DefaultNamespace => modes::default_namespace(args),
-            Mode::CompletionContext => {
-                modes::completion_context(args);
-                Ok(())
-            },
-            Mode::CompletionNamespace => {
-                modes::completion_namespace(args);
-                Ok(())
-            }
+            // Mode::DefaultContext => modes::default_context(args),
+            // Mode::DefaultNamespace => modes::default_namespace(args),
+            // Mode::CompletionContext => {
+            //     modes::completion_context(args);
+            //     Ok(())
+            // }
+            // Mode::CompletionNamespace => {
+            //     modes::completion_namespace(args);
+            //     Ok(())
+            // }
         }
     }
 }
 
-fn main() -> Result<(), io::Error> {
+#[tokio::main]
+async fn main() -> Result<(), io::Error> {
     let args = Cli::parse();
 
     if let Err(err) = Mode::invoke(&args.mode) {
