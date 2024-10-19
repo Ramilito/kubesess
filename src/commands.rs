@@ -89,7 +89,7 @@ pub fn selectable_list(input: Vec<String>) -> Option<String> {
 
 pub fn set_context(ctx: &str, temp_dir: &str, config: &Kubeconfig) -> Result<(), SetContextError> {
     if let Some(choice) = config.contexts.iter().find(|x| x.name == ctx) {
-        config::write(choice, None, temp_dir);
+        config::write(choice, None, temp_dir, config);
         Ok(())
     } else {
         Err(SetContextError::KubeContextNotFound {
