@@ -144,7 +144,7 @@ pub fn write(
     return filename;
 }
 
-pub fn get_current_session() -> KubeConfig {
+pub fn get_current_session() -> Kubeconfig {
     let current = if KUBESESSCONFIG.is_empty() {
         KUBECONFIG.split(':').next().unwrap()
     } else {

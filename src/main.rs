@@ -62,7 +62,7 @@ pub struct Cli {
 
 #[derive(clap::ValueEnum, Clone)]
 enum Mode {
-    // Namespace,
+    Namespace,
     Context,
     // DefaultContext,
     // DefaultNamespace,
@@ -74,7 +74,7 @@ impl Mode {
     fn invoke(&self) -> Result<(), Error> {
         let args = Cli::parse();
         match self {
-            // Mode::Namespace => modes::namespace(args),
+            Mode::Namespace => modes::namespace(args),
             Mode::Context => modes::context(args),
             // Mode::DefaultContext => modes::default_context(args),
             // Mode::DefaultNamespace => modes::default_namespace(args),

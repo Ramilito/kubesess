@@ -1,5 +1,5 @@
 use crate::config;
-use crate::{error::SetContextError, model::KubeConfig};
+use crate::error::SetContextError;
 
 use std::{
     io::Cursor,
@@ -41,16 +41,16 @@ use skim::prelude::*;
 //         .wait()
 //         .unwrap();
 // }
-//
-// pub fn get_namespaces() -> Vec<String> {
-//     let output = Command::new("kubectl")
-//         .args(["get", "namespace", "-o=custom-columns=Name:.metadata.name"])
-//         .output()
-//         .unwrap();
-//
-//     let string = String::from_utf8(output.stdout).unwrap();
-//     string.lines().skip(1).map(ToOwned::to_owned).collect()
-// }
+
+pub fn get_namespaces() -> Vec<String> {
+    let output = Command::new("kubectl")
+        .args(["get", "namespace", "-o=custom-columns=Name:.metadata.name"])
+        .output()
+        .unwrap();
+
+    let string = String::from_utf8(output.stdout).unwrap();
+    string.lines().skip(1).map(ToOwned::to_owned).collect()
+}
 //
 // pub fn get_current_context() -> String {
 //     let output = Command::new("kubectl")
@@ -82,10 +82,12 @@ pub fn selectable_list(input: Vec<String>) -> Option<String> {
         .map(|selected_items| selected_items[0].output().to_string())
 }
 
-// pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &KubeConfig) {
-//     let choice = config.contexts.iter().find(|x| x.name == ctx);
-//     config::write(choice.unwrap(), Some(selection), temp_dir)
-// }
+pub fn set_namespace(ctx: &str, selection: &str, temp_dir: &str, config: &Kubeconfig) -> String {
+    let choice = config.contexts.iter().find(|x| x.name == ctx);
+    let filename = config::write(choice.unwrap(), Some(selection), temp_dir, config);
+
+    return filename;
+}
 
 pub fn set_context(
     ctx: &str,

@@ -38,11 +38,17 @@ use crate::{
 // }
 
 pub fn context(args: Cli) -> Result<(), Error> {
-    // if args.current {
-    //     let config = config::get_current_session();
-    //     println!("{}", config.current_context);
-    //     return Ok(config);
-    // }
+    if args.current {
+        let config = config::get_current_session();
+        println!(
+            "{}",
+            config
+                .current_context
+                .as_deref()
+                .unwrap_or("No current context set")
+        );
+        return Ok(());
+    }
 
     let config = config::get();
     let ctx = match args.value {
@@ -72,47 +78,53 @@ pub fn context(args: Cli) -> Result<(), Error> {
     return Ok(());
 }
 
-// pub fn namespace(args: Cli) -> Result<(), Error> {
-//     let config = config::get_current_session();
-//     if args.current {
-//         let ctx = config
-//             .contexts
-//             .iter()
-//             .find(|x| x.name == config.current_context);
-//
-//         match ctx {
-//             Some(x) => {
-//                 if x.context.namespace.is_empty() {
-//                     println!("default");
-//                 } else {
-//                     println!("{}", x.context.namespace);
-//                 }
-//             }
-//             None => println!("default"),
-//         }
-//         return Ok(());
-//     }
-//
-//     let ns = match args.value {
-//         None => {
-//             let namespaces: Vec<String> = commands::get_namespaces();
-//             commands::selectable_list(namespaces).ok_or(Error::NoItemSelected {
-//                 prompt: "namespace",
-//             })?
-//         }
-//         Some(x) => x.trim().to_string(),
-//     };
-//
-//     commands::set_namespace(&config.current_context, &ns, &DEST, &config);
-//
-//     println!(
-//         "{}/{}:{}",
-//         &DEST.as_str(),
-//         str::replace(&config.current_context, ":", "_"),
-//         *KUBECONFIG
-//     );
-//     Ok(())
-// }
+pub fn namespace(args: Cli) -> Result<(), Error> {
+    let config = config::get_current_session();
+    let current_ctx = &config
+        .current_context
+        .as_deref()
+        .unwrap_or("No current context set");
+    if args.current {
+        if let Some(ctx) = config.contexts.iter().find(|x| {
+            x.name
+                == config
+                    .current_context
+                    .as_deref()
+                    .unwrap_or("No current context set")
+        }) {
+            let namespace = ctx
+                .context
+                .as_ref()
+                .and_then(|c| c.namespace.as_deref())
+                .unwrap_or("default");
+
+            println!("{}", namespace);
+        } else {
+            println!("default");
+        }
+        return Ok(());
+    }
+
+    let ns = match args.value {
+        None => {
+            let namespaces: Vec<String> = commands::get_namespaces();
+            commands::selectable_list(namespaces).ok_or(Error::NoItemSelected {
+                prompt: "namespace",
+            })?
+        }
+        Some(x) => x.trim().to_string(),
+    };
+
+    let result = commands::set_namespace(current_ctx, &ns, &DEST, &config);
+
+    println!(
+        "{}/{}:{}",
+        &DEST.as_str(),
+        str::replace(&result, ":", "_"),
+        *KUBECONFIG
+    );
+    Ok(())
+}
 //
 // pub fn default_namespace(args: Cli) -> Result<(), Error> {
 //     let config = config::get();
