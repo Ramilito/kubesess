@@ -10,13 +10,10 @@ extern crate skim;
 use kube::config::Kubeconfig;
 use skim::prelude::*;
 
-pub fn set_default_namespace(ns: &str, ctx: &str) {
+pub fn set_default_namespace(ns: &str, ctx: &str, target: &PathBuf) {
     Command::new("kubectl")
         .arg("config")
-        .arg(format!(
-            "--kubeconfig={}/.kube/config",
-            dirs::home_dir().unwrap().display()
-        ))
+        .arg(format!("--kubeconfig={}", target.to_string_lossy()))
         .arg("set-context")
         .arg(ctx)
         .arg(format!("--namespace={}", ns))

@@ -1,8 +1,4 @@
-use crate::{
-    commands, config,
-    error::{Error, SetContextError},
-    Cli, DEST, KUBECONFIG,
-};
+use crate::{commands, config, error::Error, Cli, DEST, KUBECONFIG};
 
 pub fn default_context(args: Cli) -> Result<(), Error> {
     let config = config::get(None);
@@ -142,16 +138,17 @@ pub fn namespace(args: Cli) -> Result<(), Error> {
 }
 
 pub fn default_namespace(args: Cli) -> Result<(), Error> {
-    let config = config::get_current_session();
-    let ctx = &config
+    let current_session = config::get_current_session();
+    let config = config::get(None);
+    let ctx = &current_session
         .current_context
         .as_deref()
         .unwrap_or("No current context set");
 
     if args.current {
-        if let Some(ctx) = config.contexts.iter().find(|x| {
+        if let Some(ctx) = current_session.contexts.iter().find(|x| {
             x.name
-                == config
+                == current_session
                     .current_context
                     .as_deref()
                     .unwrap_or("No current context set")
@@ -179,8 +176,21 @@ pub fn default_namespace(args: Cli) -> Result<(), Error> {
         Some(x) => x.trim().to_string(),
     };
 
-    commands::set_default_namespace(&ns, &ctx);
-    let result = commands::set_namespace(&ctx, &ns, &DEST, &config);
+    if let Some(target) = config
+        .configs
+        .iter()
+        .find(|(kubeconfig, _)| {
+            kubeconfig
+                .contexts
+                .iter()
+                .any(|context| context.name == *ctx)
+        })
+        .map(|(_, path)| path.clone())
+    {
+        commands::set_default_namespace(&ns, &ctx, &target);
+    }
+
+    let result = commands::set_namespace(&ctx, &ns, &DEST, &current_session);
     println!(
         "{}/{}:{}",
         &DEST.as_str(),
