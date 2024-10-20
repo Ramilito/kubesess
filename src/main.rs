@@ -108,8 +108,7 @@ impl Mode {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<(), io::Error> {
+fn main() -> Result<(), io::Error> {
     let args = Cli::parse();
 
     if let Err(err) = Mode::invoke(&args.mode) {
