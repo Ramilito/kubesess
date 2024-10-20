@@ -3,14 +3,14 @@ use crate::error::SetContextError;
 
 use std::{
     io::Cursor,
-    path::PathBuf,
+    path::Path,
     process::{Command, Stdio},
 };
 extern crate skim;
 use kube::config::Kubeconfig;
 use skim::prelude::*;
 
-pub fn set_default_namespace(ns: &str, ctx: &str, target: &PathBuf) {
+pub fn set_default_namespace(ns: &str, ctx: &str, target: &Path) {
     Command::new("kubectl")
         .arg("config")
         .arg(format!("--kubeconfig={}", target.to_string_lossy()))
@@ -24,7 +24,7 @@ pub fn set_default_namespace(ns: &str, ctx: &str, target: &PathBuf) {
         .unwrap();
 }
 
-pub fn set_default_context(ctx: &str, target: &PathBuf) {
+pub fn set_default_context(ctx: &str, target: &Path) {
     Command::new("kubectl")
         .arg("config")
         .arg(format!("--kubeconfig={}", target.to_string_lossy()))

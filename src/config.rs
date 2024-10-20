@@ -24,7 +24,7 @@ pub fn get(current_session: Option<&str>) -> KubeConfigs {
     let config_paths: Vec<PathBuf> = config_paths_str
         .split(':')
         .filter(|path| !path.is_empty() && paths_set.insert(path.to_string()))
-        .map(|path| PathBuf::from(path))
+        .map(PathBuf::from)
         .collect();
 
     let mut conifg = Kubeconfig::default();
