@@ -159,7 +159,7 @@ export KUBECONFIG=$HOME/.kube/config:$HOME/.kube/config-demo:$HOME/.kube/config-
 
 > :Note: **The order is important*: the first file will be the master config!
 
-The second way is to let Kubesess handle it by adding one or more .yaml files under the $HOME/.kube folder and it will be automatically merged.
+The second way is to let Kubesess handle it by adding one or more config files under the $HOME/.kube folder and it will be automatically merged.
 
 #### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
 ```
@@ -202,8 +202,8 @@ RPROMPT='$(prompt_context)'
 - [x] Add tab completion - https://github.com/clap-rs/clap/issues/1232
 - [x] Add to brew
 - [x] Add support for multiple .kube/config files
-- [ ] Add support for multiple namespace per session
-- [ ] Add error handling
+- [x] Add support for multiple namespace per session
+- [x] Add error handling
 
 ## Troubleshooting
 
@@ -224,14 +224,21 @@ This is how the ```$KUBECONFIG``` should look like (replace ```${USER}``` with y
 
 This is how the generated file should look like:
 ```yaml
-kind: Config
-apiVersion: v1
-current-context: docker-desktop
+clusters:
+- name: docker-desktop
+  cluster:
+    server: https://kubernetes.docker.internal:6443
+    certificate-authority-data: REDACTED
+users:
+- name: docker-desktop
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
 contexts:
-- context:
-    namespace: default
+- name: docker-desktop
+  context:
     cluster: docker-desktop
     user: docker-desktop
-  name: docker-desktop
+    namespace: default
+current-context: docker-desktop
 ```
-
