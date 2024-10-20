@@ -14,12 +14,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - uses: tale/kubectl-action@v1
-        with:
-          base64-kube-config: ${{ inputs.KUBECONFIG }}
       - name: Test
         run: |
           cargo check
           cargo test --all
-        env:
-          KUBECONFIG: "/home/runner/.kube/config"
 
