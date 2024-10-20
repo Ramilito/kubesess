@@ -13,7 +13,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: tale/kubectl-action@v1
       - name: Test
         run: |
           cargo check
