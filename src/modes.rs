@@ -1,17 +1,17 @@
 use crate::{
-    commands::{self},
-    config,
-    error::Error,
+    commands, config,
+    error::{Error, SetContextError},
     Cli, DEST, KUBECONFIG,
 };
 
 pub fn default_context(args: Cli) -> Result<(), Error> {
-    let config = config::get();
+    let config = config::get(None);
 
     if args.current {
         println!(
             "{}",
             config
+                .config
                 .current_context
                 .as_deref()
                 .unwrap_or("No current context set")
@@ -22,6 +22,7 @@ pub fn default_context(args: Cli) -> Result<(), Error> {
     let ctx = match args.value {
         None => {
             let options: Vec<String> = config
+                .config
                 .contexts
                 .iter()
                 .map(|context| context.name.to_string())
@@ -32,20 +33,29 @@ pub fn default_context(args: Cli) -> Result<(), Error> {
         Some(x) => x.trim().to_string(),
     };
 
-    commands::set_default_context(&ctx);
-
-    let set_context_result = commands::set_context(&ctx, &DEST, &config).map_err(Error::SetContext);
-
-    if set_context_result.is_ok() {
-        println!("{}", KUBECONFIG.as_str());
+    if let Some(target) = config
+        .configs
+        .iter()
+        .find(|(kubeconfig, _)| {
+            kubeconfig
+                .contexts
+                .iter()
+                .any(|context| context.name == ctx)
+        })
+        .map(|(_, path)| path.clone())
+    {
+        commands::set_default_context(&ctx, &target);
+        // TODO: We should move the target to the front of the line instead of inserting a
+        // duplicate
+        println!("{}:{}", target.to_string_lossy(), KUBECONFIG.as_str());
     }
 
     Ok(())
 }
 
 pub fn context(args: Cli) -> Result<(), Error> {
+    let config = config::get_current_session();
     if args.current {
-        let config = config::get_current_session();
         println!(
             "{}",
             config
@@ -56,7 +66,6 @@ pub fn context(args: Cli) -> Result<(), Error> {
         return Ok(());
     }
 
-    let config = config::get();
     let ctx = match args.value {
         None => {
             let options: Vec<String> = config
@@ -183,11 +192,12 @@ pub fn default_namespace(args: Cli) -> Result<(), Error> {
 }
 
 pub fn completion_context(args: Cli) {
-    let config = config::get();
+    let config = config::get(None);
 
     let search_value = args.value.as_deref().unwrap_or("");
 
     let options: Vec<String> = config
+        .config
         .contexts
         .iter()
         .filter(|context| context.name.starts_with(search_value))

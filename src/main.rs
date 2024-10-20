@@ -9,6 +9,7 @@ use std::collections::HashSet;
 use std::env;
 use std::fs;
 use std::io;
+use std::path;
 use std::process;
 
 #[macro_use]
@@ -16,41 +17,35 @@ extern crate lazy_static;
 
 lazy_static! {
     static ref KUBECONFIG: String = {
-        let mut paths_set: HashSet<String> = HashSet::new();
 
-        // Get KUBECONFIG environment variable and add unique paths, ignoring kubesess/cache
+        let mut paths_set = HashSet::new();
+        let mut all_paths = Vec::new();
+
+        // Get paths from KUBECONFIG environment variable, preserving order
         if let Ok(val) = env::var("KUBECONFIG") {
-            val.split(':')
-                .filter(|s| !s.contains("/kubesess/cache"))
-                .for_each(|s| {
-                    paths_set.insert(s.to_string());
-                });
+            all_paths.extend(val.split(':').filter(|s| !s.contains("/kubesess/cache")).filter_map(|s| {
+                if paths_set.insert(s.to_string()) {
+                    Some(s.to_string())
+                } else {
+                    None
+                }
+            }));
         }
 
-        // Add all files under .kube directory
+        // Collect paths from ~/.kube directory
         if let Some(home_dir) = dirs::home_dir() {
             let kube_dir = home_dir.join(".kube");
             if let Ok(entries) = fs::read_dir(&kube_dir) {
-                entries.filter_map(Result::ok).for_each(|entry| {
+                let kube_paths: Vec<_> = entries.filter_map(Result::ok).filter_map(|entry| {
                     let path = entry.path();
-                    if path.is_file() {
-                        if let Some(path_str) = path.to_str() {
-                            paths_set.insert(path_str.to_string());
-                        }
-                    }
-                });
+                    path.to_str().map(|p| p.to_string())
+                }).filter(|p| path::Path::new(p).is_file() && paths_set.insert(p.clone())).collect();
+
+                all_paths.extend(kube_paths);
             }
         }
 
-        // Collect all unique paths, sort them, and move .kube/config to the end if it exists
-        let mut paths_vec: Vec<_> = paths_set.into_iter().collect();
-        paths_vec.sort();
-        if let Some(pos) = paths_vec.iter().position(|p| p.ends_with(".kube/config")) {
-            let kube_config = paths_vec.remove(pos);
-            paths_vec.push(kube_config);
-        }
-
-        paths_vec.join(":")
+        all_paths.join(":")
     };
     static ref KUBESESSCONFIG: String = {
         match env::var("KUBECONFIG") {

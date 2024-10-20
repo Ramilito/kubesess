@@ -2,27 +2,46 @@ use crate::{KUBECONFIG, KUBESESSCONFIG};
 use kube::config::Kubeconfig;
 use kube::config::NamedContext;
 use std::fs::{self, File};
-use std::io::{BufReader, BufWriter, Read};
+use std::io::BufWriter;
 use std::path::Path;
 use std::path::PathBuf;
 
-pub fn get() -> Kubeconfig {
-    let config_paths = KUBECONFIG.clone();
-    let config_map: Vec<(usize, String)> = config_paths
+pub struct KubeConfigs {
+    pub config: Kubeconfig,
+    pub configs: Vec<(Kubeconfig, PathBuf)>,
+}
+
+pub fn get(current_session: Option<&str>) -> KubeConfigs {
+    use std::collections::HashSet;
+    use std::path::PathBuf;
+
+    let config_paths_str = match current_session {
+        Some(path) if !path.is_empty() => format!("{}:{}", path, KUBECONFIG.clone()),
+        Some(_) | None => KUBECONFIG.clone(),
+    };
+
+    let mut paths_set = HashSet::new();
+    let config_paths: Vec<PathBuf> = config_paths_str
         .split(':')
-        .enumerate()
-        .map(|(index, path)| (index, path.to_string()))
+        .filter(|path| !path.is_empty() && paths_set.insert(path.to_string()))
+        .map(|path| PathBuf::from(path))
         .collect();
 
-    let mut config = Kubeconfig::default();
+    let mut conifg = Kubeconfig::default();
+    let mut configs = Vec::new();
 
-    for (_index, path_str) in config_map.iter() {
-        let path = PathBuf::from(path_str);
+    for path in config_paths {
         match Kubeconfig::read_from(&path) {
             Ok(kubeconfig) => {
-                config.contexts.extend(kubeconfig.contexts);
-                config.clusters.extend(kubeconfig.clusters);
-                config.auth_infos.extend(kubeconfig.auth_infos);
+                configs.push((kubeconfig.clone(), path.clone()));
+
+                conifg.contexts.extend(kubeconfig.contexts.into_iter());
+                conifg.clusters.extend(kubeconfig.clusters.into_iter());
+                conifg.auth_infos.extend(kubeconfig.auth_infos.into_iter());
+
+                if conifg.current_context.is_none() {
+                    conifg.current_context = kubeconfig.current_context.clone();
+                }
             }
             Err(err) => {
                 eprintln!(
@@ -34,7 +53,10 @@ pub fn get() -> Kubeconfig {
         }
     }
 
-    config
+    KubeConfigs {
+        config: conifg,
+        configs,
+    }
 }
 
 pub fn build(
@@ -147,15 +169,7 @@ pub fn get_current_session() -> Kubeconfig {
         KUBESESSCONFIG.as_str()
     };
 
-    let f = File::open(current).unwrap();
+    let configs = get(Some(current));
 
-    let mut reader = BufReader::new(f);
-    let mut tmp = String::new();
-    reader
-        .read_to_string(&mut tmp)
-        .expect("Unable to read file");
-
-    let config = serde_yaml::from_str(tmp.trim()).unwrap();
-
-    config
+    configs.config
 }
