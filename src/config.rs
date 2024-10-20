@@ -1,38 +1,117 @@
-use crate::model::{KubeConfig, Context, Contexts};
 use crate::{KUBECONFIG, KUBESESSCONFIG};
+use kube::config::Kubeconfig;
+use kube::config::NamedContext;
 use std::fs::{self, File};
-use std::io::{BufReader, BufWriter, Read};
+use std::io::BufWriter;
 use std::path::Path;
+use std::path::PathBuf;
 
-fn build(ctx: &Contexts, ns: Option<&str>, strbuf: &str) -> KubeConfig {
-    let mut config: KubeConfig = serde_yaml::from_str(strbuf).unwrap();
-    config.api_version = "v1".to_string();
-    config.kind = "Config".to_string();
-    config.current_context = ctx.name.to_string();
+pub struct KubeConfigs {
+    pub config: Kubeconfig,
+    pub configs: Vec<(Kubeconfig, PathBuf)>,
+}
 
-    let ns = match ns {
-        Some(namespace) => namespace.to_string(),
-        None => {
-            if !config.contexts.is_empty() && !config.contexts[0].context.namespace.is_empty() {
-                config.contexts[0].context.namespace.to_string()
-            } else if !ctx.context.namespace.is_empty() {
-                ctx.context.namespace.to_string()
-            } else {
-                "default".to_string()
+pub fn get(current_session: Option<&str>) -> KubeConfigs {
+    use std::collections::HashSet;
+    use std::path::PathBuf;
+
+    let config_paths_str = match current_session {
+        Some(path) if !path.is_empty() => format!("{}:{}", path, KUBECONFIG.clone()),
+        Some(_) | None => KUBECONFIG.clone(),
+    };
+
+    let mut paths_set = HashSet::new();
+    let config_paths: Vec<PathBuf> = config_paths_str
+        .split(':')
+        .filter(|path| !path.is_empty() && paths_set.insert(path.to_string()))
+        .map(PathBuf::from)
+        .collect();
+
+    let mut conifg = Kubeconfig::default();
+    let mut configs = Vec::new();
+
+    for path in config_paths {
+        match Kubeconfig::read_from(&path) {
+            Ok(kubeconfig) => {
+                configs.push((kubeconfig.clone(), path.clone()));
+
+                conifg.contexts.extend(kubeconfig.contexts.into_iter());
+                conifg.clusters.extend(kubeconfig.clusters.into_iter());
+                conifg.auth_infos.extend(kubeconfig.auth_infos.into_iter());
+
+                if conifg.current_context.is_none() {
+                    conifg.current_context = kubeconfig.current_context.clone();
+                }
             }
+            Err(err) => {
+                eprintln!(
+                    "Failed to load Kubeconfig from '{}': {}",
+                    path.display(),
+                    err
+                );
+            }
+        }
+    }
+
+    KubeConfigs {
+        config: conifg,
+        configs,
+    }
+}
+
+pub fn build(
+    selected_context: &NamedContext,
+    namespace: Option<&str>,
+    kubeconfig: &Kubeconfig,
+) -> Kubeconfig {
+    let context_name = &selected_context.name;
+
+    // Handle the case where the context is None
+    let context = match &selected_context.context {
+        Some(ctx) => ctx,
+        None => {
+            eprintln!("Error: The selected context has no associated context data.");
+            return Kubeconfig::default();
         }
     };
 
-    config.contexts = vec![Contexts {
-        context: Context {
-            namespace: ns,
-            cluster: ctx.context.cluster.to_string(),
-            user: ctx.context.user.to_string(),
-        },
-        name: ctx.name.to_string(),
-    }];
+    // Find the corresponding cluster based on the context's cluster reference
+    let cluster_name = &context.cluster;
+    let selected_cluster = kubeconfig
+        .clusters
+        .iter()
+        .find(|cluster| &cluster.name == cluster_name)
+        .expect("Cluster for the selected context not found");
 
-    config
+    // Find the corresponding auth_info (user) based on the context's user reference
+    let user_name = &context.user;
+    let selected_auth_info = kubeconfig
+        .auth_infos
+        .iter()
+        .find(|auth_info| &auth_info.name == user_name)
+        .expect("Auth info for the selected context not found");
+
+    // Determine the namespace: use the provided one or fallback to the context's namespace
+    let final_namespace = match namespace {
+        Some(ns) => ns.to_string(),
+        None => context
+            .namespace
+            .clone()
+            .unwrap_or_else(|| "default".to_string()),
+    };
+
+    let mut minimal_context = selected_context.clone();
+    if let Some(ref mut ctx) = minimal_context.context {
+        ctx.namespace = Some(final_namespace);
+    }
+
+    Kubeconfig {
+        current_context: Some(context_name.clone()),
+        contexts: vec![minimal_context],
+        clusters: vec![selected_cluster.clone()],
+        auth_infos: vec![selected_auth_info.clone()],
+        ..Kubeconfig::default()
+    }
 }
 
 fn get_file(path: &String) -> File {
@@ -46,8 +125,8 @@ fn get_file(path: &String) -> File {
     f
 }
 
-fn get_path(ctx: &Contexts, dest: &str) -> String {
-    let path = Path::new(ctx.name.as_str());
+fn get_path(filename: &str, dest: &str) -> String {
+    let path = Path::new(&filename);
     let parent = path.parent().unwrap();
     let dirname = str::replace(&parent.display().to_string(), ":", "_");
 
@@ -59,81 +138,38 @@ fn get_path(ctx: &Contexts, dest: &str) -> String {
     path.display().to_string()
 }
 
-pub fn write(ctx: &Contexts, namespace: Option<&str>, dest: &str) {
-    let path = get_path(ctx, dest);
+pub fn write(
+    ctx: &NamedContext,
+    namespace: Option<&str>,
+    dest: &str,
+    config: &Kubeconfig,
+) -> String {
+    let minimal_config = build(ctx, namespace, config);
+    let selected_context = minimal_config.current_context.clone().unwrap_or_default();
+    let selected_ns = minimal_config
+        .contexts
+        .first()
+        .and_then(|ctx| ctx.context.as_ref().and_then(|c| c.namespace.clone()))
+        .unwrap_or_else(|| "default".to_string());
 
-    let strbuf = match fs::read_to_string(&path) {
-        Ok(file) => file,
-        Err(_error) => "".to_string(),
-    };
+    let filename = selected_context.to_owned() + "_" + &selected_ns.to_owned();
+    let path = get_path(&filename, dest);
 
     let options = get_file(&path);
     let writer = BufWriter::new(&options);
-    let config = build(ctx, namespace, &strbuf);
 
-    serde_yaml::to_writer(writer, &config).unwrap();
+    serde_yaml::to_writer(writer, &minimal_config).unwrap();
+    filename
 }
 
-pub fn get() -> KubeConfig {
-    let mut configs = KubeConfig::default();
-
-    for s in KUBECONFIG.rsplit(':') {
-        if s.contains("/kubesess/cache") {
-            continue;
-        }
-        let config: KubeConfig = get_config(s);
-
-        configs.current_context = config.current_context;
-        configs.api_version = config.api_version;
-        configs.kind = config.kind;
-        configs.contexts.extend(config.contexts);
-    }
-
-    let dir = format!("{}/.kube", dirs::home_dir().unwrap().display());
-    for entry in fs::read_dir(dir).unwrap() {
-        let path = entry.unwrap().path();
-        if let Some(extension) = path.extension() {
-            if extension == "yaml" {
-                let config: KubeConfig = get_config(path.to_str().unwrap());
-
-                configs.contexts.extend(config.contexts);
-            }
-        }
-    }
-
-    configs
-}
-
-fn get_config(path: &str) -> KubeConfig {
-    let f = File::open(path).unwrap();
-
-    let mut reader = BufReader::new(f);
-    let mut tmp = String::new();
-    reader
-        .read_to_string(&mut tmp)
-        .expect("Unable to read file");
-
-    let config: KubeConfig = serde_yaml::from_str(tmp.trim()).unwrap();
-
-    config
-}
-
-pub fn get_current_session() -> KubeConfig {
-    let current= if KUBESESSCONFIG.is_empty() {
+pub fn get_current_session() -> Kubeconfig {
+    let current = if KUBESESSCONFIG.is_empty() {
         KUBECONFIG.split(':').next().unwrap()
     } else {
         KUBESESSCONFIG.as_str()
     };
 
-    let f = File::open(current).unwrap();
+    let configs = get(Some(current));
 
-    let mut reader = BufReader::new(f);
-    let mut tmp = String::new();
-    reader
-        .read_to_string(&mut tmp)
-        .expect("Unable to read file");
-
-    let config = serde_yaml::from_str(tmp.trim()).unwrap();
-
-    config
+    configs.config
 }

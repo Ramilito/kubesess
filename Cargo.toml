@@ -1,6 +1,6 @@
 [package]
 name = "kubesess"
-version = "1.2.11"
+version = "2.0.0"
 authors = ["https://github.com/ramilito"]
 edition = "2021"
 
@@ -12,6 +12,10 @@ serde = { version = "1.0.141", features = ["derive"] }
 lazy_static = "1.4.0"
 skim = "0.9.4"
 thiserror = "1.0.56"
+kube = { version = "0.96.0", features = ["config"] }
+k8s-openapi = { version = "0.23.0", features = ["latest"] }
 
 [dev-dependencies]
+tempfile = "3.3"
 assert_cmd = "2.0"
+serial_test = "0.5"
