@@ -187,10 +187,10 @@ pub fn default_namespace(args: Cli) -> Result<(), Error> {
         })
         .map(|(_, path)| path.clone())
     {
-        commands::set_default_namespace(&ns, &ctx, &target);
+        commands::set_default_namespace(&ns, ctx, &target);
     }
 
-    let result = commands::set_namespace(&ctx, &ns, &DEST, &current_session);
+    let result = commands::set_namespace(ctx, &ns, &DEST, &current_session);
     println!(
         "{}/{}:{}",
         &DEST.as_str(),
