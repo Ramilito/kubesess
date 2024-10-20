@@ -50,11 +50,11 @@ pub fn default_context(args: Cli) -> Result<(), Error> {
 }
 
 pub fn context(args: Cli) -> Result<(), Error> {
-    let config = config::get_current_session();
+    let current_session = config::get_current_session();
     if args.current {
         println!(
             "{}",
-            config
+            current_session
                 .current_context
                 .as_deref()
                 .unwrap_or("No current context set")
@@ -62,9 +62,11 @@ pub fn context(args: Cli) -> Result<(), Error> {
         return Ok(());
     }
 
+    let config = config::get(None);
     let ctx = match args.value {
         None => {
             let options: Vec<String> = config
+                .config
                 .contexts
                 .iter()
                 .map(|context| context.name.to_string())
@@ -75,7 +77,8 @@ pub fn context(args: Cli) -> Result<(), Error> {
         Some(x) => x.trim().to_string(),
     };
 
-    let set_context_result = commands::set_context(&ctx, &DEST, &config).map_err(Error::SetContext);
+    let set_context_result =
+        commands::set_context(&ctx, &DEST, &current_session).map_err(Error::SetContext);
 
     if set_context_result.is_ok() {
         println!(
