@@ -43,13 +43,7 @@ pub fn get(current_session: Option<&str>) -> KubeConfigs {
                     conifg.current_context = kubeconfig.current_context.clone();
                 }
             }
-            Err(err) => {
-                eprintln!(
-                    "Failed to load Kubeconfig from '{}': {}",
-                    path.display(),
-                    err
-                );
-            }
+            Err(_) => {}
         }
     }
 
