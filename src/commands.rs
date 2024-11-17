@@ -25,13 +25,7 @@ pub fn set_default_namespace(ns: &str, ctx: &str, target: &Path) {
         .unwrap();
 }
 
-pub fn set_default_context(ctx: &str, target: &Path) {
-    let kubeconfig = format!(
-        "{}/.kube/config:{}",
-        dirs::home_dir().unwrap().display(),
-        target.to_string_lossy(),
-    );
-
+pub fn set_default_context(ctx: &str) {
     let output = Command::new("kubectl")
         .arg("config")
         .arg("use-context")
