@@ -1,5 +1,6 @@
 use crate::config;
 use crate::error::SetContextError;
+use crate::KUBECONFIG;
 
 use std::{
     io::Cursor,
@@ -25,16 +26,25 @@ pub fn set_default_namespace(ns: &str, ctx: &str, target: &Path) {
 }
 
 pub fn set_default_context(ctx: &str, target: &Path) {
-    Command::new("kubectl")
+    let kubeconfig = format!(
+        "{}/.kube/config:{}",
+        dirs::home_dir().unwrap().display(),
+        target.to_string_lossy(),
+    );
+
+    let output = Command::new("kubectl")
         .arg("config")
-        .arg(format!("--kubeconfig={}", target.to_string_lossy()))
         .arg("use-context")
         .arg(ctx)
+        .env("KUBECONFIG", KUBECONFIG.as_str())
         .stdout(Stdio::null())
-        .spawn()
-        .unwrap()
-        .wait()
-        .unwrap();
+        .stderr(Stdio::piped())
+        .output()
+        .expect("Failed to execute command");
+
+    if !output.status.success() {
+        eprintln!("Error: {}", String::from_utf8_lossy(&output.stderr));
+    }
 }
 
 pub fn get_namespaces() -> Vec<String> {
