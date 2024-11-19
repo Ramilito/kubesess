@@ -157,12 +157,12 @@ Example:
 export KUBECONFIG=$HOME/.kube/config:$HOME/.kube/config-demo:$HOME/.kube/config-demo-2
 ```
 
-> ![[Note]]
+> [!Note]
 > **The order is important*: the first file will be the master config!
 
 The second way is to let Kubesess handle it by adding one or more config files under the $HOME/.kube folder and it will be automatically merged.
 
-> ![[Warning]]
+> [!Warning]
 > Currently there is a bug that requires us to have this env variable: `export KUBECONFIG=$(find ~/.kube/ -maxdepth 1 -type f -printf ":%p" | sed 's/^://')`
 
 #### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
