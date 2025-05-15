@@ -37,9 +37,6 @@ lazy_static! {
         }
 
         // Collect paths from ~/.kube directory
-        let mut all_paths: Vec<String> = Vec::new();
-        let mut paths_set: HashSet<String> = HashSet::new(); // to avoid dupes
-
         if let Some(home_dir) = dirs::home_dir() {
             let kube_dir = home_dir.join(".kube");
 
