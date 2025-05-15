@@ -5,11 +5,12 @@ mod modes;
 
 use crate::error::Error;
 use clap::Parser;
+use kube::config::Kubeconfig;
 use std::collections::HashSet;
 use std::env;
 use std::fs;
 use std::io;
-use std::path;
+use std::path::PathBuf;
 use std::process;
 
 #[macro_use]
@@ -17,29 +18,45 @@ extern crate lazy_static;
 
 lazy_static! {
     static ref KUBECONFIG: String = {
-
         let mut paths_set = HashSet::new();
         let mut all_paths = Vec::new();
 
         // Get paths from KUBECONFIG environment variable, preserving order
         if let Ok(val) = env::var("KUBECONFIG") {
-            all_paths.extend(val.split(':').filter(|s| !s.contains("/kubesess/cache")).filter_map(|s| {
-                if paths_set.insert(s.to_string()) {
-                    Some(s.to_string())
-                } else {
-                    None
-                }
-            }));
+            all_paths.extend(
+                val.split(':')
+                    .filter(|s| !s.contains("/kubesess/cache"))
+                    .filter_map(|s| {
+                        if paths_set.insert(s.to_string()) {
+                            Some(s.to_string())
+                        } else {
+                            None
+                        }
+                    }),
+            );
         }
 
         // Collect paths from ~/.kube directory
+        let mut all_paths: Vec<String> = Vec::new();
+        let mut paths_set: HashSet<String> = HashSet::new(); // to avoid dupes
+
         if let Some(home_dir) = dirs::home_dir() {
             let kube_dir = home_dir.join(".kube");
+
             if let Ok(entries) = fs::read_dir(&kube_dir) {
-                let kube_paths: Vec<_> = entries.filter_map(Result::ok).filter_map(|entry| {
-                    let path = entry.path();
-                    path.to_str().map(|p| p.to_string())
-                }).filter(|p| path::Path::new(p).is_file() && paths_set.insert(p.clone())).collect();
+                let kube_paths: Vec<String> = entries
+                    .filter_map(Result::ok)
+                    .map(|e| e.path())
+                    .filter(|path: &PathBuf| {
+                        // 1) must be a regular file
+                        // 2) we haven’t added it yet
+                        // 3) it parses as a kubeconfig
+                        path.is_file()
+                            && paths_set.insert(path.to_string_lossy().into_owned())
+                            && Kubeconfig::read_from(path).is_ok()
+                    })
+                    .map(|p: PathBuf| p.to_string_lossy().into_owned())
+                    .collect();
 
                 all_paths.extend(kube_paths);
             }
