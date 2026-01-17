@@ -31,7 +31,7 @@ jobs:
         - os: ubuntu-22.04
           rust: stable
           target: aarch64-unknown-linux-musl
-        - os: macos-15-large
+        - os: macos-14
           rust: stable
           target: x86_64-apple-darwin
         - os: macos-14
