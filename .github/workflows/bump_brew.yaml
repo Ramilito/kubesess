@@ -10,11 +10,72 @@ jobs:
     name: Update Homebrew formula
     runs-on: ubuntu-latest
     steps:
-      - name: Update Homebrew formula
-        uses: dawidd6/action-homebrew-bump-formula@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get release version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+
+      - name: Calculate SHA256
+        id: sha256
+        run: |
+          SHA256=$(curl -sL "https://github.com/${{ github.repository }}/archive/refs/tags/${{ steps.version.outputs.version }}.tar.gz" | shasum -a 256 | cut -d ' ' -f 1)
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "SHA256: $SHA256"
+
+      - name: Update formula with version and SHA
+        run: |
+          sed -i 's|url "https://github.com/Ramilito/kubesess/archive/refs/tags/.*\.tar\.gz"|url "https://github.com/Ramilito/kubesess/archive/refs/tags/${{ steps.version.outputs.version }}.tar.gz"|' Formula/kubesess.rb
+          sed -i 's|sha256 ".*"|sha256 "${{ steps.sha256.outputs.sha256 }}"|' Formula/kubesess.rb
+          echo "Updated formula:"
+          cat Formula/kubesess.rb
+
+      - name: Checkout homebrew-core
+        uses: actions/checkout@v4
         with:
-          # Required, custom GitHub access token with the 'public_repo' and 'workflow' scopes
-          token: ${{secrets.TOKEN}}
-          # Formula name, required
-          formula: kubesess
-          livecheck: true
+          repository: Homebrew/homebrew-core
+          path: homebrew-core
+          token: ${{ secrets.TOKEN }}
+
+      - name: Create branch and update formula
+        working-directory: homebrew-core
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          BRANCH_NAME="kubesess-${{ steps.version.outputs.version }}"
+          git checkout -b "$BRANCH_NAME"
+
+          # Copy our formula
+          cp ../Formula/kubesess.rb Formula/k/kubesess.rb
+
+          # Remove bottle block if present (Homebrew CI will regenerate)
+          sed -i '/^  bottle do$/,/^  end$/d' Formula/k/kubesess.rb
+
+          git add Formula/k/kubesess.rb
+          git commit -m "kubesess ${{ steps.version.outputs.version }}"
+
+          echo "Formula diff:"
+          git show --stat
+
+      - name: Create Pull Request to homebrew-core
+        working-directory: homebrew-core
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          BRANCH_NAME="kubesess-${{ steps.version.outputs.version }}"
+
+          # Push to user's fork
+          git remote add fork "https://x-access-token:${{ secrets.TOKEN }}@github.com/${{ github.repository_owner }}/homebrew-core.git"
+          git push fork "$BRANCH_NAME" --force
+
+          # Create PR
+          gh pr create \
+            --repo Homebrew/homebrew-core \
+            --head "${{ github.repository_owner }}:$BRANCH_NAME" \
+            --title "kubesess ${{ steps.version.outputs.version }}" \
+            --body "Created by [GitHub Actions](https://github.com/${{ github.repository }}/actions) from release ${{ steps.version.outputs.version }}"
