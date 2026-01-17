@@ -1,6 +1,6 @@
-use crate::{commands, config, error::Error, Cli, DEST, KUBECONFIG};
+use crate::{commands, config, error::Error, ModeArgs, DEST, KUBECONFIG};
 
-pub fn default_context(args: Cli) -> Result<(), Error> {
+pub fn default_context(args: ModeArgs) -> Result<(), Error> {
     let config = config::get(None);
 
     if args.current {
@@ -49,7 +49,7 @@ pub fn default_context(args: Cli) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn context(args: Cli) -> Result<(), Error> {
+pub fn context(args: ModeArgs) -> Result<(), Error> {
     let current_session = config::get_current_session();
     if args.current {
         println!(
@@ -92,7 +92,7 @@ pub fn context(args: Cli) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn namespace(args: Cli) -> Result<(), Error> {
+pub fn namespace(args: ModeArgs) -> Result<(), Error> {
     let config = config::get_current_session();
     let current_ctx = &config
         .current_context
@@ -140,7 +140,7 @@ pub fn namespace(args: Cli) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn default_namespace(args: Cli) -> Result<(), Error> {
+pub fn default_namespace(args: ModeArgs) -> Result<(), Error> {
     let current_session = config::get_current_session();
     let config = config::get(None);
     let ctx = &current_session
@@ -204,7 +204,7 @@ pub fn default_namespace(args: Cli) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn completion_context(args: Cli) {
+pub fn completion_context(args: ModeArgs) {
     let config = config::get(None);
 
     let search_value = args.value.as_deref().unwrap_or("");
@@ -220,7 +220,7 @@ pub fn completion_context(args: Cli) {
     println!("{}", options.join(" "));
 }
 
-pub fn completion_namespace(args: Cli) {
+pub fn completion_namespace(args: ModeArgs) {
     let namespaces = commands::get_namespaces();
     let mut options = Vec::new();
 

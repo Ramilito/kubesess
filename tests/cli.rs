@@ -61,7 +61,7 @@ fn set_context() -> Result<(), Box<dyn std::error::Error>> {
     let expected: String = format!("{}", kubeconfig);
 
     let mut cmd = Command::cargo_bin("kubesess")?;
-    let output = cmd.arg("-v docker-desktop").arg("context").unwrap();
+    let output = cmd.arg("context").arg("-v").arg("docker-desktop").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
 
     assert!(output_string.contains(&expected));
@@ -79,7 +79,7 @@ fn set_default_context() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut cmd = Command::cargo_bin("kubesess")?;
 
-    let output = cmd.arg("-v docker-desktop").arg("default-context").unwrap();
+    let output = cmd.arg("default-context").arg("-v").arg("docker-desktop").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
 
     assert!(output_string.contains(&expected));
@@ -96,7 +96,7 @@ fn set_namespace() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut cmd = Command::cargo_bin("kubesess")?;
 
-    let output = cmd.arg("-v default").arg("namespace").unwrap();
+    let output = cmd.arg("namespace").arg("-v").arg("default").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
 
     assert!(output_string.contains(&expected));
@@ -113,7 +113,7 @@ fn set_default_namespace() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut cmd = Command::cargo_bin("kubesess")?;
 
-    let output = cmd.arg("-v default").arg("default-namespace").unwrap();
+    let output = cmd.arg("default-namespace").arg("-v").arg("default").unwrap();
     let output_string = String::from_utf8(output.stdout).unwrap().trim().to_owned();
 
     assert!(output_string.contains(&expected));

@@ -1,10 +1,10 @@
 mod commands;
 mod config;
 mod error;
+mod init;
 mod modes;
 
-use crate::error::Error;
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use kube::config::Kubeconfig;
 use std::collections::HashSet;
 use std::env;
@@ -84,48 +84,84 @@ lazy_static! {
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 pub struct Cli {
-    #[clap(value_enum, display_order = 1)]
-    mode: Mode,
-    #[clap(short, long, value_parser, display_order = 2)]
-    value: Option<String>,
+    #[clap(subcommand)]
+    command: Command,
+}
+
+/// Common arguments for context/namespace operations
+#[derive(clap::Args, Clone)]
+pub struct ModeArgs {
+    /// Specify the value directly instead of using interactive selection
+    #[clap(short, long, value_parser)]
+    pub value: Option<String>,
+    /// Print the current context/namespace
     #[clap(short, long, action)]
-    current: bool,
+    pub current: bool,
 }
 
-#[derive(clap::ValueEnum, Clone)]
-enum Mode {
-    Namespace,
-    Context,
-    DefaultContext,
-    DefaultNamespace,
-    CompletionContext,
-    CompletionNamespace,
-}
-
-impl Mode {
-    fn invoke(&self) -> Result<(), Error> {
-        let args = Cli::parse();
-        match self {
-            Mode::Namespace => modes::namespace(args),
-            Mode::Context => modes::context(args),
-            Mode::DefaultContext => modes::default_context(args),
-            Mode::DefaultNamespace => modes::default_namespace(args),
-            Mode::CompletionContext => {
-                modes::completion_context(args);
-                Ok(())
-            }
-            Mode::CompletionNamespace => {
-                modes::completion_namespace(args);
-                Ok(())
-            }
-        }
-    }
+#[derive(Subcommand)]
+enum Command {
+    /// Switch to a context (session-specific)
+    Context {
+        #[clap(flatten)]
+        args: ModeArgs,
+    },
+    /// Switch to a namespace (session-specific)
+    Namespace {
+        #[clap(flatten)]
+        args: ModeArgs,
+    },
+    /// Switch to a context (global, modifies kubeconfig)
+    DefaultContext {
+        #[clap(flatten)]
+        args: ModeArgs,
+    },
+    /// Switch to a namespace (global, modifies kubeconfig)
+    DefaultNamespace {
+        #[clap(flatten)]
+        args: ModeArgs,
+    },
+    /// Output completions for context
+    CompletionContext {
+        #[clap(flatten)]
+        args: ModeArgs,
+    },
+    /// Output completions for namespace
+    CompletionNamespace {
+        #[clap(flatten)]
+        args: ModeArgs,
+    },
+    /// Initialize shell integration
+    Init {
+        /// Shell to generate initialization script for
+        #[clap(value_enum)]
+        shell: init::Shell,
+    },
 }
 
 fn main() -> Result<(), io::Error> {
-    let args = Cli::parse();
+    let cli = Cli::parse();
 
-    if let Err(err) = Mode::invoke(&args.mode) {
+    let result = match cli.command {
+        Command::Context { args } => modes::context(args),
+        Command::Namespace { args } => modes::namespace(args),
+        Command::DefaultContext { args } => modes::default_context(args),
+        Command::DefaultNamespace { args } => modes::default_namespace(args),
+        Command::CompletionContext { args } => {
+            modes::completion_context(args);
+            Ok(())
+        }
+        Command::CompletionNamespace { args } => {
+            modes::completion_namespace(args);
+            Ok(())
+        }
+        Command::Init { shell } => {
+            init::print_init_script(shell);
+            Ok(())
+        }
+    };
+
+    if let Err(err) = result {
         eprintln!("error: {}", err);
         process::exit(1);
     }

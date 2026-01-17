@@ -19,9 +19,13 @@
     + [Installation](#installation)
   * [Usage](#usage)
   * [Roadmap](#roadmap)
-  * [Troubleshooting](#troubleshooting))
+  * [Migrating from v2.x](#migrating-from-v2x)
+  * [Troubleshooting](#troubleshooting)
 
 </details>
+
+> [!Important]
+> **Upgrading from v2.x?** Version 3.0 introduces breaking changes. See the [Migration Guide](#migrating-from-v2x) below.
 
 ## Showcase
 
@@ -73,12 +77,12 @@ Command | [kubesess](https://github.com/Ramilito/kubesess) | [kubectx](https://g
 Tool: [hyperfine](./benches/hyperfine/markdown.md)
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `kubesess -v docker-desktop context` | 1.3 ± 0.2 | 1.0 | 2.2 | 1.00 |
+| `kubesess context -v docker-desktop` | 1.3 ± 0.2 | 1.0 | 2.2 | 1.00 |
 | `kubectx docker-desktop` | 91.8 ± 3.3 | 85.1 | 100.7 | 71.23 ± 13.64 |
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `kubesess -v monitoring namespace` | 0.8 ± 0.1 | 0.7 | 0.9 | 1.00 |
+| `kubesess namespace -v monitoring` | 0.8 ± 0.1 | 0.7 | 0.9 | 1.00 |
 | `kubens monitoring` | 215.3 ± 27.0 | 199.5 | 288.9 | 270.22 ± 38.34 |
 
 \* Disclaimer *
@@ -96,26 +100,33 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 #### Binary
 Download and extract the binary.
 ```zsh
-KUBESESS_VERSION=2.0.3 && \
+KUBESESS_VERSION=3.0.0 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
 mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz -C $HOME/.kube/kubesess && \
 sudo mv ~/.kube/kubesess/target/${KUBESESS_OS}/release/kubesess /usr/local/bin/kubesess
 ```
 
-A script wrapper called kubesess.sh is provided for easier use, source the script wrapper in your .bashrc, .zshrc.
-```zsh
-source ~/.kube/kubesess/scripts/sh/kubesess.sh
+Initialize shell integration by adding one of the following to your shell config:
+
+**Bash** (add to `~/.bashrc`):
+```bash
+eval "$(kubesess init bash)"
 ```
 
-For zsh users, source the completion script to your .zsh/.zshrc file
+**Zsh** (add to `~/.zshrc`):
 ```zsh
-source ~/.kube/kubesess/scripts/sh/completion.sh
+eval "$(kubesess init zsh)"
 ```
 
-For fish users, copy functions and completion scripts in your fish config.
-```shell
-rsync -a ~/.kube/kubesess/scripts/fish/ ~/.config/fish/
+**Fish** (add to `~/.config/fish/config.fish`):
+```fish
+kubesess init fish | source
+```
+
+**PowerShell** (add to your PowerShell profile):
+```powershell
+Invoke-Expression (&kubesess init powershell)
 ```
 
 #### Brew
@@ -123,23 +134,13 @@ rsync -a ~/.kube/kubesess/scripts/fish/ ~/.config/fish/
 brew install kubesess
 ```
 
-Add the following to your .zshrc:
-```zsh
-source ${HOMEBREW_PREFIX}/share/zsh/site-functions/kubesess.sh
-source ${HOMEBREW_PREFIX}/opt/kubesess/etc/bash_completion.d/completion.sh
-
-```
-
-Or if you use fish:
-```fish
-cp /$HOMEBREW_PREFIX/share/fish/vendor_functions.d/{kcd.fish,kc.fish,knd.fish,kn.fish} ~/.config/fish/functions/
-```
+Add shell integration to your config (same as above):
 
 ## Usage
 
-See the available commands by running kubesess -h, output from the program needs to be added to $KUBECONFIG env variable.
+See the available commands by running `kubesess --help`. The shell integration (via `kubesess init`) provides convenient wrapper functions that handle the KUBECONFIG export automatically.
 
-#### Aliases are provided for easier use, when sourced these aliases will be created.
+#### Functions provided by shell integration:
 ```zsh
 kc  #kube_context: Sets session context
 
@@ -168,8 +169,8 @@ The second way is to let Kubesess handle it by adding one or more config files u
 #### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
 ```
 prompt_context() {
-    KUBE_CTX=$(kubesess -c context)
-    KUBE_NS=$(kubesess -c namespace)
+    KUBE_CTX=$(kubesess context -c)
+    KUBE_NS=$(kubesess namespace -c)
 
     if [[ $KUBE_CTX == *"dev"* ]]; then
       echo "❗%{$fg[yellow]%}|$KUBE_CTX%{$reset_color%}:%F{6}$KUBE_NS%f"
@@ -208,6 +209,45 @@ RPROMPT='$(prompt_context)'
 - [x] Add support for multiple .kube/config files
 - [x] Add support for multiple namespace per session
 - [x] Add error handling
+
+## Migrating from v2.x
+
+Version 3.0 introduces breaking changes to simplify shell integration.
+
+### What Changed
+
+1. **CLI argument order**: Options now come *after* the subcommand
+   ```bash
+   # Old (v2.x)
+   kubesess -v docker-desktop context
+
+   # New (v3.0)
+   kubesess context -v docker-desktop
+   ```
+
+2. **Shell integration**: Now built into the binary via `kubesess init`
+
+### Update Your Shell Config
+
+Replace your existing shell setup with:
+
+**Bash/Zsh:**
+```bash
+# Remove old source commands and add:
+eval "$(kubesess init bash)"   # or zsh
+```
+
+**Fish:**
+```fish
+kubesess init fish | source
+```
+
+**PowerShell** (new!):
+```powershell
+Invoke-Expression (&kubesess init powershell)
+```
+
+See [CHANGELOG.md](../CHANGELOG.md) for full details.
 
 ## Troubleshooting
 
