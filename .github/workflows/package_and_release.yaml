@@ -31,14 +31,14 @@ jobs:
         - os: ubuntu-22.04
           rust: stable
           target: aarch64-unknown-linux-musl
-        - os: macos-13
+        - os: macos-15-large
           rust: stable
           target: x86_64-apple-darwin
-        - os: macos-13
+        - os: macos-14
           rust: stable
           target: aarch64-apple-darwin
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
            fetch-depth: 0
       - uses: actions-rs/toolchain@v1
