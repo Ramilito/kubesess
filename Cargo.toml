@@ -1,6 +1,6 @@
 [package]
 name = "kubesess"
-version = "2.0.3"
+version = "3.0.0"
 authors = ["https://github.com/ramilito"]
 edition = "2021"
 

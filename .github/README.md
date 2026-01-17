@@ -19,9 +19,13 @@
     + [Installation](#installation)
   * [Usage](#usage)
   * [Roadmap](#roadmap)
-  * [Troubleshooting](#troubleshooting))
+  * [Migrating from v2.x](#migrating-from-v2x)
+  * [Troubleshooting](#troubleshooting)
 
 </details>
+
+> [!Important]
+> **Upgrading from v2.x?** Version 3.0 introduces breaking changes. See the [Migration Guide](#migrating-from-v2x) below.
 
 ## Showcase
 
@@ -96,7 +100,7 @@ Probably most of the speed gains are because I am bypassing kubectl and just edi
 #### Binary
 Download and extract the binary.
 ```zsh
-KUBESESS_VERSION=2.0.3 && \
+KUBESESS_VERSION=3.0.0 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
 mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz -C $HOME/.kube/kubesess && \
@@ -205,6 +209,45 @@ RPROMPT='$(prompt_context)'
 - [x] Add support for multiple .kube/config files
 - [x] Add support for multiple namespace per session
 - [x] Add error handling
+
+## Migrating from v2.x
+
+Version 3.0 introduces breaking changes to simplify shell integration.
+
+### What Changed
+
+1. **CLI argument order**: Options now come *after* the subcommand
+   ```bash
+   # Old (v2.x)
+   kubesess -v docker-desktop context
+
+   # New (v3.0)
+   kubesess context -v docker-desktop
+   ```
+
+2. **Shell integration**: Now built into the binary via `kubesess init`
+
+### Update Your Shell Config
+
+Replace your existing shell setup with:
+
+**Bash/Zsh:**
+```bash
+# Remove old source commands and add:
+eval "$(kubesess init bash)"   # or zsh
+```
+
+**Fish:**
+```fish
+kubesess init fish | source
+```
+
+**PowerShell** (new!):
+```powershell
+Invoke-Expression (&kubesess init powershell)
+```
+
+See [CHANGELOG.md](../CHANGELOG.md) for full details.
 
 ## Troubleshooting
 
