@@ -40,7 +40,7 @@ pub fn default_context(args: ModeArgs) -> Result<(), Error> {
         })
         .map(|(_, path)| path.clone())
     {
-        commands::set_default_context(&ctx);
+        commands::set_default_context(&ctx, &target);
         // TODO: We should move the target to the front of the line instead of inserting a
         // duplicate
         println!("{}:{}", target.to_string_lossy(), KUBECONFIG.as_str());

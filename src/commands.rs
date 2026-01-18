@@ -1,6 +1,5 @@
 use crate::config;
 use crate::error::SetContextError;
-use crate::KUBECONFIG;
 
 use std::{
     io::Cursor,
@@ -25,12 +24,12 @@ pub fn set_default_namespace(ns: &str, ctx: &str, target: &Path) {
         .unwrap();
 }
 
-pub fn set_default_context(ctx: &str) {
+pub fn set_default_context(ctx: &str, target: &Path) {
     let output = Command::new("kubectl")
         .arg("config")
+        .arg(format!("--kubeconfig={}", target.to_string_lossy()))
         .arg("use-context")
         .arg(ctx)
-        .env("KUBECONFIG", KUBECONFIG.as_str())
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
         .output()

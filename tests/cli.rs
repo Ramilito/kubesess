@@ -422,23 +422,114 @@ fn multi_kubeconfig_default_context_modifies_which_file() -> Result<(), Box<dyn 
     println!("  work.yaml: {}", work_modified);
     println!("  personal.yaml: {}", personal_modified);
 
-    // The EXPECTED behavior: work.yaml should be modified (it contains work-prod)
-    // The ACTUAL behavior (potential bug): config might be modified (first in KUBECONFIG)
+    // CORRECT behavior:
+    // - work.yaml contains work-prod context
+    // - work.yaml already has current-context: work-prod
+    // - So kubectl doesn't need to modify it (already correct)
+    // - config should NOT be modified (it doesn't contain work-prod)
 
-    // This test documents current behavior - adjust assertion based on what we find
+    // The key assertion: config must NOT be modified (that was the bug)
     assert!(
-        config_modified || work_modified,
-        "At least one file should have been modified"
+        !config_modified,
+        "BUG: config was modified but it doesn't contain work-prod context"
     );
 
-    // Document which file was actually modified
-    if work_modified && !config_modified {
-        println!("CORRECT: work.yaml was modified (contains the context)");
-    } else if config_modified && !work_modified {
-        println!("POTENTIAL BUG: config was modified (first in KUBECONFIG, but doesn't contain the context)");
-    } else if config_modified && work_modified {
-        println!("UNEXPECTED: Both files were modified");
+    // Document the behavior
+    if !config_modified && !work_modified {
+        println!("CORRECT: Neither file modified (work.yaml already had current-context: work-prod)");
+    } else if work_modified && !config_modified {
+        println!("CORRECT: Only work.yaml was modified (contains the context)");
+    } else if config_modified {
+        println!("BUG: config was modified (first in KUBECONFIG, but doesn't contain the context)");
     }
+
+    // Verify work.yaml has the correct current-context
+    assert_eq!(
+        after_work_ctx,
+        Some("work-prod".to_string()),
+        "work.yaml should have current-context: work-prod"
+    );
+
+    reset_environment();
+    Ok(())
+}
+
+#[test]
+#[serial]
+fn multi_kubeconfig_default_context_changes_correct_file() -> Result<(), Box<dyn std::error::Error>> {
+    reset_environment();
+    let env = setup_multi_kubeconfig_environment();
+
+    // Modify work.yaml to have a DIFFERENT current-context initially
+    // This forces kubectl to actually change the file
+    let work_content = create_kubeconfig_content(
+        "work-prod",
+        "work-cluster",
+        "work-user",
+        "production",
+        Some("some-other-context"), // Different from work-prod
+    );
+    fs::write(&env.work_path, work_content)?;
+
+    let initial_config_ctx = read_current_context_from_file(&env.config_path);
+    let initial_work_ctx = read_current_context_from_file(&env.work_path);
+
+    println!("Initial states (modified):");
+    println!("  config: {:?}", initial_config_ctx);
+    println!("  work.yaml: {:?}", initial_work_ctx);
+
+    let kubeconfig_value = format!(
+        "{}:{}:{}",
+        env.config_path.display(),
+        env.work_path.display(),
+        env.personal_path.display()
+    );
+    std::env::set_var("KUBECONFIG", &kubeconfig_value);
+
+    // Set default context to work-prod
+    let mut cmd = Command::cargo_bin("kubesess")?;
+    let output = cmd
+        .arg("default-context")
+        .arg("-v")
+        .arg("work-prod")
+        .output()?;
+
+    let stdout = String::from_utf8(output.stdout)?.trim().to_owned();
+    let stderr = String::from_utf8(output.stderr)?;
+
+    println!("Output: {}", stdout);
+    if !stderr.is_empty() {
+        println!("Stderr: {}", stderr);
+    }
+
+    let after_config_ctx = read_current_context_from_file(&env.config_path);
+    let after_work_ctx = read_current_context_from_file(&env.work_path);
+
+    println!("After states:");
+    println!("  config: {:?}", after_config_ctx);
+    println!("  work.yaml: {:?}", after_work_ctx);
+
+    let config_modified = initial_config_ctx != after_config_ctx;
+    let work_modified = initial_work_ctx != after_work_ctx;
+
+    println!("Files modified - config: {}, work: {}", config_modified, work_modified);
+
+    // CORRECT behavior: work.yaml should be modified, config should NOT
+    assert!(
+        !config_modified,
+        "BUG: config was modified but it doesn't contain work-prod context"
+    );
+    assert!(
+        work_modified,
+        "work.yaml should have been modified to set current-context: work-prod"
+    );
+    assert_eq!(
+        after_work_ctx,
+        Some("work-prod".to_string()),
+        "work.yaml should now have current-context: work-prod"
+    );
+
+    println!("CORRECT: Only work.yaml was modified (contains the context)");
 
     reset_environment();
     Ok(())
