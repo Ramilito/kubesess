@@ -103,8 +103,8 @@ Download and extract the binary.
 KUBESESS_VERSION=3.0.0 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
-mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz -C $HOME/.kube/kubesess && \
-sudo mv ~/.kube/kubesess/target/${KUBESESS_OS}/release/kubesess /usr/local/bin/kubesess
+tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz && \
+sudo mv kubesess /usr/local/bin/kubesess
 ```
 
 Initialize shell integration by adding one of the following to your shell config:

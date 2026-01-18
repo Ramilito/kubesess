@@ -5,15 +5,15 @@ LATEST_TAG := $(shell git describe --abbrev=0 --tags $(git rev-list --tags --max
 define bundle_release
 	@echo ""
 	if [[ "$(1)" == *"windows"* ]]; then  \
-		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz scripts/ ./target/$(1)/release/kubesess.exe; \
+		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz ./target/$(1)/release/kubesess.exe; \
 	else \
-		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz scripts/ ./target/$(1)/release/kubesess; \
+		tar -czvf ./target/$(1)/release/kubesess_$(1).tar.gz ./target/$(1)/release/kubesess; \
 	fi
 endef
 
 .PHONY: run
 run:
-	cargo run -- -v docker-desktop context 
+	cargo run -- -v docker-desktop context
 
 .PHONY: build
 build:
@@ -27,15 +27,16 @@ clean:
 .PHONY: bundle_release
 bundle_release:
 	$(call bundle_release,${TARGET})
-	
+
 .PHONY: deploy_local
 deploy_local: clean build
-	mkdir -p $$HOME/.kube/kubesess/scripts/sh
-	cp ./target/release/kubesess  ~/.kube/kubesess
-	cp ./scripts/sh/completion.sh ./scripts/sh/kubesess.sh ~/.kube/kubesess/scripts/sh
-	sudo mv ~/.kube/kubesess/kubesess /usr/local/bin/kubesess
-	source ~/.kube/kubesess/scripts/sh/kubesess.sh
-	source ~/.kube/kubesess/scripts/sh/completion.sh
+	mkdir -p $$HOME/.kube/kubesess
+	sudo cp ./target/release/kubesess /usr/local/bin/kubesess
+	@echo ""
+	@echo "Installation complete. Add the following to your shell config:"
+	@echo "  For bash/zsh: eval \"\$$(kubesess init bash)\""
+	@echo "  For fish:     kubesess init fish | source"
+	@echo "  For pwsh:     Invoke-Expression (&kubesess init powershell)"
 
 .PHONY: benchmark
 benchmark: deploy_local
