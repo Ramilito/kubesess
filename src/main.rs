@@ -25,7 +25,7 @@ lazy_static! {
         if let Ok(val) = env::var("KUBECONFIG") {
             all_paths.extend(
                 val.split(':')
-                    .filter(|s| !s.contains("/kubesess/cache"))
+                    .filter(|s| !s.is_empty() && !s.contains("/kubesess/cache"))
                     .filter_map(|s| {
                         if paths_set.insert(s.to_string()) {
                             Some(s.to_string())

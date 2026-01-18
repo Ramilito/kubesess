@@ -103,8 +103,8 @@ Download and extract the binary.
 KUBESESS_VERSION=3.0.0 && \
 KUBESESS_OS=x86_64-unknown-linux-gnu && \
 wget "https://github.com/Ramilito/kubesess/releases/download/${KUBESESS_VERSION}/kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz" && \
-mkdir -p $HOME/.kube/kubesess && tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz -C $HOME/.kube/kubesess && \
-sudo mv ~/.kube/kubesess/target/${KUBESESS_OS}/release/kubesess /usr/local/bin/kubesess
+tar zxpf kubesess_${KUBESESS_VERSION}_${KUBESESS_OS}.tar.gz && \
+sudo mv kubesess /usr/local/bin/kubesess
 ```
 
 Initialize shell integration by adding one of the following to your shell config:
@@ -162,9 +162,6 @@ export KUBECONFIG=$HOME/.kube/config:$HOME/.kube/config-demo:$HOME/.kube/config-
 > **The order is important*: the first file will be the master config!
 
 The second way is to let Kubesess handle it by adding one or more config files under the $HOME/.kube folder and it will be automatically merged.
-
-> [!Warning]
-> Currently there is a bug that requires us to have this env variable: `export KUBECONFIG=$(find ~/.kube/ -maxdepth 1 -type f -printf ":%p" | sed 's/^://')`
 
 #### Add information to prompt (there are other good tools for this, kube-ps1 and p10k)
 ```
