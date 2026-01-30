@@ -14,27 +14,7 @@ class Kubesess < Formula
   def install
     system "cargo", "install", *std_cargo_args
   end
-
-  def caveats
-    <<~EOS
-      To activate kubesess shell integration, add to your shell config:
-
-      For bash (~/.bashrc):
-        eval "$(kubesess init bash)"
-
-      For zsh (~/.zshrc):
-        eval "$(kubesess init zsh)"
-
-      For fish (~/.config/fish/config.fish):
-        kubesess init fish | source
-
-      For PowerShell:
-        Invoke-Expression (&kubesess init powershell)
-
-      This provides the commands: kc, kcd, kn, knd
-    EOS
-  end
-
+  
   test do
     (testpath/".kube/config").write <<~YAML
       kind: Config
