@@ -47,10 +47,16 @@ lazy_static! {
                     .filter(|path: &PathBuf| {
                         // 1) must be a regular file
                         // 2) we haven’t added it yet
-                        // 3) it parses as a kubeconfig
+                        // 3) it contains actual kubeconfig content
                         path.is_file()
                             && paths_set.insert(path.to_string_lossy().into_owned())
-                            && Kubeconfig::read_from(path).is_ok()
+                            && Kubeconfig::read_from(path)
+                                .map(|cfg| {
+                                    !cfg.clusters.is_empty()
+                                        || !cfg.contexts.is_empty()
+                                        || !cfg.auth_infos.is_empty()
+                                })
+                                .unwrap_or(false)
                     })
                     .map(|p: PathBuf| p.to_string_lossy().into_owned())
                     .collect();

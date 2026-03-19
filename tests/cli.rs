@@ -360,6 +360,43 @@ fn multi_kubeconfig_auto_discovery_finds_all_contexts() -> Result<(), Box<dyn st
 }
 
 // =============================================================================
+// Scenario 2b: Auto-discovery excludes non-kubeconfig files
+// =============================================================================
+
+#[test]
+#[serial]
+fn auto_discovery_excludes_non_kubeconfig_files() -> Result<(), Box<dyn std::error::Error>> {
+    reset_environment();
+    let env = setup_multi_kubeconfig_environment();
+
+    // Create a valid YAML file that is NOT a kubeconfig
+    let non_kubeconfig_path = env.kube_dir.join("settings.yaml");
+    fs::write(&non_kubeconfig_path, "theme: dark\nfont_size: 14\n")?;
+
+    // No KUBECONFIG set — rely on auto-discovery
+    std::env::remove_var("KUBECONFIG");
+
+    let mut cmd = Command::cargo_bin("kubesess")?;
+    let output = cmd.arg("context").arg("-v").arg("docker-desktop").output()?;
+    let stdout = String::from_utf8(output.stdout)?.trim().to_owned();
+
+    assert!(
+        output.status.success(),
+        "Command should succeed. stderr: {}",
+        String::from_utf8(output.stderr)?
+    );
+    assert!(
+        !stdout.contains("settings.yaml"),
+        "Output should not include non-kubeconfig file: {}",
+        stdout
+    );
+
+    drop(env.temp_dir);
+    reset_environment();
+    Ok(())
+}
+
+// =============================================================================
 // Scenario 3: default-context - which file gets modified?
 // =============================================================================
 
