@@ -167,3 +167,37 @@ pub fn get_current_session() -> Kubeconfig {
 
     configs.config
 }
+
+/// Coarse, source-change cache invalidation for one session snapshot.
+///
+/// A snapshot is a frozen copy that goes stale when its underlying cluster is
+/// deleted/recreated (colima, docker-desktop, ...). We never touch the cluster — we
+/// treat the snapshot like a cache keyed on its source files: it is stale if the
+/// file is gone/unreadable, or if any source kubeconfig has been modified more
+/// recently than the snapshot was written. A stale snapshot is deleted; the next
+/// `kc` rebuilds it lazily from the current source.
+///
+/// Coarse on purpose: any change to any source kubeconfig invalidates the snapshot.
+/// That keeps the check parse-free (a handful of `stat`s) so it is cheap to run on
+/// every shell prompt. Returns true if the snapshot was dropped.
+pub fn drop_if_stale(cache_path: &Path, sources: &[&str]) -> bool {
+    let cache_mtime = match fs::metadata(cache_path).and_then(|m| m.modified()) {
+        Ok(t) => t,
+        // Missing/unreadable snapshot (e.g. another shell already dropped it):
+        // report stale so the dangling entry is removed from KUBECONFIG.
+        Err(_) => return true,
+    };
+
+    let stale = sources.iter().any(|src| {
+        fs::metadata(src)
+            .and_then(|m| m.modified())
+            .map(|src_mtime| src_mtime > cache_mtime)
+            .unwrap_or(false)
+    });
+
+    if stale {
+        let _ = fs::remove_file(cache_path);
+    }
+
+    stale
+}

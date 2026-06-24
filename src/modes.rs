@@ -1,4 +1,6 @@
 use crate::{commands, config, error::Error, ModeArgs, DEST, KUBECONFIG};
+use std::env;
+use std::path::Path;
 
 pub fn default_context(args: ModeArgs) -> Result<(), Error> {
     let config = config::get(None);
@@ -201,6 +203,35 @@ pub fn default_namespace(args: ModeArgs) -> Result<(), Error> {
         *KUBECONFIG
     );
 
+    Ok(())
+}
+
+/// Self-heal the active session: drop any kubesess cache snapshot referenced in
+/// KUBECONFIG that has gone stale relative to the source kubeconfigs (coarse mtime
+/// check), then print the resulting KUBECONFIG for the shell to re-export. Stale
+/// snapshots are deleted and rebuilt lazily on the next `kc`.
+pub fn reconcile() -> Result<(), Error> {
+    let raw = env::var("KUBECONFIG").unwrap_or_default();
+    let entries: Vec<&str> = raw.split(':').filter(|e| !e.is_empty()).collect();
+
+    // The sources a snapshot is checked against are simply the non-cache entries
+    // already in KUBECONFIG (what the session was built from) — no parsing needed.
+    let sources: Vec<&str> = entries
+        .iter()
+        .copied()
+        .filter(|e| !e.contains("/kubesess/cache"))
+        .collect();
+
+    let kept: Vec<&str> = entries
+        .iter()
+        .copied()
+        .filter(|entry| {
+            !(entry.contains("/kubesess/cache")
+                && config::drop_if_stale(Path::new(entry), &sources))
+        })
+        .collect();
+
+    println!("{}", kept.join(":"));
     Ok(())
 }
 
