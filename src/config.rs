@@ -163,7 +163,36 @@ pub fn get_current_session() -> Kubeconfig {
         KUBESESSCONFIG.as_str()
     };
 
+    if current.contains("/kubesess/cache") {
+        let sources: Vec<&str> = KUBECONFIG.split(':').filter(|s| !s.is_empty()).collect();
+        drop_if_stale(Path::new(current), &sources);
+    }
+
     let configs = get(Some(current));
 
     configs.config
+}
+
+/// Delete the snapshot if a source kubeconfig is newer than it (or it's gone), and
+/// return whether it was dropped. The next `kc` rebuilds it from current source.
+pub fn drop_if_stale(cache_path: &Path, sources: &[&str]) -> bool {
+    let cache_mtime = match fs::metadata(cache_path).and_then(|m| m.modified()) {
+        Ok(t) => t,
+        // Missing/unreadable snapshot (e.g. another shell already dropped it):
+        // report stale so the dangling entry is removed from KUBECONFIG.
+        Err(_) => return true,
+    };
+
+    let stale = sources.iter().any(|src| {
+        fs::metadata(src)
+            .and_then(|m| m.modified())
+            .map(|src_mtime| src_mtime > cache_mtime)
+            .unwrap_or(false)
+    });
+
+    if stale {
+        let _ = fs::remove_file(cache_path);
+    }
+
+    stale
 }
