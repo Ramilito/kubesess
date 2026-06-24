@@ -57,28 +57,6 @@ complete -F _kc_completions kc
 complete -F _kc_completions kcd
 complete -F _kn_completions kn
 complete -F _kn_completions knd
-
-# Self-healing: before each prompt, drop any session snapshot that has gone stale
-# relative to its source kubeconfig (e.g. a cluster recreated by colima/docker-desktop).
-# Guarded so shells without an active session do nothing.
-__kubesess_reconcile() {
-  case ":$KUBECONFIG:" in
-    *"/kubesess/cache"*)
-      local __kc_new
-      __kc_new="$(kubesess reconcile)" || return
-      [ "$__kc_new" != "$KUBECONFIG" ] && export KUBECONFIG="$__kc_new"
-      ;;
-  esac
-}
-
-if [ -n "$ZSH_VERSION" ]; then
-  autoload -Uz add-zsh-hook 2>/dev/null && add-zsh-hook precmd __kubesess_reconcile
-elif [ -n "$BASH_VERSION" ]; then
-  case ";${PROMPT_COMMAND};" in
-    *";__kubesess_reconcile;"*) ;;
-    *) PROMPT_COMMAND="__kubesess_reconcile${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
-  esac
-fi
 "#;
 
 const FISH_INIT: &str = r#"# kubesess shell integration for fish
@@ -136,14 +114,6 @@ end
 
 complete -c kn -f -a '(__kubesess_namespaces)'
 complete -c knd -f -a '(__kubesess_namespaces)'
-
-# Self-healing: before each prompt, drop any session snapshot that has gone stale
-# relative to its source kubeconfig (e.g. a cluster recreated by colima/docker-desktop).
-function __kubesess_reconcile --on-event fish_prompt
-    string match -q '*/kubesess/cache*' -- "$KUBECONFIG"; or return
-    set -l new (kubesess reconcile)
-    test "$new" != "$KUBECONFIG"; and set -gx KUBECONFIG $new
-end
 "#;
 
 const POWERSHELL_INIT: &str = r#"# kubesess shell integration for PowerShell
@@ -211,20 +181,5 @@ Register-ArgumentCompleter -CommandName kn, knd -ParameterName Namespace -Script
     kubectl get ns --no-headers -o custom-columns=":metadata.name" 2>$null | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
         [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
     }
-}
-
-# Self-healing: before each prompt, drop any session snapshot that has gone stale
-# relative to its source kubeconfig (e.g. a cluster recreated by colima/docker-desktop).
-# Wraps the existing `prompt`, preserving it.
-if (-not $Global:__kubesess_orig_prompt) {
-    $Global:__kubesess_orig_prompt = $function:prompt
-}
-function prompt {
-    if ($env:KUBECONFIG -like '*/kubesess/cache*') {
-        $__kc_new = kubesess reconcile
-        if ($LASTEXITCODE -eq 0 -and $__kc_new -ne $env:KUBECONFIG) { $env:KUBECONFIG = $__kc_new }
-    }
-    if ($Global:__kubesess_orig_prompt) { & $Global:__kubesess_orig_prompt }
-    else { "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) " }
 }
 "#;
