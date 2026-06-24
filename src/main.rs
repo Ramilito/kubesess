@@ -137,9 +137,6 @@ enum Command {
         #[clap(flatten)]
         args: ModeArgs,
     },
-    /// Self-heal stale session cache against source kubeconfigs (internal)
-    #[clap(hide = true)]
-    Reconcile,
     /// Initialize shell integration
     Init {
         /// Shell to generate initialization script for
@@ -164,7 +161,6 @@ fn main() -> Result<(), io::Error> {
             modes::completion_namespace(args);
             Ok(())
         }
-        Command::Reconcile => modes::reconcile(),
         Command::Init { shell } => {
             init::print_init_script(shell);
             Ok(())
