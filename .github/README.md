@@ -228,10 +228,15 @@ Version 3.0 introduces breaking changes to simplify shell integration.
 
 Replace your existing shell setup with:
 
-**Bash/Zsh:**
+**Bash:**
 ```bash
 # Remove old source commands and add:
-eval "$(kubesess init bash)"   # or zsh
+eval "$(kubesess init bash)"
+```
+
+**Zsh:**
+```zsh
+eval "$(kubesess init zsh)"
 ```
 
 **Fish:**
