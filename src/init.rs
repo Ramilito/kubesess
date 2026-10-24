@@ -10,7 +10,8 @@ pub enum Shell {
 /// Print the shell initialization script for the given shell
 pub fn print_init_script(shell: Shell) {
     let script = match shell {
-        Shell::Bash | Shell::Zsh => BASH_ZSH_INIT,
+        Shell::Bash => BASH_ZSH_INIT,
+        Shell::Zsh => ZSH_INIT,
         Shell::Fish => FISH_INIT,
         Shell::Powershell => POWERSHELL_INIT,
     };
@@ -18,9 +19,8 @@ pub fn print_init_script(shell: Shell) {
 }
 
 const BASH_ZSH_INIT: &str = r#"# kubesess shell integration
-# Add to your .bashrc or .zshrc:
+# Add to your .bashrc:
 #   eval "$(kubesess init bash)"  # for bash
-#   eval "$(kubesess init zsh)"   # for zsh
 
 __kubesess_export() {
   local OUTPUT
@@ -57,6 +57,55 @@ complete -F _kc_completions kc
 complete -F _kc_completions kcd
 complete -F _kn_completions kn
 complete -F _kn_completions knd
+"#;
+
+const ZSH_INIT: &str = r#"# kubesess shell integration
+# Add to your .zshrc:
+#   eval "$(kubesess init zsh)"
+
+__kubesess_export() {
+  local OUTPUT
+  OUTPUT="$(kubesess "$@")" || return $?
+  export KUBECONFIG="$OUTPUT"
+}
+
+kc() {
+  __kubesess_export context ${1:+"-v" "$1"}
+}
+
+kcd() {
+  __kubesess_export default-context ${1:+"-v" "$1"}
+}
+
+kn() {
+  __kubesess_export namespace ${1:+"-v" "$1"}
+}
+
+knd() {
+  __kubesess_export default-namespace ${1:+"-v" "$1"}
+}
+
+# Completions for Zsh
+_kubesess_contexts() {
+  local output
+  local -a matches
+  output="$(kubesess completion-context -v "$PREFIX")"
+  matches=(${=output})
+  (( ${#matches} )) && compadd -- "${matches[@]}"
+}
+
+_kubesess_namespaces() {
+  local output
+  local -a matches
+  output="$(kubesess completion-namespace -v "$PREFIX")"
+  matches=(${=output})
+  (( ${#matches} )) && compadd -- "${matches[@]}"
+}
+
+if (( $+functions[compdef] )); then
+  compdef _kubesess_contexts kc kcd
+  compdef _kubesess_namespaces kn knd
+fi
 "#;
 
 const FISH_INIT: &str = r#"# kubesess shell integration for fish
