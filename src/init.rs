@@ -86,11 +86,6 @@ knd() {
 }
 
 # Completions for Zsh
-if (( ! $+functions[compdef] )); then
-  autoload -Uz compinit
-  compinit
-fi
-
 _kubesess_contexts() {
   local output
   local -a matches
@@ -107,8 +102,10 @@ _kubesess_namespaces() {
   (( ${#matches} )) && compadd -- "${matches[@]}"
 }
 
-compdef _kubesess_contexts kc kcd
-compdef _kubesess_namespaces kn knd
+if (( $+functions[compdef] )); then
+  compdef _kubesess_contexts kc kcd
+  compdef _kubesess_namespaces kn knd
+fi
 "#;
 
 const FISH_INIT: &str = r#"# kubesess shell integration for fish
