@@ -136,6 +136,14 @@ brew install kubesess
 
 Add shell integration to your config (same as above):
 
+#### Arch Linux (AUR)
+Install the [`kubesess-bin`](https://aur.archlinux.org/packages/kubesess-bin) package with an AUR helper such as yay:
+```zsh
+yay -S kubesess-bin
+```
+
+Add shell integration to your config (same as above).
+
 ## Usage
 
 See the available commands by running `kubesess --help`. The shell integration (via `kubesess init`) provides convenient wrapper functions that handle the KUBECONFIG export automatically.
